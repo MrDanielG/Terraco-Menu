@@ -38,7 +38,9 @@ export default function Home() {
             </Head>
 
             <main className={styles.main}>
-                <h1 className={styles.title}>{t.helloWorld}</h1>
+                <h1 className={`${styles.title} text-orange`}>
+                    {t.helloWorld}
+                </h1>
 
                 <p className={styles.description}>
                     Get started by editing{' '}
@@ -51,10 +53,7 @@ export default function Home() {
                         className={styles.card}
                     >
                         <h2>Change EN</h2>
-                        <p>
-                            Find in-depth information about Next.js features and
-                            API.
-                        </p>
+                        <p>Change language to English</p>
                     </a>
 
                     <a
@@ -62,10 +61,7 @@ export default function Home() {
                         className={styles.card}
                     >
                         <h2>Change ES</h2>
-                        <p>
-                            Learn about Next.js in an interactive course with
-                            quizzes!
-                        </p>
+                        <p>Change language to Spanish</p>
                     </a>
 
                     <a
