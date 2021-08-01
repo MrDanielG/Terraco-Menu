@@ -12,6 +12,7 @@ module.exports = {
                     DEFAULT: '#401D0A',
                 },
                 orange: {
+                    light: '#FD8D00',
                     DEFAULT: '#FA4A0C',
                 },
             },
@@ -20,5 +21,5 @@ module.exports = {
     variants: {
         extend: {},
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/forms')],
 };
