@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import ParentCard from '../components/card/ParentCard';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
 import styles from '../styles/Home.module.css';
@@ -27,7 +28,7 @@ export default function Home() {
     };
 
     return (
-        <div className={styles.container}>
+        <div className="bg-gray-200">
             <Head>
                 <title>Create Next App</title>
                 <meta
@@ -37,7 +38,7 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className={styles.main}>
+            <main className="">
                 <h1 className={`${styles.title} text-orange`}>
                     {t.helloWorld}
                 </h1>
@@ -63,30 +64,10 @@ export default function Home() {
                         <h2>Change ES</h2>
                         <p>Change language to Spanish</p>
                     </a>
-
-                    <a
-                        href="https://github.com/vercel/next.js/tree/master/examples"
-                        className={styles.card}
-                    >
-                        <h2>Examples &rarr;</h2>
-                        <p>
-                            Discover and deploy boilerplate example Next.js
-                            projects.
-                        </p>
-                    </a>
-
-                    <a
-                        href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                        className={styles.card}
-                    >
-                        <h2>Deploy &rarr;</h2>
-                        <p>
-                            Instantly deploy your Next.js site to a public URL
-                            with Vercel.
-                        </p>
-                    </a>
                 </div>
             </main>
+
+            <ParentCard />
 
             <footer className={styles.footer}>
                 <a
