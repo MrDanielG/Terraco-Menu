@@ -22,6 +22,9 @@ module.exports = {
                 }),
             },
         },
+        fontFamily: {
+            sans: ['Poppins', 'Helvetica', 'Arial', 'sans-serif'],
+        },
     },
     variants: {
         extend: {},

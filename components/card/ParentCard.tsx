@@ -1,4 +1,5 @@
-import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
+import CardActions from './CardActions';
+import CardInfo from './CardInfo';
 
 interface Props {}
 const ParentCard = (props: Props) => {
@@ -13,24 +14,9 @@ const ParentCard = (props: Props) => {
                     />
                 </div>
 
-                <div className="p-5 w-full">
-                    <h1 className="block text-lg leading-tight font-medium text-black hover:underline">
-                        Sopa Juchipila
-                    </h1>
-                    <div className="uppercase mt-2 tracking-wide text-sm text-gray-400 font-semibold">
-                        Importe: $40:00
-                    </div>
-                    <p className="mt-2 text-brown font-semibold">Cant: 3</p>
-                </div>
+                <CardInfo />
 
-                <div className="w-32 h-auto flex flex-wrap content-between float-right">
-                    <button className="w-full h-14 bg-brown-light rounded-bl-3xl text-white text-3xl mb-1 flex items-center justify-center">
-                        <HiPlusSm />
-                    </button>
-                    <button className="w-full h-14 bg-brown-light rounded-tl-3xl text-white text-2xl mt-1 flex items-center justify-center">
-                        <HiMinusSm />
-                    </button>
-                </div>
+                <CardActions />
             </div>
         </div>
     );
