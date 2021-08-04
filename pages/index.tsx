@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import ParentCard from '../components/card/ParentCard';
 import CategoryBar from '../components/CategoryBar';
+import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
@@ -28,6 +29,7 @@ export default function Home() {
 
     return (
         <div className="bg-gray-200 p-8">
+            <Navbar />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
             <SearchBar />
