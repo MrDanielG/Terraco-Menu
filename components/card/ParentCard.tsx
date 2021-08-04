@@ -4,7 +4,7 @@ import CardInfo from './CardInfo';
 interface Props {}
 const ParentCard = (props: Props) => {
     return (
-        <div className=" mx-3 bg-white rounded-xl shadow-md overflow-hidden max-w-2xl md:max-w-xs">
+        <div className="my-3 bg-white rounded-xl shadow-md overflow-hidden max-w-2xl md:max-w-xs">
             <div className="flex md:block">
                 <div className="flex-shrink-0">
                     <img

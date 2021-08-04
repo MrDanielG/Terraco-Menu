@@ -6,9 +6,9 @@ const CardInfo = (props: Props) => {
             <h1 className="block text-md leading-tight text-black hover:underline">
                 Sopa Juchipila
             </h1>
-            <div className="uppercase mt-2 tracking-wide text-sm text-gray-400">
+            {/* <div className="uppercase mt-2 tracking-wide text-sm text-gray-400">
                 Importe: $40:00
-            </div>
+            </div> */}
             <p className="mt-2 text-brown font-semibold">Cant: 3</p>
         </div>
     );
