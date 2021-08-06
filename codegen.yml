@@ -1,0 +1,15 @@
+overwrite: true
+schema: 'https://restaurant-graphql.herokuapp.com/graphql'
+documents: 'graphql/*.ts'
+generates:
+    graphql/graphql.tsx:
+        config:
+            reactApolloVersion: 3
+            withHooks: true
+        plugins:
+            - 'typescript'
+            - 'typescript-operations'
+            - 'typescript-react-apollo'
+    ./graphql.schema.json:
+        plugins:
+            - 'introspection'
