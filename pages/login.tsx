@@ -1,13 +1,25 @@
 import { useRouter } from 'next/router';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
 
 interface Props {}
 
+interface IFormInput {
+    email: string;
+    password: string;
+}
+
 const Login = (props: Props) => {
     const router = useRouter();
     const { locale } = router;
     const t = locale === 'es-MX' ? esMX : enUS;
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<IFormInput>();
+    const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
     return (
         <div
@@ -24,13 +36,11 @@ const Login = (props: Props) => {
                         </h2>
                     </div>
 
-                    <form className="mt-8 space-y-6" action="#" method="POST">
-                        <input
-                            type="hidden"
-                            name="remember"
-                            defaultValue="true"
-                        />
-                        <div className="rounded-md shadow-sm -space-y-px">
+                    <form
+                        className="mt-8 space-y-6"
+                        onSubmit={handleSubmit(onSubmit)}
+                    >
+                        <div className="rounded-md shadow-sm">
                             <div>
                                 <label
                                     htmlFor="email-address"
@@ -39,30 +49,46 @@ const Login = (props: Props) => {
                                     {t.login.email}
                                 </label>
                                 <input
+                                    {...register('email', {
+                                        required: true,
+                                    })}
                                     id="email-address"
-                                    name="email"
                                     type="email"
                                     autoComplete="email"
-                                    required
-                                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-orange focus:border-orange focus:z-10 sm:text-sm my-3"
+                                    className="rounded-3xl relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-orange focus:border-orange focus:z-10 sm:text-sm my-3"
                                     placeholder={t.login.email}
+                                    required
                                 />
                             </div>
+                            {errors.email && (
+                                <span className="text-sm text-red-600">
+                                    Correo es requerido
+                                </span>
+                            )}
 
                             <div>
                                 <label htmlFor="password" className="sr-only">
                                     {t.login.password}
                                 </label>
                                 <input
+                                    {...register('password', {
+                                        required: true,
+                                        minLength: 8,
+                                    })}
                                     id="password"
-                                    name="password"
                                     type="password"
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-orange focus:border-orange focus:z-10 sm:text-sm my-3"
+                                    className="rounded-3xl relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-orange focus:border-orange focus:z-10 sm:text-sm my-3"
                                     placeholder={t.login.password}
                                 />
                             </div>
+                            {errors.password && (
+                                <span className="text-sm text-red-600">
+                                    Contraseña es requerida y al menos 8
+                                    caracteres
+                                </span>
+                            )}
                         </div>
 
                         <div className="text-sm text-center">
@@ -77,7 +103,7 @@ const Login = (props: Props) => {
                         <div>
                             <button
                                 type="submit"
-                                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange hover:bg-orange-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
+                                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-3xl text-white bg-orange hover:bg-orange-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
                             >
                                 {t.login.button}
                             </button>

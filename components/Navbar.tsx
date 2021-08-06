@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
 
 interface Props {}
