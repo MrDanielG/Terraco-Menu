@@ -31,7 +31,6 @@ export default function Home() {
     const t = locale === 'es-MX' ? esMX : enUS;
 
     const handleLanguageToggle = (myLocale: 'en-US' | 'es-MX') => {
-        console.log('hola');
         switch (myLocale) {
             case 'es-MX':
                 router.push('/', '/', { locale: 'en-US' });

@@ -2,6 +2,7 @@ import ParentCard from '../../components/card/ParentCard';
 import CategoryBar from '../../components/CategoryBar';
 import Navbar from '../../components/Navbar';
 import SearchBar from '../../components/SearchBar';
+import useRedirect from '../../hooks/useRedirect';
 
 const categoryData = [
     {
@@ -17,6 +18,8 @@ const categoryData = [
 interface Props {}
 
 const ChefHome = (props: Props) => {
+    useRedirect();
+
     return (
         <div className="bg-gray-200 p-8 h-screen">
             <Navbar />
