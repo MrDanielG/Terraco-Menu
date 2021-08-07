@@ -1,6 +1,8 @@
+import AddButton from '../../components/AddButton';
 import ParentCard from '../../components/card/ParentCard';
 import CategoryBar from '../../components/CategoryBar';
 import Navbar from '../../components/Navbar';
+// import ProtectedPage from '../../components/ProtectedPage';
 import SearchBar from '../../components/SearchBar';
 import useRedirect from '../../hooks/useRedirect';
 
@@ -21,7 +23,8 @@ const ChefHome = (props: Props) => {
     useRedirect();
 
     return (
-        <div className="bg-gray-200 p-8 h-screen">
+        // <ProtectedPage username="Chef" redirectTo="/">
+        <div className="bg-gray-200 p-8 h-full">
             <Navbar />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
@@ -32,7 +35,12 @@ const ChefHome = (props: Props) => {
             <ParentCard />
 
             <ParentCard />
+
+            <ParentCard />
+
+            <AddButton onClick={() => console.log('Add Clicked')} />
         </div>
+        // </ProtectedPage>
     );
 };
 
