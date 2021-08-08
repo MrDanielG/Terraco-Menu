@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
-import ParentCard from '../components/card/ParentCard';
-import CategoryBar from '../components/CategoryBar';
-import Navbar from '../components/Navbar';
-import SearchBar from '../components/SearchBar';
-import { enUS } from '../lib/i18n/enUS';
-import { esMX } from '../lib/i18n/esMX';
+import AddButton from '../../components/AddButton';
+import ParentCard from '../../components/card/ParentCard';
+import CategoryBar from '../../components/CategoryBar';
+import Navbar from '../../components/Navbar';
+import SearchBar from '../../components/SearchBar';
+
+interface Props {}
 
 const categoryData = [
     {
@@ -25,30 +26,13 @@ const categoryData = [
     },
 ];
 
-export default function Home() {
+const Platillos = (props: Props) => {
     const router = useRouter();
-    const { locale } = router;
-    const t = locale === 'es-MX' ? esMX : enUS;
-
-    const handleLanguageToggle = (myLocale: 'en-US' | 'es-MX') => {
-        switch (myLocale) {
-            case 'es-MX':
-                router.push('/', '/', { locale: 'en-US' });
-                break;
-
-            case 'en-US':
-                router.push('/', '/', { locale: 'es-MX' });
-                break;
-
-            default:
-                break;
-        }
-    };
 
     return (
         <div className="bg-gray-200 p-8 h-screen">
             <Navbar />
-            <h1 className="font-semibold text-3xl text-brown">Menú</h1>
+            <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
 
             <SearchBar />
 
@@ -57,6 +41,10 @@ export default function Home() {
             <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
 
             <ParentCard />
+
+            <AddButton onClick={() => router.push('/chef/addDish')} />
         </div>
     );
-}
+};
+
+export default Platillos;

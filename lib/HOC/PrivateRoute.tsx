@@ -1,27 +1,19 @@
-import { useRouter } from 'next/router';
+import Router from 'next/router';
+import { useAuth } from '../../contexts/AuthContext';
 
 const PrivateRoute = (WrappedComponent: any) => {
     return (props: any) => {
         // checks whether we are on client / browser or server.
-        if (typeof window !== 'undefined') {
-            const Router = useRouter();
-            const tokenName =
-                process.env.NEXT_PUBLIC_AUTH_KEY || 'Authorization';
-
-            const accessToken = localStorage.getItem(tokenName);
-
-            // If there is no access token we redirect to "/" page.
-            if (!accessToken) {
-                Router.replace('/');
-                return null;
-            }
-
-            // If this is an accessToken we just render the component that was passed with all its props
-            return <WrappedComponent {...props} />;
-        }
-
         // If we are on server, return null
-        return null;
+        if (typeof window === 'undefined') return null;
+
+        const { currentUser } = useAuth();
+
+        // If there is no access token we redirect to "/" page.
+        if (currentUser === null) Router.replace('/');
+
+        // If this is an accessToken we just render the component that was passed with all its props
+        return <WrappedComponent {...props} />;
     };
 };
 

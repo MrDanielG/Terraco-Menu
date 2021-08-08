@@ -1,14 +1,19 @@
 import { ApolloProvider } from '@apollo/client';
 import type { AppProps } from 'next/app';
-import 'tailwindcss/tailwind.css';
+import { Toaster } from 'react-hot-toast';
+import AuthProvider from '../contexts/AuthContext';
 import { useApollo } from '../lib/ApolloClient';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
     const apolloClient = useApollo(pageProps.initialApolloState);
 
     return (
         <ApolloProvider client={apolloClient}>
-            <Component {...pageProps} />
+            <AuthProvider>
+                <Toaster />
+                <Component {...pageProps} />
+            </AuthProvider>
         </ApolloProvider>
     );
 }
