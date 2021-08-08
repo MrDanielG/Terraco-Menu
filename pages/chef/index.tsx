@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import AddButton from '../../components/AddButton';
 import ParentCard from '../../components/card/ParentCard';
 import CategoryBar from '../../components/CategoryBar';
@@ -21,6 +22,7 @@ interface Props {}
 
 const ChefHome = (props: Props) => {
     useRedirect();
+    const router = useRouter();
 
     return (
         <ProtectedPage username="Chef" redirectTo="/">
@@ -38,7 +40,7 @@ const ChefHome = (props: Props) => {
 
                 <ParentCard />
 
-                <AddButton onClick={() => console.log('Add Clicked')} />
+                <AddButton onClick={() => router.push('/chef/addMenu')} />
             </div>
         </ProtectedPage>
     );
