@@ -1,10 +1,14 @@
 import { Dialog, Transition } from '@headlessui/react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Fragment, useState } from 'react';
 import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Props {}
 
 const Navbar = (props: Props) => {
+    const { currentUser } = useAuth();
     const [open, setOpen] = useState(false);
 
     return (
@@ -14,11 +18,34 @@ const Navbar = (props: Props) => {
                     onClick={() => setOpen(true)}
                     className="cursor-pointer text-brown text-2xl"
                 />
+                {currentUser?.name === 'Chef' && (
+                    <Image
+                        src="/assets/images/chefIcon.png"
+                        alt="Chef Icon"
+                        objectFit="cover"
+                        width="40"
+                        height="40"
+                    />
+                )}
 
-                <div className="rounded-lg bg-orange flex gap-2 px-2 py-1 max-w-sm">
-                    <HiOutlineBookOpen className="text-2xl text-white" />
-                    <p className="text-white">4</p>
-                </div>
+                {currentUser?.name === 'Manager' && (
+                    <>
+                        <Image
+                            src="/assets/images/adminIcon.png"
+                            alt="Chef Icon"
+                            objectFit="cover"
+                            width="40"
+                            height="40"
+                        />
+                    </>
+                )}
+
+                {currentUser === null && (
+                    <div className="rounded-lg bg-orange flex gap-2 px-2 py-1 max-w-sm">
+                        <HiOutlineBookOpen className="text-2xl text-white" />
+                        <p className="text-white">4</p>
+                    </div>
+                )}
             </div>
 
             <Transition.Root show={open} as={Fragment}>
@@ -86,18 +113,78 @@ const Navbar = (props: Props) => {
                                         <div className="mt-6 relative flex-1 px-4 sm:px-6">
                                             <div className="absolute inset-0 px-4 sm:px-6">
                                                 <ul className="text-center">
-                                                    <li className="my-8">
-                                                        Inicio
-                                                    </li>
-                                                    <li className="my-8">
-                                                        Platillos
-                                                    </li>
-                                                    <li className="my-8">
-                                                        Menus
-                                                    </li>
-                                                    <li className="my-8">
-                                                        Cerrar Sesión
-                                                    </li>
+                                                    {currentUser === null && (
+                                                        <>
+                                                            <li className="my-8">
+                                                                <Link href="/">
+                                                                    <a>
+                                                                        Inicio
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
+                                                        </>
+                                                    )}
+                                                    {currentUser?.name ===
+                                                        'Chef' && (
+                                                        <>
+                                                            <li className="my-8">
+                                                                <Link href="/chef">
+                                                                    <a>
+                                                                        Inicio
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <Link href="/chef/dashboard">
+                                                                    <a>
+                                                                        Panel de
+                                                                        Pedidos
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <Link href="/chef/platillos">
+                                                                    <a>
+                                                                        Platillos
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
+                                                        </>
+                                                    )}
+
+                                                    {currentUser?.name ===
+                                                        'Manager' && (
+                                                        <>
+                                                            <li className="my-8">
+                                                                <Link href="/manager">
+                                                                    <a>
+                                                                        Inicio
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <Link href="/manager/stats/dishes">
+                                                                    <a>
+                                                                        Estadísticas
+                                                                        Platillos
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <Link href="/chef/platillos/sells">
+                                                                    <a>
+                                                                        Estadísticas
+                                                                        Ventas
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <Link href="/chef/tables">
+                                                                    <a>Mesas</a>
+                                                                </Link>
+                                                            </li>
+                                                        </>
+                                                    )}
                                                 </ul>
                                             </div>
                                         </div>

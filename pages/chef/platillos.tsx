@@ -32,7 +32,7 @@ const Platillos = (props: Props) => {
     return (
         <div className="bg-gray-200 p-8 h-screen">
             <Navbar />
-            <h1 className="font-semibold text-3xl text-brown">Menú</h1>
+            <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
 
             <SearchBar />
 

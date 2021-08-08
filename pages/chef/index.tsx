@@ -28,7 +28,7 @@ const ChefHome = (props: Props) => {
         <ProtectedPage username="Chef" redirectTo="/">
             <div className="bg-gray-200 p-8 h-full">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown">Menú</h1>
+                <h1 className="font-semibold text-3xl text-brown">Menús</h1>
 
                 <SearchBar />
 
