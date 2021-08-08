@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { HiOutlineChevronLeft } from 'react-icons/hi';
 import BigButton from '../../components/BigButton';
 import Navbar from '../../components/Navbar';
 import { enUS } from '../../lib/i18n/enUS';
@@ -17,6 +18,13 @@ const AddMenu = (props: Props) => {
             <h1 className="font-semibold text-3xl text-brown mb-8">
                 Crear Menú
             </h1>
+
+            <div
+                className="flex items-center text-gray-500 mb-6 cursor-pointer"
+                onClick={() => router.push('/chef')}
+            >
+                <HiOutlineChevronLeft /> Regresar
+            </div>
 
             <div className="rounded-md shadow-sm">
                 <div>

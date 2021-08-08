@@ -2,7 +2,13 @@ import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useState } from 'react';
-import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
+import {
+    HiHome,
+    HiLogin,
+    HiMenuAlt1,
+    HiOutlineBookOpen,
+    HiX,
+} from 'react-icons/hi';
 import { useAuth } from '../contexts/AuthContext';
 
 interface Props {}
@@ -19,25 +25,25 @@ const Navbar = (props: Props) => {
                     className="cursor-pointer text-brown text-2xl"
                 />
                 {currentUser?.name === 'Chef' && (
-                    <Image
-                        src="/assets/images/chefIcon.png"
-                        alt="Chef Icon"
-                        objectFit="cover"
-                        width="40"
-                        height="40"
-                    />
-                )}
-
-                {currentUser?.name === 'Manager' && (
-                    <>
+                    <figure>
                         <Image
-                            src="/assets/images/adminIcon.png"
+                            src="/assets/images/chef_icon.webp"
                             alt="Chef Icon"
-                            objectFit="cover"
                             width="40"
                             height="40"
                         />
-                    </>
+                    </figure>
+                )}
+
+                {currentUser?.name === 'Manager' && (
+                    <figure>
+                        <Image
+                            src="/assets/images/admin_icon.webp"
+                            alt="Manager Icon"
+                            width="40"
+                            height="40"
+                        />
+                    </figure>
                 )}
 
                 {currentUser === null && (
@@ -118,6 +124,7 @@ const Navbar = (props: Props) => {
                                                             <li className="my-8">
                                                                 <Link href="/">
                                                                     <a>
+                                                                        <HiHome />
                                                                         Inicio
                                                                     </a>
                                                                 </Link>
@@ -125,6 +132,7 @@ const Navbar = (props: Props) => {
                                                             <li className="my-8">
                                                                 <Link href="/login">
                                                                     <a>
+                                                                        <HiLogin />
                                                                         Iniciar
                                                                         Sesión
                                                                     </a>
