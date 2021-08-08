@@ -14,7 +14,9 @@ const AddMenu = (props: Props) => {
     return (
         <div className="bg-gray-200 p-8 h-screen">
             <Navbar />
-            <h1 className="font-semibold text-3xl text-brown">Menú</h1>
+            <h1 className="font-semibold text-3xl text-brown mb-8">
+                Crear Menú
+            </h1>
 
             <div className="rounded-md shadow-sm">
                 <div>
@@ -33,7 +35,7 @@ const AddMenu = (props: Props) => {
                 </div>
 
                 <textarea
-                    className="mt-1 block w-full rounded-3xl border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="mt-1 block w-full rounded-3xl border-gray-300 shadow-sm focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
                     rows={3}
                     placeholder="Descripcion"
                 ></textarea>

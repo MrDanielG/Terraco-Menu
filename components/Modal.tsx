@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import BigButton from './BigButton';
 
 interface Props {
-    children: JSX.Element;
+    children: JSX.Element | any;
     title: string;
     isOpen: boolean;
     closeBtnTitle: string;
