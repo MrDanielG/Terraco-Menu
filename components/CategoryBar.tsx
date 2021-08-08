@@ -1,3 +1,4 @@
+import Image from 'next/image';
 interface Props {
     data: ICategoryData[];
 }
@@ -10,11 +11,15 @@ const CategoryBar = ({ data }: Props) => {
                     className="mr-6 flex flex-col items-center justify-center"
                     key={i}
                 >
-                    <img
-                        src={category.url}
-                        alt=""
-                        className="w-11 h-11 rounded-lg mb-2"
-                    />
+                    <figure className="relative w-10 h-10 mb-2">
+                        <Image
+                            src={category.url}
+                            alt={category.name}
+                            className="rounded-lg"
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                    </figure>
                     <p className="text-sm text-brown">{category.name}</p>
                 </button>
             ))}

@@ -25,7 +25,7 @@ export function ProtectedPage({
                 setLoading(false);
             }
         }
-    }, [currentUser, router]);
+    }, [currentUser, router, redirectTo, username]);
 
     return <>{loading ? <h1>Cargando...</h1> : children}</>;
 }
