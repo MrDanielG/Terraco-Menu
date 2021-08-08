@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 interface Props {}
 
 const Navbar = (props: Props) => {
-    const { currentUser } = useAuth();
+    const { currentUser, logOut } = useAuth();
     const [open, setOpen] = useState(false);
 
     return (
@@ -122,6 +122,14 @@ const Navbar = (props: Props) => {
                                                                     </a>
                                                                 </Link>
                                                             </li>
+                                                            <li className="my-8">
+                                                                <Link href="/login">
+                                                                    <a>
+                                                                        Iniciar
+                                                                        Sesión
+                                                                    </a>
+                                                                </Link>
+                                                            </li>
                                                         </>
                                                     )}
                                                     {currentUser?.name ===
@@ -148,6 +156,17 @@ const Navbar = (props: Props) => {
                                                                         Platillos
                                                                     </a>
                                                                 </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <a
+                                                                    className="cursor-pointer"
+                                                                    onClick={
+                                                                        logOut
+                                                                    }
+                                                                >
+                                                                    Cerrar
+                                                                    Sesión
+                                                                </a>
                                                             </li>
                                                         </>
                                                     )}
@@ -182,6 +201,17 @@ const Navbar = (props: Props) => {
                                                                 <Link href="/chef/tables">
                                                                     <a>Mesas</a>
                                                                 </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <a
+                                                                    className="cursor-pointer"
+                                                                    onClick={
+                                                                        logOut
+                                                                    }
+                                                                >
+                                                                    Cerrar
+                                                                    Sesión
+                                                                </a>
                                                             </li>
                                                         </>
                                                     )}
