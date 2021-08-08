@@ -1,10 +1,9 @@
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 
 const PublicRoute = (WrappedComponent: any) => {
     return (props: any) => {
         // checks whether we are on client / browser or server.
         if (typeof window !== 'undefined') {
-            const Router = useRouter();
             const tokenName =
                 process.env.NEXT_PUBLIC_AUTH_KEY || 'Authorization';
 

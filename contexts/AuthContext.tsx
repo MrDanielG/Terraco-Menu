@@ -21,7 +21,7 @@ const AuthProvider = ({ children }: any) => {
 
     const decodeUserPayload = (token: string): User => {
         const payload = jwtDecode<JwtPayload>(token);
-        const { user } = payload as { user: User };
+        const user = payload as User;
         return user;
     };
 

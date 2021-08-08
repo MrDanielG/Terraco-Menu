@@ -9,8 +9,6 @@ export default function useRedirect() {
     let redirectPath = () => {};
 
     useEffect(() => {
-        console.log(currentRoute);
-
         if (currentRoute === '/chef' && currentUser?.name !== 'Chef') {
             router.push('/');
         }

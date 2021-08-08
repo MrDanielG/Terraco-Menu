@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 
 const PrivateRoute = (WrappedComponent: any) => {
@@ -7,11 +7,10 @@ const PrivateRoute = (WrappedComponent: any) => {
         // If we are on server, return null
         if (typeof window === 'undefined') return null;
 
-        const router = useRouter();
         const { currentUser } = useAuth();
 
         // If there is no access token we redirect to "/" page.
-        if (currentUser === null) router.replace('/');
+        if (currentUser === null) Router.replace('/');
 
         // If this is an accessToken we just render the component that was passed with all its props
         return <WrappedComponent {...props} />;
