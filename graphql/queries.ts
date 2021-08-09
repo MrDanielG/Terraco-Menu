@@ -13,3 +13,15 @@ const GET_USER_BY_EMAIL = gql`
         }
     }
 `;
+
+export const GET_MENUS = gql`
+    query GetMenus {
+        menus {
+            _id
+            title
+            isActive
+            description
+            url_img
+        }
+    }
+`;

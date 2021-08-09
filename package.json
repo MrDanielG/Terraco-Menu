@@ -14,6 +14,7 @@
     "@headlessui/react": "^1.4.0",
     "@tailwindcss/forms": "^0.3.3",
     "apollo-upload-client": "^16.0.0",
+    "dinero.js": "^2.0.0-alpha.8",
     "graphql": "^15.5.1",
     "jwt-decode": "^3.1.2",
     "next": "11.0.1",
@@ -21,7 +22,8 @@
     "react-dom": "17.0.2",
     "react-hook-form": "^7.12.2",
     "react-hot-toast": "^2.1.0",
-    "react-icons": "^4.2.0"
+    "react-icons": "^4.2.0",
+    "react-select": "^4.3.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.0.1",
@@ -31,6 +33,7 @@
     "@graphql-codegen/typescript-react-apollo": "3.0.0",
     "@types/apollo-upload-client": "14.1.0",
     "@types/react": "17.0.15",
+    "@types/react-select": "^4.0.17",
     "autoprefixer": "^10.3.1",
     "eslint": "7.32.0",
     "eslint-config-next": "11.0.1",

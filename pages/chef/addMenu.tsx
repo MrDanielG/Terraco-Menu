@@ -4,10 +4,7 @@ import toast from 'react-hot-toast';
 import { HiOutlineChevronLeft } from 'react-icons/hi';
 import BigButton from '../../components/buttons/BigButton';
 import Navbar from '../../components/Navbar';
-import {
-    MenuDataInput,
-    useAddMenuMutationMutation,
-} from '../../graphql/graphql';
+import { MenuDataInput, useAddMenuMutation } from '../../graphql/graphql';
 
 interface Props {}
 
@@ -18,15 +15,14 @@ const AddMenu = (props: Props) => {
         handleSubmit,
         formState: { errors },
     } = useForm<MenuDataInput>();
-    const [addMenuMutationMutation, { data, loading }] =
-        useAddMenuMutationMutation();
+    const [addMenuMutation, { data, loading }] = useAddMenuMutation();
 
     const onSubmit: SubmitHandler<MenuDataInput> = async (
         { title, description },
         e
     ) => {
         try {
-            const res = await addMenuMutationMutation({
+            const res = await addMenuMutation({
                 variables: {
                     addMenuData: { title, description, isActive: true },
                 },
@@ -36,7 +32,7 @@ const AddMenu = (props: Props) => {
 
             toast.success('Menú Creado');
             e?.target.reset();
-            // router.push('/chef');
+            router.push('/chef');
         } catch (err) {
             console.error(err);
             toast.error('Error al Crear Menú');
@@ -69,7 +65,6 @@ const AddMenu = (props: Props) => {
                         id="title"
                         name="title"
                         type="text"
-                        autoComplete="email"
                         className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
                         placeholder="Menú Mexicano"
                     />
