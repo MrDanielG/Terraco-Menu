@@ -10,6 +10,7 @@ module.exports = {
             'storage.googleapis.com',
             'images.unsplash.com',
             'storage.cloud.google.com',
+            'api.cloudinary.com',
         ],
     },
 };
