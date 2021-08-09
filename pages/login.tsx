@@ -33,7 +33,7 @@ const Login = (props: Props) => {
             toast.success('Sesión Iniciada');
         } catch (err) {
             console.error(err);
-            toast('Error al Iniciar Sesion');
+            toast.error('Error al Iniciar Sesion');
         } finally {
             setLoading(false);
         }

@@ -102,8 +102,14 @@ export type Mutation = {
   updateDish: Dish;
   delDishById: Scalars['Int'];
   generateTable: Table;
-  addTable: Table;
+  setTableName: Table;
   delTableById: Scalars['Int'];
+  createOrder: Order;
+  addItemToOrder: Order;
+  delItemFromOrder: Order;
+  createOrderItem: OrderItem;
+  sumToOrderItem: OrderItem;
+  delOrderItemById: Scalars['Int'];
 };
 
 
@@ -199,13 +205,76 @@ export type MutationDelDishByIdArgs = {
 };
 
 
-export type MutationAddTableArgs = {
+export type MutationGenerateTableArgs = {
   name: Scalars['String'];
+};
+
+
+export type MutationSetTableNameArgs = {
+  name: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
 export type MutationDelTableByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationCreateOrderArgs = {
+  tableId: Scalars['String'];
+};
+
+
+export type MutationAddItemToOrderArgs = {
+  orderId: Scalars['String'];
+  orderItemId: Scalars['String'];
+};
+
+
+export type MutationDelItemFromOrderArgs = {
+  orderId: Scalars['String'];
+  orderItemId: Scalars['String'];
+};
+
+
+export type MutationCreateOrderItemArgs = {
+  dishId: Scalars['String'];
+  quantity: Scalars['Float'];
+};
+
+
+export type MutationSumToOrderItemArgs = {
+  idOrderItem: Scalars['String'];
+  value?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationDelOrderItemByIdArgs = {
+  id: Scalars['String'];
+};
+
+/** A restaurant order. */
+export type Order = {
+  __typename?: 'Order';
+  _id: Scalars['String'];
+  orderNumber: Scalars['Float'];
+  table: Table;
+  items: Array<OrderItem>;
+  start_time: Scalars['DateTime'];
+  end_time?: Maybe<Scalars['DateTime']>;
+};
+
+/** An order's entry item. */
+export type OrderItem = {
+  __typename?: 'OrderItem';
+  _id: Scalars['String'];
+  /** The recorded dish name. */
+  dish: Dish;
+  /** Units ordered by the customer. */
+  quantity: Scalars['Float'];
+  /** Whether if this order item can be edited */
+  canChange: Scalars['Boolean'];
 };
 
 export type Query = {
@@ -223,6 +292,9 @@ export type Query = {
   tables: Array<Table>;
   tableById: Table;
   tableByIdNumber: Table;
+  orders: Array<Order>;
+  orderById: Order;
+  orderItems: Array<OrderItem>;
 };
 
 
@@ -265,6 +337,11 @@ export type QueryTableByIdNumberArgs = {
   idNumber: Scalars['Float'];
 };
 
+
+export type QueryOrderByIdArgs = {
+  id: Scalars['String'];
+};
+
 /** Permissions group that can be assigned to an User. */
 export type Role = {
   __typename?: 'Role';
@@ -285,9 +362,9 @@ export type Table = {
   __typename?: 'Table';
   _id: Scalars['String'];
   /** The unique table number identificator. */
-  idNumber: Scalars['Float'];
+  tableNumber: Scalars['Float'];
   /** A descriptive name for this table. */
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   /** Stored token to build an obfuscated URL. */
   token: Scalars['String'];
   /** Wheather the table is enabled or not. */
@@ -319,6 +396,13 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginResponse', accessToken: string } };
+
+export type AddMenuMutationMutationVariables = Exact<{
+  addMenuData: MenuDataInput;
+}>;
+
+
+export type AddMenuMutationMutation = { __typename?: 'Mutation', addMenu: { __typename?: 'Menu', _id: string, title: string, description: string, url_img: string, isActive: boolean } };
 
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
@@ -362,6 +446,43 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const AddMenuMutationDocument = gql`
+    mutation AddMenuMutation($addMenuData: MenuDataInput!) {
+  addMenu(data: $addMenuData) {
+    _id
+    title
+    description
+    url_img
+    isActive
+  }
+}
+    `;
+export type AddMenuMutationMutationFn = Apollo.MutationFunction<AddMenuMutationMutation, AddMenuMutationMutationVariables>;
+
+/**
+ * __useAddMenuMutationMutation__
+ *
+ * To run a mutation, you first call `useAddMenuMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddMenuMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addMenuMutationMutation, { data, loading, error }] = useAddMenuMutationMutation({
+ *   variables: {
+ *      addMenuData: // value for 'addMenuData'
+ *   },
+ * });
+ */
+export function useAddMenuMutationMutation(baseOptions?: Apollo.MutationHookOptions<AddMenuMutationMutation, AddMenuMutationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddMenuMutationMutation, AddMenuMutationMutationVariables>(AddMenuMutationDocument, options);
+      }
+export type AddMenuMutationMutationHookResult = ReturnType<typeof useAddMenuMutationMutation>;
+export type AddMenuMutationMutationResult = Apollo.MutationResult<AddMenuMutationMutation>;
+export type AddMenuMutationMutationOptions = Apollo.BaseMutationOptions<AddMenuMutationMutation, AddMenuMutationMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {

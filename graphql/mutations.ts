@@ -7,3 +7,15 @@ export const LOGIN = gql`
         }
     }
 `;
+
+export const ADD_MENU = gql`
+    mutation AddMenuMutation($addMenuData: MenuDataInput!) {
+        addMenu(data: $addMenuData) {
+            _id
+            title
+            description
+            url_img
+            isActive
+        }
+    }
+`;

@@ -1,4 +1,4 @@
-import BigButton from '../../components/BigButton';
+import BigButton from '../../components/buttons/BigButton';
 
 interface Props {}
 

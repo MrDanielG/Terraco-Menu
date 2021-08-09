@@ -2,13 +2,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useState } from 'react';
-import {
-    HiHome,
-    HiLogin,
-    HiMenuAlt1,
-    HiOutlineBookOpen,
-    HiX,
-} from 'react-icons/hi';
+import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
 import { useAuth } from '../contexts/AuthContext';
 
 interface Props {}
@@ -124,7 +118,6 @@ const Navbar = (props: Props) => {
                                                             <li className="my-8">
                                                                 <Link href="/">
                                                                     <a>
-                                                                        <HiHome />
                                                                         Inicio
                                                                     </a>
                                                                 </Link>
@@ -132,7 +125,6 @@ const Navbar = (props: Props) => {
                                                             <li className="my-8">
                                                                 <Link href="/login">
                                                                     <a>
-                                                                        <HiLogin />
                                                                         Iniciar
                                                                         Sesión
                                                                     </a>
