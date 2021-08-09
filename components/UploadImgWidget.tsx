@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { HiPhotograph } from "react-icons/hi";
 
 interface Props {
-  onChange?: (file: File) => void;
+  onChange?: (file: File | null) => void;
 }
 const upload_endpoint =
   "https://api.cloudinary.com/v1_1/brosimgstorage/image/upload";
@@ -24,14 +23,14 @@ export const uploadImage = async (image: File) => {
 };
 
 const UploadImgWidget = (props: Props) => {
-  const [image, setImage] = useState("");
-  const [url, setUrl] = useState(null);
+  const [image, setImage] = useState<File| null>(null);
+  const [url, setUrl] = useState<string |null>(null);
 
   useEffect(() => {
     if (props.onChange && image) {
       props.onChange(image);
     }
-    return () => setImage("");
+    return () => setImage(null);
   }, [image]);
 
   const onImageChange = (event: React.FormEvent) => {
