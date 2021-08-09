@@ -1,11 +1,15 @@
 import { useRouter } from 'next/router';
 import AddButton from '../../components/AddButton';
 import ParentCard from '../../components/card/ParentCard';
+import CardInfo from '../../components/card/CardInfo';
+import CardActions from '../../components/card/CardActions';
 import CategoryBar from '../../components/CategoryBar';
 import Navbar from '../../components/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
 import SearchBar from '../../components/SearchBar';
 import useRedirect from '../../hooks/useRedirect';
+import { HiPencil, HiMinusSm } from "react-icons/hi";
+
 
 const categoryData = [
     {
@@ -17,6 +21,11 @@ const categoryData = [
         url: 'https://images.unsplash.com/photo-1557682260-96773eb01377?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1315&q=80',
     },
 ];
+
+const data = {
+    title: "Menú Mexicano",
+    description: "Etiam vel tortor sodales tellus ultricies commodo."
+};
 
 interface Props {}
 
@@ -34,7 +43,22 @@ const ChefHome = (props: Props) => {
 
                 <CategoryBar data={categoryData} />
 
-                <ParentCard />
+                <ParentCard>
+                    <CardInfo >
+                        <CardInfo.Title>
+                            Title
+                        </CardInfo.Title>
+                        <CardInfo.Body>
+                            Body
+                        </CardInfo.Body>
+                    </CardInfo>
+                    <CardActions>
+                        <CardActions.Bottom
+                            icon={<HiPencil/>}
+                            onClick={(e) => console.log("Action pressed", e) }
+                        />
+                    </CardActions>
+                </ParentCard>
 
                 <ParentCard />
 
