@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import AddButton from '../../../components/AddButton';
+import AddButton from '../../../components/buttons/AddButton';
 import ParentCard from '../../../components/card/ParentCard';
 import CategoryBar from '../../../components/CategoryBar';
 import Modal from '../../../components/Modal';

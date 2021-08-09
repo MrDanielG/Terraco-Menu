@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import AddButton from '../../../components/AddButton';
+import AddButton from '../../../components/buttons/AddButton';
 import InfoTable from '../../../components/InfoTable';
 import Modal from '../../../components/Modal';
 import Navbar from '../../../components/Navbar';
