@@ -1,11 +1,12 @@
 import { MXN } from '@dinero.js/currencies';
 import { dinero } from 'dinero.js';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
 import BigButton from '../../components/buttons/BigButton';
+import UploadImgWidget, { uploadImage } from '../../components/UploadImgWidget';
 import {
     DishDataInput,
     useAddDishMutation,
@@ -22,6 +23,7 @@ interface IAddDishInput extends DishDataInput {
 
 const AddDish = (props: Props) => {
     const router = useRouter();
+    const [imgFile, setImgFile] = useState<File | null>(null);
     const [loadingRequests, setLoadingRequests] = useState(false);
     const { data, loading: loadingMenus } = useGetMenusQuery();
     const {
@@ -53,16 +55,12 @@ const AddDish = (props: Props) => {
     const [addDishMutation] = useAddDishMutation();
     const [addDishToMenuMutation] = useAddDishToMenuMutation();
 
+    useEffect(() => {
+        console.log(imgFile);
+    }, [imgFile]);
+
     const onSubmit: SubmitHandler<IAddDishInput> = async (
-        {
-            name,
-            description,
-            url_img,
-            price,
-            selectCategories,
-            prepTime,
-            menusId,
-        },
+        { name, description, price, selectCategories, prepTime, menusId },
         e
     ) => {
         try {
@@ -71,12 +69,14 @@ const AddDish = (props: Props) => {
             const myCategories = selectCategories.map((category) => {
                 return category.value;
             });
+            if (!imgFile) return;
+            const url_img = await uploadImage(imgFile);
+            console.log(url_img);
 
             const addDishData: DishDataInput = {
                 name,
                 description,
-                url_img:
-                    'https://images.unsplash.com/photo-1529270296466-b09d5f5c2bab?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1490&q=80',
+                url_img,
                 price: dinero({ amount: +price, currency: MXN }),
                 categories: myCategories,
             };
@@ -108,18 +108,15 @@ const AddDish = (props: Props) => {
     return (
         <div className="bg-gray-200 p-8 h-auto min-h-screen">
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex justify-center">
-                    <div className="w-32 h-32 flex justify-center items-center text-sm text-white text-center bg-brown rounded-full">
-                        <label htmlFor="file-upload" className="cursor-pointer">
-                            <span>Upload a file</span>
-                            <input
-                                id="file-upload"
-                                name="file-upload"
-                                type="file"
-                                className="sr-only"
-                            />
-                        </label>
+                <div className="flex justify-center items-center flex-col">
+                    <div className="my-3">
+                        <UploadImgWidget onChange={setImgFile} />
                     </div>
+                    {!imgFile && (
+                        <span className="text-sm my-2 text-red-600 text-center">
+                            Imagen requerida
+                        </span>
+                    )}
                 </div>
 
                 <div className="my-3">
