@@ -1,7 +1,7 @@
 import { MXN } from '@dinero.js/currencies';
 import { dinero } from 'dinero.js';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
@@ -54,10 +54,6 @@ const AddDish = (props: Props) => {
     });
     const [addDishMutation] = useAddDishMutation();
     const [addDishToMenuMutation] = useAddDishToMenuMutation();
-
-    useEffect(() => {
-        console.log(imgFile);
-    }, [imgFile]);
 
     const onSubmit: SubmitHandler<IAddDishInput> = async (
         { name, description, price, selectCategories, prepTime, menusId },
@@ -274,7 +270,7 @@ const AddDish = (props: Props) => {
 
                 <BigButton
                     text="Agregar Platillo"
-                    isDisabled={loadingRequests}
+                    isDisabled={loadingRequests || !imgFile}
                 />
             </form>
         </div>
