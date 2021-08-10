@@ -518,7 +518,12 @@ export type GetUserByEmailQuery = { __typename?: 'Query', userByEmail?: Maybe<{ 
 export type GetMenusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, title: string, isActive: boolean, description: string, url_img?: Maybe<string> }> };
+export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: Maybe<string>, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> }> };
+
+export type GetDishesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDishesQuery = { __typename?: 'Query', dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> };
 
 export type GetTablesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -531,6 +536,13 @@ export type GetTableByIdQueryVariables = Exact<{
 
 
 export type GetTableByIdQuery = { __typename?: 'Query', tableById: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
+
+export type GetDishByIdQueryVariables = Exact<{
+  dishByIdId: Scalars['String'];
+}>;
+
+
+export type GetDishByIdQuery = { __typename?: 'Query', dishById?: Maybe<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> };
 
 
 export const LoginDocument = gql`
@@ -803,10 +815,19 @@ export const GetMenusDocument = gql`
     query GetMenus {
   menus {
     _id
-    title
     isActive
-    description
     url_img
+    title
+    dishes {
+      _id
+      name
+      description
+      url_img
+      price
+      score
+      categories
+      preparation_time
+    }
   }
 }
     `;
@@ -837,6 +858,47 @@ export function useGetMenusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetMenusQueryHookResult = ReturnType<typeof useGetMenusQuery>;
 export type GetMenusLazyQueryHookResult = ReturnType<typeof useGetMenusLazyQuery>;
 export type GetMenusQueryResult = Apollo.QueryResult<GetMenusQuery, GetMenusQueryVariables>;
+export const GetDishesDocument = gql`
+    query GetDishes {
+  dishes {
+    _id
+    name
+    description
+    url_img
+    price
+    score
+    categories
+    preparation_time
+  }
+}
+    `;
+
+/**
+ * __useGetDishesQuery__
+ *
+ * To run a query within a React component, call `useGetDishesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDishesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDishesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetDishesQuery(baseOptions?: Apollo.QueryHookOptions<GetDishesQuery, GetDishesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDishesQuery, GetDishesQueryVariables>(GetDishesDocument, options);
+      }
+export function useGetDishesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDishesQuery, GetDishesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDishesQuery, GetDishesQueryVariables>(GetDishesDocument, options);
+        }
+export type GetDishesQueryHookResult = ReturnType<typeof useGetDishesQuery>;
+export type GetDishesLazyQueryHookResult = ReturnType<typeof useGetDishesLazyQuery>;
+export type GetDishesQueryResult = Apollo.QueryResult<GetDishesQuery, GetDishesQueryVariables>;
 export const GetTablesDocument = gql`
     query getTables {
   tables {
@@ -914,3 +976,45 @@ export function useGetTableByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetTableByIdQueryHookResult = ReturnType<typeof useGetTableByIdQuery>;
 export type GetTableByIdLazyQueryHookResult = ReturnType<typeof useGetTableByIdLazyQuery>;
 export type GetTableByIdQueryResult = Apollo.QueryResult<GetTableByIdQuery, GetTableByIdQueryVariables>;
+export const GetDishByIdDocument = gql`
+    query getDishById($dishByIdId: String!) {
+  dishById(id: $dishByIdId) {
+    _id
+    name
+    description
+    url_img
+    price
+    score
+    categories
+    preparation_time
+  }
+}
+    `;
+
+/**
+ * __useGetDishByIdQuery__
+ *
+ * To run a query within a React component, call `useGetDishByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDishByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDishByIdQuery({
+ *   variables: {
+ *      dishByIdId: // value for 'dishByIdId'
+ *   },
+ * });
+ */
+export function useGetDishByIdQuery(baseOptions: Apollo.QueryHookOptions<GetDishByIdQuery, GetDishByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDishByIdQuery, GetDishByIdQueryVariables>(GetDishByIdDocument, options);
+      }
+export function useGetDishByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDishByIdQuery, GetDishByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDishByIdQuery, GetDishByIdQueryVariables>(GetDishByIdDocument, options);
+        }
+export type GetDishByIdQueryHookResult = ReturnType<typeof useGetDishByIdQuery>;
+export type GetDishByIdLazyQueryHookResult = ReturnType<typeof useGetDishByIdLazyQuery>;
+export type GetDishByIdQueryResult = Apollo.QueryResult<GetDishByIdQuery, GetDishByIdQueryVariables>;

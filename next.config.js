@@ -11,6 +11,7 @@ module.exports = {
             'images.unsplash.com',
             'storage.cloud.google.com',
             'api.cloudinary.com',
+            'res.cloudinary.com',
         ],
     },
 };
