@@ -190,7 +190,7 @@ const Navbar = (props: Props) => {
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
-                                                                <Link href="/manager/platillos/sells">
+                                                                <Link href="/manager/stats/sells">
                                                                     <a>
                                                                         Estadísticas
                                                                         Ventas

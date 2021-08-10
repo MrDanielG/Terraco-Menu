@@ -1,6 +1,7 @@
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { useRouter } from 'next/router';
 import React, { useContext, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useLoginMutation, User } from '../graphql/graphql';
 
 export interface authData {
@@ -39,6 +40,7 @@ const AuthProvider = ({ children }: any) => {
             const { data } = await loginMutation({
                 variables: { loginEmail: email, loginPassword: password },
             });
+            console.log(data);
             if (!data?.login) return;
 
             const accessToken = data.login.accessToken;
@@ -47,12 +49,15 @@ const AuthProvider = ({ children }: any) => {
             const user = decodeUserPayload(accessToken);
             setCurrentUser(user);
 
+            toast.success('Sesión Iniciada');
+
             if (user.name === 'Chef') {
                 router.push('/chef');
             } else if (user.name === 'Manager') {
                 router.push('/manager');
             }
         } catch (err) {
+            toast.error('Error al Iniciar Sesion');
             console.error(err);
         }
     };

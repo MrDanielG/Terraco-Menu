@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
@@ -30,10 +29,8 @@ const Login = (props: Props) => {
         try {
             setLoading(true);
             await logIn(email, password);
-            toast.success('Sesión Iniciada');
         } catch (err) {
             console.error(err);
-            toast.error('Error al Iniciar Sesion');
         } finally {
             setLoading(false);
         }
@@ -122,7 +119,7 @@ const Login = (props: Props) => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-3xl text-white bg-orange hover:bg-orange-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange"
+                                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-3xl text-white bg-orange hover:bg-orange-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 {t.login.button}
                             </button>
