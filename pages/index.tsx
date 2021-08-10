@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { HiPlusSm } from 'react-icons/hi';
+import { HiPlus } from 'react-icons/hi';
 import CardActions from '../components/card/CardActions';
 import CardInfo from '../components/card/CardInfo';
 import ParentCard from '../components/card/ParentCard';
@@ -55,7 +55,7 @@ export default function Home() {
     };
 
     return (
-        <div className="bg-gray-200 p-8 h-full">
+        <div className="bg-gray-200 p-8 h-full min-h-screen">
             <Navbar />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
@@ -86,9 +86,7 @@ export default function Home() {
                                         </CardInfo.Footer>
                                     </CardInfo>
                                     <CardActions>
-                                        <CardActions.Bottom
-                                            icon={<HiPlusSm />}
-                                        />
+                                        <CardActions.Bottom icon={<HiPlus />} />
                                     </CardActions>
                                 </ParentCard>
                             ))}

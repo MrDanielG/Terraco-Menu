@@ -1,15 +1,14 @@
 import { useRouter } from 'next/router';
+import { HiPencil } from 'react-icons/hi';
 import AddButton from '../../components/buttons/AddButton';
-import ParentCard from '../../components/card/ParentCard';
-import CardInfo from '../../components/card/CardInfo';
 import CardActions from '../../components/card/CardActions';
+import CardInfo from '../../components/card/CardInfo';
+import ParentCard from '../../components/card/ParentCard';
 import CategoryBar from '../../components/CategoryBar';
 import Navbar from '../../components/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
 import SearchBar from '../../components/SearchBar';
 import useRedirect from '../../hooks/useRedirect';
-import { HiPencil, HiMinusSm } from "react-icons/hi";
-
 
 const categoryData = [
     {
@@ -23,8 +22,8 @@ const categoryData = [
 ];
 
 const data = {
-    title: "Menú Mexicano",
-    description: "Etiam vel tortor sodales tellus ultricies commodo."
+    title: 'Menú Mexicano',
+    description: 'Etiam vel tortor sodales tellus ultricies commodo.',
 };
 
 interface Props {}
@@ -35,7 +34,7 @@ const ChefHome = (props: Props) => {
 
     return (
         <ProtectedPage username="Chef" redirectTo="/">
-            <div className="bg-gray-200 p-8 h-full">
+            <div className="bg-gray-200 p-8 h-full min-h-screen">
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">Menús</h1>
 
@@ -44,18 +43,18 @@ const ChefHome = (props: Props) => {
                 <CategoryBar data={categoryData} />
 
                 <ParentCard>
-                    <CardInfo >
-                        <CardInfo.Title>
-                            Title
-                        </CardInfo.Title>
-                        <CardInfo.Body>
-                            Body
-                        </CardInfo.Body>
+                    <CardInfo>
+                        <CardInfo.Title>Title</CardInfo.Title>
+                        <CardInfo.Body>Body</CardInfo.Body>
                     </CardInfo>
                     <CardActions>
+                        {/* <CardActions.Top
+                            icon={<HiPencil />}
+                            onClick={(e) => console.log('Action pressed', e)}
+                        /> */}
                         <CardActions.Bottom
-                            icon={<HiPencil/>}
-                            onClick={(e) => console.log("Action pressed", e) }
+                            icon={<HiPencil />}
+                            onClick={(e) => console.log('Action pressed', e)}
                         />
                     </CardActions>
                 </ParentCard>

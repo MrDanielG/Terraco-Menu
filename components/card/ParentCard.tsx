@@ -12,8 +12,9 @@ interface Props {
 
 const ParentCard = (props: Props) => {
     return (
-        <div className="my-6 bg-white rounded-xl shadow-md overflow-hidden max-w-2xl md:max-w-xs cursor-pointer"
-             onClick={props?.onClick}
+        <div
+            className="my-6 bg-white rounded-2xl shadow-lg overflow-hidden max-w-2xl md:max-w-xs cursor-pointer"
+            onClick={props?.onClick}
         >
             <div className="flex md:block">
                 <div className="flex-shrink-0">
@@ -26,10 +27,7 @@ const ParentCard = (props: Props) => {
                         />
                     </figure>
                 </div>
-                <>
-                    {props.children}
-                </>
-
+                <>{props.children}</>
             </div>
         </div>
     );

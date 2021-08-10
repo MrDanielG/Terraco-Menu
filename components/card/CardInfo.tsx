@@ -27,7 +27,11 @@ const CardInfo: React.FC<Props> & {
     Body: typeof CardInfoBody;
     Footer: typeof CardInfoFooter;
 } = (props: Props) => {
-    return <div className="p-5 w-full">{props.children}</div>;
+    return (
+        <div className="p-5 w-full flex flex-col justify-center">
+            {props.children}
+        </div>
+    );
 };
 CardInfo.Title = CardInfoTitle;
 CardInfo.Body = CardInfoBody;
