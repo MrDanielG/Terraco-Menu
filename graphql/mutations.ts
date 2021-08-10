@@ -65,3 +65,18 @@ export const ADD_TABLE = gql`
         }
     }
 `;
+
+export const UPDATE_TABLE = gql`
+    mutation UpdateTable(
+        $updateTableData: TableInputData!
+        $updateTableId: String!
+    ) {
+        updateTable(data: $updateTableData, id: $updateTableId) {
+            _id
+            tableNumber
+            name
+            token
+            enabled
+        }
+    }
+`;

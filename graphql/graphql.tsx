@@ -105,9 +105,10 @@ export type Mutation = {
   generateTable: Table;
   setTableName: Table;
   delTableById: Scalars['Int'];
+  updateTable: Table;
   createOrder: Order;
-  addItemToOrder: Order;
-  delItemFromOrder: Order;
+  addItemsToOrder: Order;
+  delItemsFromOrder: Order;
   createOrderItem: OrderItem;
   sumToOrderItem: OrderItem;
   delOrderItemById: Scalars['Int'];
@@ -223,20 +224,27 @@ export type MutationDelTableByIdArgs = {
 };
 
 
+export type MutationUpdateTableArgs = {
+  data: TableInputData;
+  id: Scalars['String'];
+};
+
+
 export type MutationCreateOrderArgs = {
+  itemsIds: Array<Scalars['String']>;
   tableId: Scalars['String'];
 };
 
 
-export type MutationAddItemToOrderArgs = {
+export type MutationAddItemsToOrderArgs = {
   orderId: Scalars['String'];
-  orderItemId: Scalars['String'];
+  itemsIds: Array<Scalars['String']>;
 };
 
 
-export type MutationDelItemFromOrderArgs = {
+export type MutationDelItemsFromOrderArgs = {
   orderId: Scalars['String'];
-  orderItemId: Scalars['String'];
+  itemsIds: Array<Scalars['String']>;
 };
 
 
@@ -282,8 +290,8 @@ export type OrderItem = {
   dish: Dish;
   /** Units ordered by the customer. */
   quantity: Scalars['Float'];
-  /** Whether if this order item can be edited */
-  canChange: Scalars['Boolean'];
+  /** Whether if this order is pending, . */
+  status: Status;
 };
 
 export type Query = {
@@ -368,6 +376,18 @@ export type RoleDataInput = {
   permissions: Array<Scalars['String']>;
 };
 
+/** Order and order item status */
+export enum Status {
+  Pending = 'PENDING',
+  Cooking = 'COOKING',
+  Served = 'SERVED'
+}
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  orderChanges: Order;
+};
+
 export type Table = {
   __typename?: 'Table';
   _id: Scalars['String'];
@@ -379,6 +399,17 @@ export type Table = {
   token: Scalars['String'];
   /** Wheather the table is enabled or not. */
   enabled: Scalars['Boolean'];
+};
+
+export type TableInputData = {
+  /** The unique table number identificator. */
+  tableNumber?: Maybe<Scalars['Float']>;
+  /** A descriptive name for this table. */
+  name?: Maybe<Scalars['String']>;
+  /** Stored token to build an obfuscated URL. */
+  token?: Maybe<Scalars['String']>;
+  /** Wheather the table is enabled or not. */
+  enabled?: Maybe<Scalars['Boolean']>;
 };
 
 /** Generated Ticked from an order */
@@ -469,6 +500,14 @@ export type GenerateTableMutationVariables = Exact<{
 
 export type GenerateTableMutation = { __typename?: 'Mutation', generateTable: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
 
+export type UpdateTableMutationVariables = Exact<{
+  updateTableData: TableInputData;
+  updateTableId: Scalars['String'];
+}>;
+
+
+export type UpdateTableMutation = { __typename?: 'Mutation', updateTable: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
+
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
 }>;
@@ -480,6 +519,18 @@ export type GetMenusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, title: string, isActive: boolean, description: string, url_img?: Maybe<string> }> };
+
+export type GetTablesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTablesQuery = { __typename?: 'Query', tables: Array<{ __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, enabled: boolean, token: string }> };
+
+export type GetTableByIdQueryVariables = Exact<{
+  tableByIdId: Scalars['String'];
+}>;
+
+
+export type GetTableByIdQuery = { __typename?: 'Query', tableById: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
 
 
 export const LoginDocument = gql`
@@ -669,6 +720,44 @@ export function useGenerateTableMutation(baseOptions?: Apollo.MutationHookOption
 export type GenerateTableMutationHookResult = ReturnType<typeof useGenerateTableMutation>;
 export type GenerateTableMutationResult = Apollo.MutationResult<GenerateTableMutation>;
 export type GenerateTableMutationOptions = Apollo.BaseMutationOptions<GenerateTableMutation, GenerateTableMutationVariables>;
+export const UpdateTableDocument = gql`
+    mutation UpdateTable($updateTableData: TableInputData!, $updateTableId: String!) {
+  updateTable(data: $updateTableData, id: $updateTableId) {
+    _id
+    tableNumber
+    name
+    token
+    enabled
+  }
+}
+    `;
+export type UpdateTableMutationFn = Apollo.MutationFunction<UpdateTableMutation, UpdateTableMutationVariables>;
+
+/**
+ * __useUpdateTableMutation__
+ *
+ * To run a mutation, you first call `useUpdateTableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTableMutation, { data, loading, error }] = useUpdateTableMutation({
+ *   variables: {
+ *      updateTableData: // value for 'updateTableData'
+ *      updateTableId: // value for 'updateTableId'
+ *   },
+ * });
+ */
+export function useUpdateTableMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTableMutation, UpdateTableMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTableMutation, UpdateTableMutationVariables>(UpdateTableDocument, options);
+      }
+export type UpdateTableMutationHookResult = ReturnType<typeof useUpdateTableMutation>;
+export type UpdateTableMutationResult = Apollo.MutationResult<UpdateTableMutation>;
+export type UpdateTableMutationOptions = Apollo.BaseMutationOptions<UpdateTableMutation, UpdateTableMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {
@@ -748,3 +837,80 @@ export function useGetMenusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetMenusQueryHookResult = ReturnType<typeof useGetMenusQuery>;
 export type GetMenusLazyQueryHookResult = ReturnType<typeof useGetMenusLazyQuery>;
 export type GetMenusQueryResult = Apollo.QueryResult<GetMenusQuery, GetMenusQueryVariables>;
+export const GetTablesDocument = gql`
+    query getTables {
+  tables {
+    _id
+    tableNumber
+    name
+    enabled
+    token
+  }
+}
+    `;
+
+/**
+ * __useGetTablesQuery__
+ *
+ * To run a query within a React component, call `useGetTablesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTablesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTablesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTablesQuery(baseOptions?: Apollo.QueryHookOptions<GetTablesQuery, GetTablesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTablesQuery, GetTablesQueryVariables>(GetTablesDocument, options);
+      }
+export function useGetTablesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTablesQuery, GetTablesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTablesQuery, GetTablesQueryVariables>(GetTablesDocument, options);
+        }
+export type GetTablesQueryHookResult = ReturnType<typeof useGetTablesQuery>;
+export type GetTablesLazyQueryHookResult = ReturnType<typeof useGetTablesLazyQuery>;
+export type GetTablesQueryResult = Apollo.QueryResult<GetTablesQuery, GetTablesQueryVariables>;
+export const GetTableByIdDocument = gql`
+    query getTableById($tableByIdId: String!) {
+  tableById(id: $tableByIdId) {
+    _id
+    tableNumber
+    name
+    token
+    enabled
+  }
+}
+    `;
+
+/**
+ * __useGetTableByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTableByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTableByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTableByIdQuery({
+ *   variables: {
+ *      tableByIdId: // value for 'tableByIdId'
+ *   },
+ * });
+ */
+export function useGetTableByIdQuery(baseOptions: Apollo.QueryHookOptions<GetTableByIdQuery, GetTableByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTableByIdQuery, GetTableByIdQueryVariables>(GetTableByIdDocument, options);
+      }
+export function useGetTableByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTableByIdQuery, GetTableByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTableByIdQuery, GetTableByIdQueryVariables>(GetTableByIdDocument, options);
+        }
+export type GetTableByIdQueryHookResult = ReturnType<typeof useGetTableByIdQuery>;
+export type GetTableByIdLazyQueryHookResult = ReturnType<typeof useGetTableByIdLazyQuery>;
+export type GetTableByIdQueryResult = Apollo.QueryResult<GetTableByIdQuery, GetTableByIdQueryVariables>;
