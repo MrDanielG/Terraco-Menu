@@ -53,3 +53,15 @@ export const ADD_DISH_TO_MENU = gql`
         }
     }
 `;
+
+export const ADD_TABLE = gql`
+    mutation GenerateTable($generateTableName: String!) {
+        generateTable(name: $generateTableName) {
+            _id
+            tableNumber
+            name
+            token
+            enabled
+        }
+    }
+`;

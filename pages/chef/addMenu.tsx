@@ -22,14 +22,11 @@ const AddMenu = (props: Props) => {
         e
     ) => {
         try {
-            const res = await addMenuMutation({
+            await addMenuMutation({
                 variables: {
                     addMenuData: { title, description, isActive: true },
                 },
             });
-            console.log('Res', res);
-            console.log('data', data);
-
             toast.success('Menú Creado');
             e?.target.reset();
             router.push('/chef');

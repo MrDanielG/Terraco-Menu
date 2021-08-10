@@ -190,7 +190,7 @@ const Navbar = (props: Props) => {
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
-                                                                <Link href="/chef/platillos/sells">
+                                                                <Link href="/manager/platillos/sells">
                                                                     <a>
                                                                         Estadísticas
                                                                         Ventas
@@ -198,7 +198,7 @@ const Navbar = (props: Props) => {
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
-                                                                <Link href="/chef/tables">
+                                                                <Link href="/manager/tables">
                                                                     <a>Mesas</a>
                                                                 </Link>
                                                             </li>

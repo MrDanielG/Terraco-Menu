@@ -5,7 +5,7 @@ const defaultImg =
 
 interface Props {
     url_img?: string;
-    children: JSX.Element;
+    children?: JSX.Element;
 }
 
 const ParentCard = (props: Props) => {

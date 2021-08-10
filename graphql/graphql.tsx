@@ -462,6 +462,13 @@ export type AddDishToMenuMutationVariables = Exact<{
 
 export type AddDishToMenuMutation = { __typename?: 'Mutation', addDishToMenu: { __typename?: 'Menu', _id: string, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, price: any }> } };
 
+export type GenerateTableMutationVariables = Exact<{
+  generateTableName: Scalars['String'];
+}>;
+
+
+export type GenerateTableMutation = { __typename?: 'Mutation', generateTable: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
+
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
 }>;
@@ -625,6 +632,43 @@ export function useAddDishToMenuMutation(baseOptions?: Apollo.MutationHookOption
 export type AddDishToMenuMutationHookResult = ReturnType<typeof useAddDishToMenuMutation>;
 export type AddDishToMenuMutationResult = Apollo.MutationResult<AddDishToMenuMutation>;
 export type AddDishToMenuMutationOptions = Apollo.BaseMutationOptions<AddDishToMenuMutation, AddDishToMenuMutationVariables>;
+export const GenerateTableDocument = gql`
+    mutation GenerateTable($generateTableName: String!) {
+  generateTable(name: $generateTableName) {
+    _id
+    tableNumber
+    name
+    token
+    enabled
+  }
+}
+    `;
+export type GenerateTableMutationFn = Apollo.MutationFunction<GenerateTableMutation, GenerateTableMutationVariables>;
+
+/**
+ * __useGenerateTableMutation__
+ *
+ * To run a mutation, you first call `useGenerateTableMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateTableMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateTableMutation, { data, loading, error }] = useGenerateTableMutation({
+ *   variables: {
+ *      generateTableName: // value for 'generateTableName'
+ *   },
+ * });
+ */
+export function useGenerateTableMutation(baseOptions?: Apollo.MutationHookOptions<GenerateTableMutation, GenerateTableMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateTableMutation, GenerateTableMutationVariables>(GenerateTableDocument, options);
+      }
+export type GenerateTableMutationHookResult = ReturnType<typeof useGenerateTableMutation>;
+export type GenerateTableMutationResult = Apollo.MutationResult<GenerateTableMutation>;
+export type GenerateTableMutationOptions = Apollo.BaseMutationOptions<GenerateTableMutation, GenerateTableMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {

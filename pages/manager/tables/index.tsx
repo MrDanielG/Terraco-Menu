@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import AddButton from '../../../components/buttons/AddButton';
 import InfoTable from '../../../components/InfoTable';
@@ -7,14 +8,12 @@ import Navbar from '../../../components/Navbar';
 interface Props {}
 
 const Tables = (props: Props) => {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     function closeModal() {
         setIsOpen(false);
     }
 
-    function openModal() {
-        setIsOpen(true);
-    }
     const nums = [1, 2, 3, 4, 5];
 
     return (
@@ -40,14 +39,16 @@ const Tables = (props: Props) => {
                     ))}
                 </div>
 
-                <AddButton onClick={() => setIsOpen(true)} />
+                <AddButton
+                    onClick={() => router.push('/manager/tables/addTable')}
+                />
             </div>
 
             <Modal
                 isOpen={isOpen}
                 title="Mesa Info"
                 closeModal={closeModal}
-                onCloseModal={() => console.log('onCloseModal')}
+                onCloseModal={closeModal}
                 closeBtnTitle="Imprimir QR"
             >
                 <InfoTable />
