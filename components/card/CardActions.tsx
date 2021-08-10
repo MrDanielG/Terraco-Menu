@@ -5,7 +5,7 @@ interface Props {
 interface ActionProps {
     icon?: JSX.Element;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
-    children: any;
+    children?: JSX.Element | JSX.Element[];   
 }
 
 const CardActionTop = (props: ActionProps) => {
@@ -23,7 +23,7 @@ const CardActionBottom = (props: ActionProps) => {
     return (
         <button
             onClick={props.onClick}
-            className="w-full h-14 bg-brown-light rounded-tl-3xl text-white text-2xl mt-1 flex items-center justify-center md:w-20 md:mt-0 md:rounded-tr-3xl md:rounded-tl-none md:float-left"
+            className="w-full h-14 bg-brown-light rounded-tl-3xl text-white text-2xl mt-30 flex items-center justify-center md:w-20 md:mt-0 md:rounded-tr-3xl md:rounded-tl-none md:float-left"
         >
             {props.icon}
         </button>
