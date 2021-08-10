@@ -518,7 +518,7 @@ export type GetUserByEmailQuery = { __typename?: 'Query', userByEmail?: Maybe<{ 
 export type GetMenusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: Maybe<string>, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> }> };
+export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: Maybe<string>, title: string, description: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> }> };
 
 export type GetDishesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -543,6 +543,13 @@ export type GetDishByIdQueryVariables = Exact<{
 
 
 export type GetDishByIdQuery = { __typename?: 'Query', dishById?: Maybe<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> };
+
+export type GetMenyByIdQueryVariables = Exact<{
+  menuByIdId: Scalars['String'];
+}>;
+
+
+export type GetMenyByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
 
 
 export const LoginDocument = gql`
@@ -818,6 +825,7 @@ export const GetMenusDocument = gql`
     isActive
     url_img
     title
+    description
     dishes {
       _id
       name
@@ -1018,3 +1026,48 @@ export function useGetDishByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetDishByIdQueryHookResult = ReturnType<typeof useGetDishByIdQuery>;
 export type GetDishByIdLazyQueryHookResult = ReturnType<typeof useGetDishByIdLazyQuery>;
 export type GetDishByIdQueryResult = Apollo.QueryResult<GetDishByIdQuery, GetDishByIdQueryVariables>;
+export const GetMenyByIdDocument = gql`
+    query getMenyById($menuByIdId: String!) {
+  menuById(id: $menuByIdId) {
+    _id
+    title
+    description
+    url_img
+    isActive
+    dishes {
+      _id
+      name
+      url_img
+      price
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMenyByIdQuery__
+ *
+ * To run a query within a React component, call `useGetMenyByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenyByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMenyByIdQuery({
+ *   variables: {
+ *      menuByIdId: // value for 'menuByIdId'
+ *   },
+ * });
+ */
+export function useGetMenyByIdQuery(baseOptions: Apollo.QueryHookOptions<GetMenyByIdQuery, GetMenyByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMenyByIdQuery, GetMenyByIdQueryVariables>(GetMenyByIdDocument, options);
+      }
+export function useGetMenyByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenyByIdQuery, GetMenyByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMenyByIdQuery, GetMenyByIdQueryVariables>(GetMenyByIdDocument, options);
+        }
+export type GetMenyByIdQueryHookResult = ReturnType<typeof useGetMenyByIdQuery>;
+export type GetMenyByIdLazyQueryHookResult = ReturnType<typeof useGetMenyByIdLazyQuery>;
+export type GetMenyByIdQueryResult = Apollo.QueryResult<GetMenyByIdQuery, GetMenyByIdQueryVariables>;

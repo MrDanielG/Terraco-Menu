@@ -21,6 +21,7 @@ export const GET_MENUS = gql`
       isActive
       url_img
       title
+      description
       dishes {
         _id
         name
@@ -83,6 +84,24 @@ export const GET_DISH_BY_ID = gql`
       score
       categories
       preparation_time
+    }
+  }
+`;
+
+export const GET_MENU_BY_ID = gql`
+  query getMenyById($menuByIdId: String!) {
+    menuById(id: $menuByIdId) {
+      _id
+      title
+      description
+      url_img
+      isActive
+      dishes {
+        _id
+        name
+        url_img
+        price
+      }
     }
   }
 `;

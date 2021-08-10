@@ -1,11 +1,16 @@
+import { Switch } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import AddButton from '../../../components/buttons/AddButton';
 import ParentCard from '../../../components/card/ParentCard';
+import CardInfo from '../../../components/card/CardInfo';
+import CardActions from '../../../components/card/CardActions';
 import CategoryBar from '../../../components/CategoryBar';
 import Modal from '../../../components/Modal';
 import Navbar from '../../../components/Navbar';
 import SearchBar from '../../../components/SearchBar';
+import { useGetMenyByIdQuery } from '../../../graphql/graphql';
+import { formatDinero, intlFormat } from '../../../lib/utils';
 
 interface Props {}
 
@@ -31,20 +36,52 @@ const categoryData = [
 const MenuDetail = (props: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
-    const {
-        query: { menuId },
-    } = router;
+    const { id } = router.query;
+    const { data } = useGetMenyByIdQuery({
+        variables: {
+            menuByIdId: id?.toString() || ""
+        }
+    });
+    const menu = data?.menuById || null;
+    
     return (
         <>
             <div className="bg-gray-200 p-8 h-auto min-h-screen">
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">
-                    Nombre Menu
+                    {
+                        menu && menu.title
+                    }
                 </h1>
+                <p>
+                    {
+                        menu && menu.description
+                    }
+                </p>
+                <div>
+                    {
+                        menu && menu.dishes.map(dish =>
+                            <ParentCard
+                                url_img={ dish.url_img?.toString() }
+                                key={dish._id}
+                            >
+                                <CardInfo>
+                                    <CardInfo.Title>
+                                        {
+                                            dish.name
+                                        }
+                                    </CardInfo.Title>
+                                    <CardInfo.Footer>
+                                        {
+                                            intlFormat(dish.price, 'es-MX')
+                                        }
+                                    </CardInfo.Footer>
+                                </CardInfo>
+                            </ParentCard>
+                        )
+                    }
+                </div>
 
-                <ParentCard />
-
-                <ParentCard />
 
                 <AddButton onClick={() => setIsOpen(true)} />
             </div>
