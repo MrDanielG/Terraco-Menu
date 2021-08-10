@@ -11,6 +11,7 @@ import Navbar from '../../../components/Navbar';
 import SearchBar from '../../../components/SearchBar';
 import { useGetMenyByIdQuery } from '../../../graphql/graphql';
 import { formatDinero, intlFormat } from '../../../lib/utils';
+import BackButton from '../../../components/buttons/BackButton';
 
 interface Props {}
 
@@ -48,6 +49,7 @@ const MenuDetail = (props: Props) => {
         <>
             <div className="bg-gray-200 p-8 h-auto min-h-screen">
                 <Navbar />
+                <BackButton  text="Inicio" pathNameOnBack="/chef" />
                 <h1 className="font-semibold text-3xl text-brown">
                     {
                         menu && menu.title
