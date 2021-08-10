@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
+import BackButton from '../../components/buttons/BackButton';
 import BigButton from '../../components/buttons/BigButton';
 import UploadImgWidget, { uploadImage } from '../../components/UploadImgWidget';
 import {
@@ -103,6 +104,7 @@ const AddDish = (props: Props) => {
 
     return (
         <div className="bg-gray-200 p-8 h-auto min-h-screen">
+            <BackButton text="Regresar" pathNameOnBack="/chef/platillos" />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex justify-center items-center flex-col">
                     <div className="my-3">

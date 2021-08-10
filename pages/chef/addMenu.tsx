@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { HiOutlineChevronLeft } from 'react-icons/hi';
+import BackButton from '../../components/buttons/BackButton';
 import BigButton from '../../components/buttons/BigButton';
 import Navbar from '../../components/Navbar';
 import { MenuDataInput, useAddMenuMutation } from '../../graphql/graphql';
@@ -46,12 +46,7 @@ const AddMenu = (props: Props) => {
                 Crear Menú
             </h1>
 
-            <div
-                className="flex items-center text-gray-500 mb-6 cursor-pointer"
-                onClick={() => router.push('/chef')}
-            >
-                <HiOutlineChevronLeft className="mr-1" /> Regresar
-            </div>
+            <BackButton text="Regresar" pathNameOnBack="/chef" />
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="my-3">

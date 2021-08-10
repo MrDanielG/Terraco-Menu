@@ -66,6 +66,7 @@ const UploadImgWidget = (props: Props) => {
                     name="file-upload"
                     type="file"
                     className="sr-only"
+                    accept="image/*"
                     onChange={(e) => onImageChange(e)}
                 />
             </label>
