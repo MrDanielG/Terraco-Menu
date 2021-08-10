@@ -31,7 +31,7 @@ const UploadImgWidget = (props: Props) => {
             props.onChange(image);
         }
         return () => setImage(null);
-    }, [image]);
+    }, [image, props]);
 
     const onImageChange = (event: React.FormEvent) => {
         const files = (event.target as HTMLInputElement).files;
