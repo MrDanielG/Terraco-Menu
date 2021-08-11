@@ -49,20 +49,20 @@ const ChefHome = (props: Props) => {
                 <CategoryBar data={categoryData} onClick={handleOnClick} />
                 <div>
                     {menus &&
-                        menus.map((menu) => (
-                            <ParentCard
-                                url_img="https://images.unsplash.com/photo-1529270296466-b09d5f5c2bab?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1490&q=80"
-                                key={menu._id}
-                                onClick={() => router.push(`/chef/menu/${menu._id}`)}
-                            >
-                                <CardInfo>
-                                    <CardInfo.Title>{menu.title}</CardInfo.Title>
-                                </CardInfo>
-                                <CardActions>
-                                    <CardActions.Bottom icon={<HiPencil />} />
-                                </CardActions>
-                            </ParentCard>
-                        ))}
+                     menus.map((menu) => (
+                         <ParentCard
+                             url_img="https://images.unsplash.com/photo-1529270296466-b09d5f5c2bab?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1490&q=80"
+                             key={menu._id}
+                             onClick={() => router.push(`/chef/menu/${menu._id}`)}
+                         >
+                             <CardInfo>
+                                 <CardInfo.Title><span>{menu.title}</span></CardInfo.Title>
+                             </CardInfo>
+                             <CardActions>
+                                 <CardActions.Bottom icon={<HiPencil />} />
+                             </CardActions>
+                         </ParentCard>
+                    ))}
                 </div>
                 <AddButton onClick={() => router.push('/chef/addMenu')} />
             </div>

@@ -74,14 +74,14 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
             {availableDishes?.map((dish) => (
                 <ParentCard
                     url_img={
-                        dish.url_img?.toString() ||
-                        'https://images.unsplash.com/photo-1602881917445-0b1ba001addf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+                    dish.url_img?.toString() ||
+                    'https://images.unsplash.com/photo-1602881917445-0b1ba001addf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
                     }
                     key={dish._id}
                 >
                     <CardInfo>
-                        <CardInfo.Title>{dish.name}</CardInfo.Title>
-                        <CardInfo.Footer>{intlFormat(dish.price, 'es-MX')}</CardInfo.Footer>
+                        <CardInfo.Title><span>{dish.name}</span></CardInfo.Title>
+                        <CardInfo.Footer><span>{intlFormat(dish.price, 'es-MX')}</span></CardInfo.Footer>
                     </CardInfo>
                     <CardActions>
                         <CardActions.Bottom

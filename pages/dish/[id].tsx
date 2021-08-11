@@ -55,7 +55,7 @@ const DishDetail = (props: Props) => {
                     <div className=" flex justify-between py-8">
                         <h1 className="text-brown text-2xl font-semibold">{dish && dish.name}</h1>
                         <p className="text-brown text-2xl font-semibold">
-                            {dish && intlFormat(dish.price)}
+                            {dish && intlFormat(dish.price, 'es-MX')}
                         </p>
                     </div>
 

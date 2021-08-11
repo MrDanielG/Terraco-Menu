@@ -66,8 +66,8 @@ const MenuDetail = (props: Props) => {
                 {menu?.dishes.map((dish) => (
                     <ParentCard url_img={dish.url_img?.toString()} key={dish._id}>
                         <CardInfo>
-                            <CardInfo.Title>{dish.name}</CardInfo.Title>
-                            <CardInfo.Footer>{intlFormat(dish.price, 'es-MX')}</CardInfo.Footer>
+                            <CardInfo.Title><span>{dish.name}</span></CardInfo.Title>
+                            <CardInfo.Footer><span>{intlFormat(dish.price, 'es-MX')}</span></CardInfo.Footer>
                         </CardInfo>
                     </ParentCard>
                 ))}
