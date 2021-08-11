@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { HiPencil } from 'react-icons/hi';
 import AddButton from '../../components/buttons/AddButton';
 import CardActions from '../../components/card/CardActions';
 import CardInfo from '../../components/card/CardInfo';
@@ -8,9 +9,8 @@ import CategoryBar from '../../components/CategoryBar';
 import Navbar from '../../components/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
 import SearchBar from '../../components/SearchBar';
-import useRedirect from '../../hooks/useRedirect';
-import { HiPencil, HiMinusSm } from 'react-icons/hi';
 import { useGetMenusQuery } from '../../graphql/graphql';
+import useRedirect from '../../hooks/useRedirect';
 
 const categoryData = [
     {
@@ -51,7 +51,7 @@ const ChefHome = (props: Props) => {
                     {menus &&
                         menus.map((menu) => (
                             <ParentCard
-                                url_img={menu.url_img || null}
+                                url_img="https://images.unsplash.com/photo-1529270296466-b09d5f5c2bab?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1490&q=80"
                                 key={menu._id}
                                 onClick={() => router.push(`/chef/menu/${menu._id}`)}
                             >

@@ -1,17 +1,15 @@
-import { Switch } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { HiPencil } from 'react-icons/hi';
+import AddDishToMenu from '../../../components/AddDishToMenu';
 import AddButton from '../../../components/buttons/AddButton';
-import ParentCard from '../../../components/card/ParentCard';
+import BackButton from '../../../components/buttons/BackButton';
 import CardInfo from '../../../components/card/CardInfo';
-import CardActions from '../../../components/card/CardActions';
-import CategoryBar from '../../../components/CategoryBar';
+import ParentCard from '../../../components/card/ParentCard';
 import Modal from '../../../components/Modal';
 import Navbar from '../../../components/Navbar';
-import SearchBar from '../../../components/SearchBar';
 import { useGetMenyByIdQuery } from '../../../graphql/graphql';
-import { formatDinero, intlFormat } from '../../../lib/utils';
-import BackButton from '../../../components/buttons/BackButton';
+import { intlFormat } from '../../../lib/utils';
 
 interface Props {}
 
@@ -38,52 +36,41 @@ const MenuDetail = (props: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const { id } = router.query;
-    const { data } = useGetMenyByIdQuery({
+    const { data, refetch } = useGetMenyByIdQuery({
         variables: {
-            menuByIdId: id?.toString() || ""
-        }
+            menuByIdId: id?.toString() || '',
+        },
     });
     const menu = data?.menuById || null;
-    
+    const currentDishesId = data?.menuById?.dishes.map((dish) => dish._id);
+
     return (
         <>
             <div className="bg-gray-200 p-8 h-auto min-h-screen">
                 <Navbar />
-                <BackButton  text="Inicio" pathNameOnBack="/chef" />
-                <h1 className="font-semibold text-3xl text-brown">
-                    {
-                        menu && menu.title
-                    }
-                </h1>
-                <p>
-                    {
-                        menu && menu.description
-                    }
-                </p>
-                <div>
-                    {
-                        menu && menu.dishes.map(dish =>
-                            <ParentCard
-                                url_img={ dish.url_img?.toString() }
-                                key={dish._id}
-                            >
-                                <CardInfo>
-                                    <CardInfo.Title>
-                                        {
-                                            dish.name
-                                        }
-                                    </CardInfo.Title>
-                                    <CardInfo.Footer>
-                                        {
-                                            intlFormat(dish.price, 'es-MX')
-                                        }
-                                    </CardInfo.Footer>
-                                </CardInfo>
-                            </ParentCard>
-                        )
-                    }
+                <BackButton text="Inicio" pathNameOnBack="/chef" />
+                <div className="flex items-center">
+                    <h1 className="font-semibold text-3xl text-brown">{menu?.title}</h1>
+                    <button>
+                        <HiPencil className="text-3xl text-brown ml-2" />
+                    </button>
                 </div>
+                <p className="text-gray-500 mt-1">
+                    Status:{' '}
+                    <span className={menu?.isActive ? 'text-mygreen' : 'text-red-600'}>
+                        {menu?.isActive ? 'Activo' : 'Inactivo'}
+                    </span>
+                </p>
+                <p className="text-gray-500 mt-2">{menu?.description}</p>
 
+                {menu?.dishes.map((dish) => (
+                    <ParentCard url_img={dish.url_img?.toString()} key={dish._id}>
+                        <CardInfo>
+                            <CardInfo.Title>{dish.name}</CardInfo.Title>
+                            <CardInfo.Footer>{intlFormat(dish.price, 'es-MX')}</CardInfo.Footer>
+                        </CardInfo>
+                    </ParentCard>
+                ))}
 
                 <AddButton onClick={() => setIsOpen(true)} />
             </div>
@@ -92,18 +79,13 @@ const MenuDetail = (props: Props) => {
                 isOpen={isOpen}
                 title="Agrega Platillos al Menú"
                 closeModal={() => setIsOpen(false)}
-                onCloseModal={() => console.log('Modal clsed')}
+                onCloseModal={async () => {
+                    setIsOpen(false);
+                    await refetch();
+                }}
                 closeBtnTitle="Cerrar"
             >
-                <div>
-                    <SearchBar />
-
-                    <CategoryBar data={categoryData} />
-
-                    <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
-
-                    <ParentCard />
-                </div>
+                <AddDishToMenu menuId={menu?._id!} currentDishesId={currentDishesId!} />
             </Modal>
         </>
     );
