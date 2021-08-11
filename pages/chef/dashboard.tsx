@@ -1,9 +1,27 @@
+import { useEffect, useState } from 'react';
 import ComandaCard from '../../components/ComandaCard';
 import Navbar from '../../components/Navbar';
+import { Order, useOrderChangesSubscription } from '../../graphql/graphql';
 
 interface Props {}
 
 const Dashboard = (props: Props) => {
+    const [orders, setOrders] = useState<Order[]>([]);
+    const { data } = useOrderChangesSubscription();
+    const orderArray: Order[] = [];
+
+    useEffect(() => {
+        console.log(data?.orderChanges);
+        if (data?.orderChanges) {
+            orderArray.push(data.orderChanges as Order);
+            setOrders(orderArray);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        console.log('Orders', orders);
+    }, [orders]);
+
     return (
         <div className="bg-gray-200 p-8 h-screen">
             <Navbar />
@@ -11,7 +29,9 @@ const Dashboard = (props: Props) => {
 
             <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
 
-            <ComandaCard numTable={22} />
+            {orders.map((order) => (
+                <ComandaCard order={order} key={order._id} />
+            ))}
         </div>
     );
 };

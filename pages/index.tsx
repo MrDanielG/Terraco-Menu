@@ -1,20 +1,24 @@
 import { useRouter } from 'next/router';
-import ParentCard from '../components/card/ParentCard';
-import CardInfo from '../components/card/CardInfo';
+import { HiPlusSm } from 'react-icons/hi';
 import CardActions from '../components/card/CardActions';
+import CardInfo from '../components/card/CardInfo';
+import ParentCard from '../components/card/ParentCard';
 import CategoryBar from '../components/CategoryBar';
 import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
+import { useGetMenusQuery } from '../graphql/graphql';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
-import { useGetMenusQuery } from '../graphql/graphql';
 import { intlFormat } from '../lib/utils';
+<<<<<<< HEAD
 import { HiPlusSm } from 'react-icons/hi';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { Dish } from '../graphql/graphql';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+=======
+>>>>>>> crud-menu
 
 const categoryData = [
     {
@@ -93,6 +97,7 @@ export default function Home() {
             <CategoryBar data={categoryData} />
             <div>
                 {menus.length > 0 &&
+<<<<<<< HEAD
                     menus.map(
                         (menu) =>
                             menu.dishes.length > 0 && (
@@ -127,6 +132,33 @@ export default function Home() {
                                 </div>
                             )
                     )}
+=======
+                    menus.map((menu) => (
+                        <div key={menu._id}>
+                            <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
+                                {menu.title}
+                            </h2>
+                            {menu.dishes &&
+                                menu.dishes.map((dish) => (
+                                    <ParentCard
+                                        url_img={dish.url_img?.toString()}
+                                        onClick={() => router.push(`/dish/${dish._id}`)}
+                                        key={dish._id}
+                                    >
+                                        <CardInfo>
+                                            <CardInfo.Title>{dish.name}</CardInfo.Title>
+                                            <CardInfo.Footer>
+                                                {intlFormat(dish.price, 'es-MX')}
+                                            </CardInfo.Footer>
+                                        </CardInfo>
+                                        <CardActions>
+                                            <CardActions.Bottom icon={<HiPlusSm />} />
+                                        </CardActions>
+                                    </ParentCard>
+                                ))}
+                        </div>
+                    ))}
+>>>>>>> crud-menu
             </div>
         </div>
     );

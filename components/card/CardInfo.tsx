@@ -18,7 +18,7 @@ const CardInfoTitle = (props: Props) => {
 
 const CardInfoBody = (props: Props) => {
     return (
-        <div className="uppercase mt-2 tracking-wide text-sm text-gray-400" onClick={props.on}>
+        <div className="uppercase mt-2 tracking-wide text-sm text-gray-400" onClick={props.onClick}>
             {props.children}
         </div>
     );

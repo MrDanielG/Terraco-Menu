@@ -4,7 +4,10 @@ import {
     ApolloLink,
     InMemoryCache,
     NormalizedCacheObject,
+    split,
 } from '@apollo/client';
+import { WebSocketLink } from '@apollo/client/link/ws';
+import { getMainDefinition } from '@apollo/client/utilities';
 import { createUploadLink } from 'apollo-upload-client';
 import { IncomingMessage, ServerResponse } from 'http';
 import { useMemo } from 'react';
@@ -18,8 +21,17 @@ export type ResolverContext = {
 
 function createIsomorphLink(context: ResolverContext = {}) {
     const uri = process.env.NEXT_PUBLIC_SERVER_URI || '';
+    const wsUri = process.env.NEXT_PUBLIC_SUBSCRIPTION_URI || '';
     const tokenName = process.env.NEXT_PUBLIC_AUTH_KEY || 'Authorization';
     const httpLink = createUploadLink({ uri });
+
+    if (typeof window === 'undefined') return;
+    const wsLink = new WebSocketLink({
+        uri: wsUri,
+        options: {
+            reconnect: true,
+        },
+    });
 
     const authLink = new ApolloLink((operation, forward) => {
         let token: string | null = '';
@@ -35,7 +47,24 @@ function createIsomorphLink(context: ResolverContext = {}) {
         // Call the next link in the middleware chain.
         return forward(operation);
     });
-    return authLink.concat(httpLink); // Chain it with the HttpLink
+
+    // The split function takes three parameters:
+    //
+    // * A function that's called for each operation to execute
+    // * The Link to use for an operation if the function returns a "truthy" value
+    // * The Link to use for an operation if the function returns a "falsy" value
+    const splitLink = split(
+        ({ query }) => {
+            const definition = getMainDefinition(query);
+            return (
+                definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+            );
+        },
+        wsLink,
+        authLink.concat(httpLink) // Chain it with the HttpLink
+    );
+
+    return splitLink;
 }
 
 function createApolloClient(context?: ResolverContext) {
