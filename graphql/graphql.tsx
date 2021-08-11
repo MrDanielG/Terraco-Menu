@@ -551,6 +551,11 @@ export type GetMenyByIdQueryVariables = Exact<{
 
 export type GetMenyByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
 
+export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OrderChangesSubscription = { __typename?: 'Subscription', orderChanges: { __typename?: 'Order', _id: string, orderNumber: number, end_time?: Maybe<any>, start_time: any, table: { __typename?: 'Table', name?: Maybe<string>, tableNumber: number, _id: string }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> } };
+
 
 export const LoginDocument = gql`
     mutation Login($loginPassword: String!, $loginEmail: String!) {
@@ -1071,3 +1076,48 @@ export function useGetMenyByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMenyByIdQueryHookResult = ReturnType<typeof useGetMenyByIdQuery>;
 export type GetMenyByIdLazyQueryHookResult = ReturnType<typeof useGetMenyByIdLazyQuery>;
 export type GetMenyByIdQueryResult = Apollo.QueryResult<GetMenyByIdQuery, GetMenyByIdQueryVariables>;
+export const OrderChangesDocument = gql`
+    subscription OrderChanges {
+  orderChanges {
+    _id
+    orderNumber
+    table {
+      name
+      tableNumber
+      _id
+    }
+    end_time
+    start_time
+    items {
+      dish {
+        name
+      }
+      _id
+      quantity
+      status
+    }
+  }
+}
+    `;
+
+/**
+ * __useOrderChangesSubscription__
+ *
+ * To run a query within a React component, call `useOrderChangesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOrderChangesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrderChangesSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOrderChangesSubscription(baseOptions?: Apollo.SubscriptionHookOptions<OrderChangesSubscription, OrderChangesSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<OrderChangesSubscription, OrderChangesSubscriptionVariables>(OrderChangesDocument, options);
+      }
+export type OrderChangesSubscriptionHookResult = ReturnType<typeof useOrderChangesSubscription>;
+export type OrderChangesSubscriptionResult = Apollo.SubscriptionResult<OrderChangesSubscription>;

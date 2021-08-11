@@ -1,9 +1,17 @@
+import { useEffect } from 'react';
 import ComandaCard from '../../components/ComandaCard';
 import Navbar from '../../components/Navbar';
+import { useOrderChangesSubscription } from '../../graphql/graphql';
 
 interface Props {}
 
 const Dashboard = (props: Props) => {
+    const { data, loading, error } = useOrderChangesSubscription();
+
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
+
     return (
         <div className="bg-gray-200 p-8 h-screen">
             <Navbar />
