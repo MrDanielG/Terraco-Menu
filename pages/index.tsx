@@ -65,22 +65,16 @@ export default function Home() {
             {menus.length > 0 &&
                 menus.map((menu) => (
                     <div key={menu._id}>
-                        <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
-                            {menu.title}
-                        </h2>
+                        <h2 className="mt-10 mb-6 text-brown text-lg uppercase">{menu.title}</h2>
                         {menu.dishes &&
                             menu.dishes.map((dish) => (
                                 <ParentCard
                                     key={dish._id}
                                     url_img={dish.url_img?.toString()}
-                                    onClick={() =>
-                                        router.push(`/dish/${dish._id}`)
-                                    }
+                                    onClick={() => router.push(`/dish/${dish._id}`)}
                                 >
                                     <CardInfo>
-                                        <CardInfo.Title>
-                                            {dish.name}
-                                        </CardInfo.Title>
+                                        <CardInfo.Title>{dish.name}</CardInfo.Title>
                                         <CardInfo.Footer>
                                             {formatDinero(dish.price)}
                                         </CardInfo.Footer>
