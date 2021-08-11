@@ -13,7 +13,7 @@ const CardInfoTitle = (props: any) => {
 const CardInfoBody = (props: any) => {
     return (
         <div className="uppercase mt-2 tracking-wide text-sm text-gray-400">
-            {props.children}
+            { props.children }
         </div>
     );
 };
