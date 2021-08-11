@@ -1,26 +1,42 @@
+import { useRouter } from 'next/router';
+import { Order } from '../graphql/graphql';
+
 interface Props {
-    numTable: number;
+    order: Order;
 }
 
-const ComandaCard = (props: Props) => {
+const ComandaCard = ({ order }: Props) => {
+    const router = useRouter();
+    const { locale } = router;
+    const date = new Date(order.start_time.toString()).toLocaleString(locale);
+
     return (
         <div className="bg-white p-8 rounded-3xl">
-            <h1 className="text-brown font-semibold text-sm">Mesa #123</h1>
-            <p className="text-sm text-gray-500 mb-4">
-                29 de Julio 2021, 08:28 PM
-            </p>
+            <h1 className="text-brown font-semibold text-sm">Mesa # {order.table.tableNumber}</h1>
+            <p className="text-sm text-gray-500 mb-4">{date}</p>
 
-            <div>
-                <div className="flex justify-between">
-                    <p className="text-brown font-semibold">Sopa de Medula</p>
-                    <p className="text-brown font-semibold">Qty: 3</p>
+            {order.items.map((item) => (
+                <div key={item._id} className="my-2">
+                    <div className="flex justify-between">
+                        <p className="text-brown font-semibold">{item.dish.name}</p>
+                        <p className="text-brown font-semibold">Cant: {item.quantity}</p>
+                    </div>
+                    <p
+                        className={`text-sm ${
+                            item.status === 'COOKING' ? 'text-yellow-400' : 'text-gray-500'
+                        }`}
+                    >
+                        {item.status}
+                    </p>
                 </div>
-                <p className="text-sm text-gray-500">Sin Lechuga</p>
-            </div>
+            ))}
             <br />
 
             <div className="w-full flex justify-end">
-                <button className="text-mygreen border-2 border-mygreen border-solid py-3 px-6 rounded-xl">
+                <button
+                    onClick={() => console.log('Id Order: ', order._id)}
+                    className="text-mygreen border-2 border-mygreen border-solid py-3 px-6 rounded-xl"
+                >
                     Completar
                 </button>
             </div>
