@@ -9,7 +9,7 @@ import Navbar from '../../components/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
 import SearchBar from '../../components/SearchBar';
 import useRedirect from '../../hooks/useRedirect';
-import { HiPencil, HiMinusSm } from "react-icons/hi";
+import { HiPencil, HiMinusSm } from 'react-icons/hi';
 import { useGetMenusQuery } from '../../graphql/graphql';
 
 const categoryData = [
@@ -23,7 +23,6 @@ const categoryData = [
     },
 ];
 
-
 interface Props {}
 
 const ChefHome = (props: Props) => {
@@ -31,14 +30,14 @@ const ChefHome = (props: Props) => {
     const [active, setActive] = useState(true);
     const router = useRouter();
     const { data } = useGetMenusQuery();
-    const menus = data?.menus.filter(menu => menu.isActive === active);
+    const menus = data?.menus.filter((menu) => menu.isActive === active);
     const handleOnClick = (category: ICategoryData) => {
-        if(category.name === 'Activos') {
+        if (category.name === 'Activos') {
             setActive(true);
         } else {
             setActive(false);
         }
-    }
+    };
     return (
         <ProtectedPage username="Chef" redirectTo="/">
             <div className="bg-gray-200 p-8 h-full min-h-screen">
@@ -47,25 +46,23 @@ const ChefHome = (props: Props) => {
 
                 <SearchBar />
 
-                <CategoryBar data={ categoryData } onClick={ handleOnClick } />
+                <CategoryBar data={categoryData} onClick={handleOnClick} />
                 <div>
-                    {
-                        menus && menus.map( menu =>
-                            <ParentCard url_img={ menu.url_img?.toString() }
-                                        key={ menu._id }
-                                onClick={() => router.push(`/chef/menu/${menu._id}`) }
+                    {menus &&
+                        menus.map((menu) => (
+                            <ParentCard
+                                url_img={menu.url_img || null}
+                                key={menu._id}
+                                onClick={() => router.push(`/chef/menu/${menu._id}`)}
                             >
                                 <CardInfo>
-                                    <CardInfo.Title>
-                                        { menu.title }
-                                    </CardInfo.Title>
+                                    <CardInfo.Title>{menu.title}</CardInfo.Title>
                                 </CardInfo>
                                 <CardActions>
-                                    <CardActions.Bottom icon={ <HiPencil /> } />
+                                    <CardActions.Bottom icon={<HiPencil />} />
                                 </CardActions>
                             </ParentCard>
-                        )
-                    }
+                        ))}
                 </div>
                 <AddButton onClick={() => router.push('/chef/addMenu')} />
             </div>

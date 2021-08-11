@@ -20,7 +20,7 @@ const ParentCard = (props: Props) => {
                 <div className="flex-shrink-0">
                     <figure className="relative w-28 h-full md:h-40 md:w-full">
                         <Image
-                            src={props.url_img ?? defaultImg}
+                            src={props?.url_img ?? defaultImg}
                             alt="Dish Img"
                             layout="fill"
                             objectFit="cover"
