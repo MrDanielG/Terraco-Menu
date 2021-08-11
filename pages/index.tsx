@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { HiPlusSm } from 'react-icons/hi';
 import CardActions from '../components/card/CardActions';
 import CardInfo from '../components/card/CardInfo';
 import ParentCard from '../components/card/ParentCard';
@@ -73,7 +72,6 @@ export default function Home() {
         } else {
             currentOrder.items.push({ qty: 1, dish });
         }
-        console.log(name);
         setCurrentOrder(currentOrder);
         setNumItems(currentOrder.items.length);
         toast.success(
@@ -94,40 +92,40 @@ export default function Home() {
             <CategoryBar data={categoryData} />
             <div>
                 {menus.length > 0 &&
-                    menus.map(
-                        (menu) =>
-                            menu.dishes.length > 0 && (
-                                <div key={menu._id}>
-                                    <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
-                                        {menu.title}
-                                    </h2>
-                                    {menu.dishes.map((dish) => (
-                                        <ParentCard
-                                            url_img={dish.url_img?.toString()}
-                                            onClick={() => router.push(`/dish/${dish._id}`)}
-                                            key={dish._id}
-                                        >
-                                            <CardInfo
-                                                onClick={() => router.push(`/dish/${dish._id}`)}
-                                            >
-                                                <CardInfo.Title>{dish.name}</CardInfo.Title>
-                                                <CardInfo.Footer>
-                                                    {intlFormat(dish.price, 'es-MX')}
-                                                </CardInfo.Footer>
-                                            </CardInfo>
-                                            <CardActions>
-                                                <CardActions.Bottom
-                                                    icon={<HiPlusSm />}
-                                                    onClick={(e) => {
-                                                        handleAddDish(dish);
-                                                    }}
-                                                />
-                                            </CardActions>
-                                        </ParentCard>
-                                    ))}
-                                </div>
-                            )
-                    )}
+                 menus.map(
+                     (menu) =>
+                         menu.dishes.length > 0 && (
+                             <div key={menu._id}>
+                                 <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
+                                     {menu.title}
+                                 </h2>
+                                 {menu.dishes.map((dish) => (
+                                     <ParentCard
+                                         url_img={dish.url_img?.toString()}
+                                         onClick={() => router.push(`/dish/${dish._id}`)}
+                                         key={dish._id}
+                                     >
+                                         <CardInfo
+                                             onClick={() => router.push(`/dish/${dish._id}`)}
+                                         >
+                                             <CardInfo.Title><span>{dish.name}</span></CardInfo.Title>
+                                             <CardInfo.Footer>
+                                                 <span>{intlFormat(dish.price, 'es-MX')}</span>                                                 
+                                             </CardInfo.Footer>
+                                         </CardInfo>
+                                         <CardActions>
+                                             <CardActions.Bottom
+                                                 icon={<HiPlusSm />}
+                                                 onClick={(_e) => {
+                                                     handleAddDish(dish);
+                                                 }}
+                                             />
+                                         </CardActions>
+                                     </ParentCard>
+                                 ))}
+                             </div>
+                         )
+                )}
             </div>
         </div>
     );

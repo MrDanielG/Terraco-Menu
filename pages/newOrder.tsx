@@ -1,6 +1,5 @@
-import { Switch } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import BigButton from '../components/buttons/BigButton';
 import ParentCard from '../components/card/ParentCard';
 import CardInfo from '../components/card/CardInfo';
@@ -16,7 +15,7 @@ import {
     useCreateOrderItemsMutation,
     useAddItemsToOrderMutation,
 } from '../graphql/graphql';
-import { multiply, add, dinero, subtract } from 'dinero.js';
+import { multiply, add, dinero } from 'dinero.js';
 import { MXN } from '@dinero.js/currencies';
 import toast from 'react-hot-toast';
 
@@ -27,10 +26,9 @@ const NewOrder = (props: Props) => {
         tableId: '',
         items: [],
     });
-    const [order, setOrder] = useLocalStorage<Order>('myOrder', null);
-    const [change, setChange] = useState(-21);
-    /* const [order, setOrder] = useState<Order | null>(null); */
-    const [canOrder, setCanOrder] = useState(currentOrder.items.length > 0);
+    const [order, setOrder] = useLocalStorage<Order | null>('myOrder', null);
+    const [_change, setChange] = useState(-21);
+
     const { items, tableId } = currentOrder;
     let total = dinero({ amount: 0, currency: MXN });
     items.forEach((item) => {
@@ -82,17 +80,20 @@ const NewOrder = (props: Props) => {
                     orderRes = await AddItemsToOrderMutation({
                         variables: {
                             addItemsToOrderOrderId: order._id,
-                            addItemsToOrderItemsIds: itemsIds,
+                            addItemsToOrderItemsIds: itemsIds || [],
                         },
                     });
                     setCurrentOrder({ items: [], tableId: tableId });
-                    setOrder(orderRes.data?.addItemsToOrder);
+                    setOrder(orderRes.data?.addItemsToOrder as Order);
                 } else {
                     orderRes = await CreateOrderMutation({
-                        variables: { createOrderTableId: tableId, createOrderItemsIds: itemsIds },
+                        variables: {
+                            createOrderTableId: tableId,
+                            createOrderItemsIds: itemsIds || [],
+                        },
                     });
                     setCurrentOrder({ items: [], tableId: tableId });
-                    setOrder(orderRes.data?.createOrder);
+                    setOrder(orderRes.data?.createOrder as Order);
                 }
 
                 if (orderRes.errors !== undefined) {
@@ -119,18 +120,24 @@ const NewOrder = (props: Props) => {
                         order.items.map((item) => (
                             <ParentCard url_img={item.dish.url_img?.toString()} key={item.dish._id}>
                                 <CardInfo>
-                                    <CardInfo.Title>{item.dish.name}</CardInfo.Title>
+                                    <CardInfo.Title>
+                                        <span>{item.dish.name}</span>
+                                    </CardInfo.Title>
                                     <CardInfo.Body>
-                                        Importe:{' '}
-                                        {intlFormat(
-                                            multiply(
-                                                dinero(item.dish.price),
-                                                item.quantity
-                                            ).toJSON(),
-                                            'es-MX'
-                                        )}
+                                        <div>
+                                            Importe:{' '}
+                                            {intlFormat(
+                                                multiply(
+                                                    dinero(item.dish.price),
+                                                    item.quantity
+                                                ).toJSON(),
+                                                'es-MX'
+                                            )}
+                                        </div>
                                     </CardInfo.Body>
-                                    <CardInfo.Footer>Cant: {item.quantity}</CardInfo.Footer>
+                                    <CardInfo.Footer>
+                                        <div>Cant: {item.quantity}</div>
+                                    </CardInfo.Footer>
                                 </CardInfo>
                             </ParentCard>
                         ))}
@@ -145,15 +152,24 @@ const NewOrder = (props: Props) => {
                         items.map((item, idx) => (
                             <ParentCard url_img={item.dish.url_img?.toString()} key={item.dish._id}>
                                 <CardInfo>
-                                    <CardInfo.Title>{item.dish.name}</CardInfo.Title>
+                                    <CardInfo.Title>
+                                        <span>{item.dish.name}</span>
+                                    </CardInfo.Title>
                                     <CardInfo.Body>
-                                        Importe:{' '}
-                                        {intlFormat(
-                                            multiply(dinero(item.dish.price), item.qty).toJSON(),
-                                            'es-MX'
-                                        )}
+                                        <div>
+                                            Importe:{' '}
+                                            {intlFormat(
+                                                multiply(
+                                                    dinero(item.dish.price),
+                                                    item.qty
+                                                ).toJSON(),
+                                                'es-MX'
+                                            )}
+                                        </div>
                                     </CardInfo.Body>
-                                    <CardInfo.Footer>Cant: {item.qty}</CardInfo.Footer>
+                                    <CardInfo.Footer>
+                                        <div>Cant: {item.qty}</div>
+                                    </CardInfo.Footer>
                                 </CardInfo>
                                 <CardActions>
                                     <CardActions.Top
