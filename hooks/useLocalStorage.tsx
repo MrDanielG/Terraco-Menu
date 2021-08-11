@@ -22,5 +22,5 @@ export const useLocalStorage = <T extends unknown>(
         }
     };
 
-    return [storedValue, setValue];
+    return [storedValue, setValue] as [T, typeof setValue];
 };

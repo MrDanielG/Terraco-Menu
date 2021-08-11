@@ -12,10 +12,7 @@ interface Props {
 
 const ParentCard = (props: Props) => {
     return (
-        <div
-            className="my-6 bg-white rounded-2xl shadow-lg overflow-hidden max-w-2xl md:max-w-xs cursor-pointer"
-            onClick={props?.onClick}
-        >
+        <div className="my-6 bg-white rounded-2xl shadow-lg overflow-hidden max-w-2xl md:max-w-xs cursor-pointer">
             <div className="flex md:block">
                 <div className="flex-shrink-0">
                     <figure className="relative w-28 h-full md:h-40 md:w-full">
@@ -24,6 +21,7 @@ const ParentCard = (props: Props) => {
                             alt="Dish Img"
                             layout="fill"
                             objectFit="cover"
+                            onClick={props?.onClick}
                         />
                     </figure>
                 </div>

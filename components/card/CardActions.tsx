@@ -36,7 +36,7 @@ const CardActions: React.FC<Props> & {
 } = (props: Props) => {
     return (
         <>
-            <div className="w-56 h-32 flex flex-wrap md:w-full md:h-auto md:block">
+            <div className="w-56 h-100 flex flex-wrap md:w-full md:h-auto md:block">
                 {props.children}
             </div>
         </>

@@ -1,16 +1,30 @@
+import { useRouter } from 'next/router';
 import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useState } from 'react';
 import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
 import { useAuth } from '../contexts/AuthContext';
-
-interface Props {}
+/* import { useLocalStorage } from '../hooks/useLocalStorage'; */
+interface Props {
+    itemsQty?: number;
+}
 
 const Navbar = (props: Props) => {
+    const router = useRouter();
     const { currentUser, logOut } = useAuth();
     const [open, setOpen] = useState(false);
 
+    /* const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
+     *     tableId: "",
+     *     items: [],
+     * });
+     * const items = currentOrder.items; */
+    const handleMyOrderClick = () => {
+        if (props.itemsQty !== null) {
+            router.push('/newOrder');
+        }
+    };
     return (
         <div className="mb-6">
             <div className="flex justify-between items-center ">
@@ -41,9 +55,12 @@ const Navbar = (props: Props) => {
                 )}
 
                 {currentUser === null && (
-                    <div className="rounded-lg bg-orange flex gap-2 px-2 py-1 max-w-sm">
+                    <div
+                        className="rounded-lg bg-orange flex gap-2 px-2 py-1 max-w-sm cursor-pointer"
+                        onClick={handleMyOrderClick}
+                    >
                         <HiOutlineBookOpen className="text-2xl text-white" />
-                        <p className="text-white">4</p>
+                        <p className="text-white">{props?.itemsQty || 0}</p>
                     </div>
                 )}
             </div>
@@ -93,13 +110,8 @@ const Navbar = (props: Props) => {
                                                 className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                                                 onClick={() => setOpen(false)}
                                             >
-                                                <span className="sr-only">
-                                                    Close panel
-                                                </span>
-                                                <HiX
-                                                    className="h-6 w-6"
-                                                    aria-hidden="true"
-                                                />
+                                                <span className="sr-only">Close panel</span>
+                                                <HiX className="h-6 w-6" aria-hidden="true" />
                                             </button>
                                         </div>
                                     </Transition.Child>
@@ -117,84 +129,59 @@ const Navbar = (props: Props) => {
                                                         <>
                                                             <li className="my-8">
                                                                 <Link href="/">
-                                                                    <a>
-                                                                        Inicio
-                                                                    </a>
+                                                                    <a>Inicio</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
                                                                 <Link href="/login">
-                                                                    <a>
-                                                                        Iniciar
-                                                                        Sesión
-                                                                    </a>
+                                                                    <a>Iniciar Sesión</a>
                                                                 </Link>
                                                             </li>
                                                         </>
                                                     )}
-                                                    {currentUser?.name ===
-                                                        'Chef' && (
+                                                    {currentUser?.name === 'Chef' && (
                                                         <>
                                                             <li className="my-8">
                                                                 <Link href="/chef">
-                                                                    <a>
-                                                                        Inicio
-                                                                    </a>
+                                                                    <a>Inicio</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
                                                                 <Link href="/chef/dashboard">
-                                                                    <a>
-                                                                        Panel de
-                                                                        Pedidos
-                                                                    </a>
+                                                                    <a>Panel de Pedidos</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
                                                                 <Link href="/chef/platillos">
-                                                                    <a>
-                                                                        Platillos
-                                                                    </a>
+                                                                    <a>Platillos</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
                                                                 <a
                                                                     className="cursor-pointer"
-                                                                    onClick={
-                                                                        logOut
-                                                                    }
+                                                                    onClick={logOut}
                                                                 >
-                                                                    Cerrar
-                                                                    Sesión
+                                                                    Cerrar Sesión
                                                                 </a>
                                                             </li>
                                                         </>
                                                     )}
 
-                                                    {currentUser?.name ===
-                                                        'Manager' && (
+                                                    {currentUser?.name === 'Manager' && (
                                                         <>
                                                             <li className="my-8">
                                                                 <Link href="/manager">
-                                                                    <a>
-                                                                        Inicio
-                                                                    </a>
+                                                                    <a>Inicio</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
                                                                 <Link href="/manager/stats/dishes">
-                                                                    <a>
-                                                                        Estadísticas
-                                                                        Platillos
-                                                                    </a>
+                                                                    <a>Estadísticas Platillos</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
                                                                 <Link href="/manager/stats/sells">
-                                                                    <a>
-                                                                        Estadísticas
-                                                                        Ventas
-                                                                    </a>
+                                                                    <a>Estadísticas Ventas</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
@@ -205,12 +192,9 @@ const Navbar = (props: Props) => {
                                                             <li className="my-8">
                                                                 <a
                                                                     className="cursor-pointer"
-                                                                    onClick={
-                                                                        logOut
-                                                                    }
+                                                                    onClick={logOut}
                                                                 >
-                                                                    Cerrar
-                                                                    Sesión
+                                                                    Cerrar Sesión
                                                                 </a>
                                                             </li>
                                                         </>

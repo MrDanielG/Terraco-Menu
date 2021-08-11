@@ -9,11 +9,9 @@ import {
 } from 'react-icons/hi';
 import BigButton from '../../components/buttons/BigButton';
 import { useGetDishByIdQuery } from '../../graphql/graphql';
-import { formatDinero }from '../../lib/utils';
+import { intlFormat } from '../../lib/utils';
 
-interface Props {
-
-}
+interface Props {}
 
 const DishDetail = (props: Props) => {
     const router = useRouter();
@@ -24,8 +22,8 @@ const DishDetail = (props: Props) => {
     };
     const { data } = useGetDishByIdQuery({
         variables: {
-            dishByIdId: id?.toString() || ""
-        }
+            dishByIdId: id?.toString() || '',
+        },
     });
     const dish = data?.dishById || null;
 
@@ -53,51 +51,37 @@ const DishDetail = (props: Props) => {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-3xl absolute top-52 bg-white">
+                <div className="p-6 rounded-3xl absolute top-52 bg-white w-full">
                     <div className=" flex justify-between py-8">
-                        <h1 className="text-brown text-2xl font-semibold">
-                            {
-                                dish && dish.name
-                            }
-                        </h1>
+                        <h1 className="text-brown text-2xl font-semibold">{dish && dish.name}</h1>
                         <p className="text-brown text-2xl font-semibold">
-                            {
-                                dish && formatDinero(dish.price)
-                            }
+                            {dish && intlFormat(dish.price)}
                         </p>
                     </div>
 
                     <div className="flex justify-between pb-10">
-                        {
-                            dish && dish.preparation_time && (
-                                <div className="rounded-3xl bg-brown gap-2 px-3 py-1 max-w-sm h-8 flex items-center">
-                                    <HiOutlineClock className="text-xl text-white" />
-                                    <p className="text-white text-sm font-semibold">
-                                        {
-                                            dish.preparation_time.toString()
-                                        }
-                                    </p>
-                                </div>
-                            )
-                        }
-                        
+                        {dish && dish.preparation_time && (
+                            <div className="rounded-3xl bg-brown gap-2 px-3 py-1 max-w-sm h-8 flex items-center">
+                                <HiOutlineClock className="text-xl text-white" />
+                                <p className="text-white text-sm font-semibold">
+                                    {dish.preparation_time.toString()}
+                                </p>
+                            </div>
+                        )}
 
                         <div className="flex items-center gap-2">
                             <p className="font-semibold text-brown">Cant:</p>
 
-                            <div className="flex bg-brown gap-2 px-2 py-1 max-w-sm h-8 rounded-3xl">
+                            <div className="flex bg-brown gap-2 px-2 py-1 max-w-sm h-8 rounded-3xl ">
                                 <button
                                     className="text-white text-xl"
                                     onClick={() => {
-                                        if (quantity > 1)
-                                            setQuantity(quantity - 1);
+                                        if (quantity > 1) setQuantity(quantity - 1);
                                     }}
                                 >
                                     <HiMinusSm />
                                 </button>
-                                <p className="text-white font-semibold">
-                                    {quantity}
-                                </p>
+                                <p className="text-white font-semibold">{quantity}</p>
                                 <button
                                     className="text-white text-xl"
                                     onClick={() => setQuantity(quantity + 1)}
@@ -109,14 +93,8 @@ const DishDetail = (props: Props) => {
                     </div>
 
                     <div>
-                        <h2 className="text-brown text-xl pb-4 font-semibold">
-                            Descripcion
-                        </h2>
-                        <p>
-                            {
-                                dish && dish.description
-                            }
-                        </p>
+                        <h2 className="text-brown text-xl pb-4 font-semibold">Descripcion</h2>
+                        <p>{dish && dish.description}</p>
                     </div>
 
                     <BigButton text="Añadir a la orden" onClick={addToOrder} />
