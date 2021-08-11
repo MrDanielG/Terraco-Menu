@@ -1,15 +1,15 @@
 import { useRouter } from 'next/router';
-import ParentCard from '../components/card/ParentCard';
-import CardInfo from '../components/card/CardInfo';
+import { HiPlusSm } from 'react-icons/hi';
 import CardActions from '../components/card/CardActions';
+import CardInfo from '../components/card/CardInfo';
+import ParentCard from '../components/card/ParentCard';
 import CategoryBar from '../components/CategoryBar';
 import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
+import { useGetMenusQuery } from '../graphql/graphql';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
-import { useGetMenusQuery } from '../graphql/graphql';
 import { intlFormat } from '../lib/utils';
-import { HiPlusSm } from 'react-icons/hi';
 
 const categoryData = [
     {
@@ -63,7 +63,7 @@ export default function Home() {
             <div>
                 {menus.length > 0 &&
                     menus.map((menu) => (
-                        <div>
+                        <div key={menu._id}>
                             <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
                                 {menu.title}
                             </h2>
