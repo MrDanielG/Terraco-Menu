@@ -77,9 +77,7 @@ const AuthProvider = ({ children }: any) => {
         isLoggedIn,
     };
 
-    return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;
