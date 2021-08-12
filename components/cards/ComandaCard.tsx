@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 import { Order, Status, useChangeOrderItemsStatusMutation } from '../../graphql/graphql';
 
 interface Props {
@@ -17,8 +18,13 @@ const ComandaCard = ({ order }: Props) => {
     });
 
     const changeOrderStatus = async () => {
-        const res = await changeOrderItemsStatusMutation();
-        console.log(res);
+        try {
+            await changeOrderItemsStatusMutation();
+            toast.success('Orden Completada');
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al Completar Orden');
+        }
     };
 
     return (
