@@ -1,4 +1,4 @@
-import Navbar from '../../../components/Navbar';
+import Navbar from '../../../components/layout/Navbar';
 interface Props {}
 
 const months = [
@@ -28,9 +28,7 @@ const SellsStats = (props: Props) => {
     return (
         <div className="bg-gray-200 p-8 h-auto min-h-screen">
             <Navbar />
-            <h1 className="font-semibold text-3xl text-brown">
-                Ventas Mensuales
-            </h1>
+            <h1 className="font-semibold text-3xl text-brown">Ventas Mensuales</h1>
 
             <div className="flex flex-col mt-6">
                 <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

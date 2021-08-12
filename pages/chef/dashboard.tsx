@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import ComandaCard from '../../components/ComandaCard';
-import Navbar from '../../components/Navbar';
+import ComandaCard from '../../components/cards/ComandaCard';
+import Navbar from '../../components/layout/Navbar';
 import { Order, useOrderChangesSubscription } from '../../graphql/graphql';
 
 interface Props {}

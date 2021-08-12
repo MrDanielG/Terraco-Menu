@@ -4,10 +4,10 @@ import { HiPencil } from 'react-icons/hi';
 import AddDishToMenu from '../../../components/AddDishToMenu';
 import AddButton from '../../../components/buttons/AddButton';
 import BackButton from '../../../components/buttons/BackButton';
-import CardInfo from '../../../components/card/CardInfo';
-import ParentCard from '../../../components/card/ParentCard';
-import Modal from '../../../components/Modal';
-import Navbar from '../../../components/Navbar';
+import CardInfo from '../../../components/cards/parent-card/CardInfo';
+import ParentCard from '../../../components/cards/parent-card/ParentCard';
+import Modal from '../../../components/layout/Modal';
+import Navbar from '../../../components/layout/Navbar';
 import { useGetMenyByIdQuery } from '../../../graphql/graphql';
 import { intlFormat } from '../../../lib/utils';
 
@@ -66,8 +66,12 @@ const MenuDetail = (props: Props) => {
                 {menu?.dishes.map((dish) => (
                     <ParentCard url_img={dish.url_img?.toString()} key={dish._id}>
                         <CardInfo>
-                            <CardInfo.Title><span>{dish.name}</span></CardInfo.Title>
-                            <CardInfo.Footer><span>{intlFormat(dish.price, 'es-MX')}</span></CardInfo.Footer>
+                            <CardInfo.Title>
+                                <span>{dish.name}</span>
+                            </CardInfo.Title>
+                            <CardInfo.Footer>
+                                <span>{intlFormat(dish.price, 'es-MX')}</span>
+                            </CardInfo.Footer>
                         </CardInfo>
                     </ParentCard>
                 ))}

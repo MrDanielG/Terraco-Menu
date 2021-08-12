@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { Order } from '../graphql/graphql';
+import { Order } from '../../graphql/graphql';
 
 interface Props {
     order: Order;

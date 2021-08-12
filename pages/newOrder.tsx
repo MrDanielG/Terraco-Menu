@@ -1,23 +1,24 @@
+import { MXN } from '@dinero.js/currencies';
+import { add, dinero, multiply } from 'dinero.js';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import BigButton from '../components/buttons/BigButton';
-import ParentCard from '../components/card/ParentCard';
-import CardInfo from '../components/card/CardInfo';
-import CardActions from '../components/card/CardActions';
-import Navbar from '../components/Navbar';
-import { intlFormat } from '../lib/utils';
-import BackButton from '../components/buttons/BackButton';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { Dish, Order } from '../graphql/graphql';
-import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
-import {
-    useCreateOrderMutation,
-    useCreateOrderItemsMutation,
-    useAddItemsToOrderMutation,
-} from '../graphql/graphql';
-import { multiply, add, dinero } from 'dinero.js';
-import { MXN } from '@dinero.js/currencies';
 import toast from 'react-hot-toast';
+import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
+import BackButton from '../components/buttons/BackButton';
+import BigButton from '../components/buttons/BigButton';
+import CardActions from '../components/cards/parent-card/CardActions';
+import CardInfo from '../components/cards/parent-card/CardInfo';
+import ParentCard from '../components/cards/parent-card/ParentCard';
+import Navbar from '../components/layout/Navbar';
+import {
+    Dish,
+    Order,
+    useAddItemsToOrderMutation,
+    useCreateOrderItemsMutation,
+    useCreateOrderMutation,
+} from '../graphql/graphql';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { intlFormat } from '../lib/utils';
 
 interface Props {}
 const NewOrder = (props: Props) => {

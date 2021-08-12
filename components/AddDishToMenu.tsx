@@ -3,11 +3,11 @@ import toast from 'react-hot-toast';
 import { HiPlusSm } from 'react-icons/hi';
 import { Dish, useAddDishToMenuMutation, useGetDishesQuery } from '../graphql/graphql';
 import { intlFormat } from '../lib/utils';
-import CardActions from './card/CardActions';
-import CardInfo from './card/CardInfo';
-import ParentCard from './card/ParentCard';
-import CategoryBar from './CategoryBar';
-import SearchBar from './SearchBar';
+import CardActions from './cards/parent-card/CardActions';
+import CardInfo from './cards/parent-card/CardInfo';
+import ParentCard from './cards/parent-card/ParentCard';
+import CategoryBar from './layout/CategoryBar';
+import SearchBar from './layout/SearchBar';
 
 const categoryData = [
     {
@@ -74,14 +74,18 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
             {availableDishes?.map((dish) => (
                 <ParentCard
                     url_img={
-                    dish.url_img?.toString() ||
-                    'https://images.unsplash.com/photo-1602881917445-0b1ba001addf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+                        dish.url_img?.toString() ||
+                        'https://images.unsplash.com/photo-1602881917445-0b1ba001addf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
                     }
                     key={dish._id}
                 >
                     <CardInfo>
-                        <CardInfo.Title><span>{dish.name}</span></CardInfo.Title>
-                        <CardInfo.Footer><span>{intlFormat(dish.price, 'es-MX')}</span></CardInfo.Footer>
+                        <CardInfo.Title>
+                            <span>{dish.name}</span>
+                        </CardInfo.Title>
+                        <CardInfo.Footer>
+                            <span>{intlFormat(dish.price, 'es-MX')}</span>
+                        </CardInfo.Footer>
                     </CardInfo>
                     <CardActions>
                         <CardActions.Bottom

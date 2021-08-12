@@ -1,10 +1,10 @@
-import { useRouter } from 'next/router';
 import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Fragment, useState } from 'react';
 import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 /* import { useLocalStorage } from '../hooks/useLocalStorage'; */
 interface Props {
     itemsQty?: number;

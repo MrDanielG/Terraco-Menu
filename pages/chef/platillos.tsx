@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import AddButton from '../../components/buttons/AddButton';
-import ParentCard from '../../components/card/ParentCard';
-import CategoryBar from '../../components/CategoryBar';
-import Navbar from '../../components/Navbar';
-import SearchBar from '../../components/SearchBar';
+import ParentCard from '../../components/cards/parent-card/ParentCard';
+import CategoryBar from '../../components/layout/CategoryBar';
+import Navbar from '../../components/layout/Navbar';
+import SearchBar from '../../components/layout/SearchBar';
 
 interface Props {}
 
@@ -36,7 +36,7 @@ const Platillos = (props: Props) => {
 
             <SearchBar />
 
-            <CategoryBar data={ categoryData } />
+            <CategoryBar data={categoryData} />
 
             <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
 
