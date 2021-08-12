@@ -113,6 +113,7 @@ export type Mutation = {
   updateTable: Table;
   createOrder: Order;
   addItemsToOrder: Order;
+  changeOrderItemsStatus: Order;
   delItemsFromOrder: Order;
   createOrderItem: OrderItem;
   createOrderItems: Array<OrderItem>;
@@ -245,6 +246,12 @@ export type MutationCreateOrderArgs = {
 export type MutationAddItemsToOrderArgs = {
   orderId: Scalars['String'];
   itemsIds: Array<Scalars['String']>;
+};
+
+
+export type MutationChangeOrderItemsStatusArgs = {
+  status: Status;
+  orderId: Scalars['String'];
 };
 
 
@@ -391,7 +398,9 @@ export type RoleDataInput = {
 export enum Status {
   Pending = 'PENDING',
   Cooking = 'COOKING',
-  Served = 'SERVED'
+  Served = 'SERVED',
+  Payingoff = 'PAYINGOFF',
+  Payed = 'PAYED'
 }
 
 export type Subscription = {
@@ -542,6 +551,14 @@ export type AddItemsToOrderMutationVariables = Exact<{
 
 export type AddItemsToOrderMutation = { __typename?: 'Mutation', addItemsToOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any } }> } };
 
+export type ChangeOrderItemsStatusMutationVariables = Exact<{
+  changeOrderItemsStatusStatus: Status;
+  changeOrderItemsStatusOrderId: Scalars['String'];
+}>;
+
+
+export type ChangeOrderItemsStatusMutation = { __typename?: 'Mutation', changeOrderItemsStatus: { __typename?: 'Order', _id: string, items: Array<{ __typename?: 'OrderItem', status: Status, quantity: number, _id: string, dish: { __typename?: 'Dish', name: string } }> } };
+
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
 }>;
@@ -584,6 +601,11 @@ export type GetMenyByIdQueryVariables = Exact<{
 
 
 export type GetMenyByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
+
+export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'Order', _id: string, orderNumber: number, start_time: any, end_time?: Maybe<any>, table: { __typename?: 'Table', name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> }> };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -959,6 +981,51 @@ export function useAddItemsToOrderMutation(baseOptions?: Apollo.MutationHookOpti
 export type AddItemsToOrderMutationHookResult = ReturnType<typeof useAddItemsToOrderMutation>;
 export type AddItemsToOrderMutationResult = Apollo.MutationResult<AddItemsToOrderMutation>;
 export type AddItemsToOrderMutationOptions = Apollo.BaseMutationOptions<AddItemsToOrderMutation, AddItemsToOrderMutationVariables>;
+export const ChangeOrderItemsStatusDocument = gql`
+    mutation ChangeOrderItemsStatus($changeOrderItemsStatusStatus: Status!, $changeOrderItemsStatusOrderId: String!) {
+  changeOrderItemsStatus(
+    status: $changeOrderItemsStatusStatus
+    orderId: $changeOrderItemsStatusOrderId
+  ) {
+    _id
+    items {
+      status
+      quantity
+      _id
+      dish {
+        name
+      }
+    }
+  }
+}
+    `;
+export type ChangeOrderItemsStatusMutationFn = Apollo.MutationFunction<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>;
+
+/**
+ * __useChangeOrderItemsStatusMutation__
+ *
+ * To run a mutation, you first call `useChangeOrderItemsStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeOrderItemsStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeOrderItemsStatusMutation, { data, loading, error }] = useChangeOrderItemsStatusMutation({
+ *   variables: {
+ *      changeOrderItemsStatusStatus: // value for 'changeOrderItemsStatusStatus'
+ *      changeOrderItemsStatusOrderId: // value for 'changeOrderItemsStatusOrderId'
+ *   },
+ * });
+ */
+export function useChangeOrderItemsStatusMutation(baseOptions?: Apollo.MutationHookOptions<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>(ChangeOrderItemsStatusDocument, options);
+      }
+export type ChangeOrderItemsStatusMutationHookResult = ReturnType<typeof useChangeOrderItemsStatusMutation>;
+export type ChangeOrderItemsStatusMutationResult = Apollo.MutationResult<ChangeOrderItemsStatusMutation>;
+export type ChangeOrderItemsStatusMutationOptions = Apollo.BaseMutationOptions<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {
@@ -1253,6 +1320,55 @@ export function useGetMenyByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMenyByIdQueryHookResult = ReturnType<typeof useGetMenyByIdQuery>;
 export type GetMenyByIdLazyQueryHookResult = ReturnType<typeof useGetMenyByIdLazyQuery>;
 export type GetMenyByIdQueryResult = Apollo.QueryResult<GetMenyByIdQuery, GetMenyByIdQueryVariables>;
+export const GetOrdersDocument = gql`
+    query GetOrders {
+  orders {
+    _id
+    orderNumber
+    table {
+      name
+      tableNumber
+    }
+    items {
+      _id
+      dish {
+        name
+      }
+      quantity
+      status
+    }
+    start_time
+    end_time
+  }
+}
+    `;
+
+/**
+ * __useGetOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+      }
+export function useGetOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+        }
+export type GetOrdersQueryHookResult = ReturnType<typeof useGetOrdersQuery>;
+export type GetOrdersLazyQueryHookResult = ReturnType<typeof useGetOrdersLazyQuery>;
+export type GetOrdersQueryResult = Apollo.QueryResult<GetOrdersQuery, GetOrdersQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {

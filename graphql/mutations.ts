@@ -137,3 +137,25 @@ export const ADD_ITEMS_TO_ORDER = gql`
         }
     }
 `;
+
+export const CHANGE_ORDER_ITEM_STATUS = gql`
+    mutation ChangeOrderItemsStatus(
+        $changeOrderItemsStatusStatus: Status!
+        $changeOrderItemsStatusOrderId: String!
+    ) {
+        changeOrderItemsStatus(
+            status: $changeOrderItemsStatusStatus
+            orderId: $changeOrderItemsStatusOrderId
+        ) {
+            _id
+            items {
+                status
+                quantity
+                _id
+                dish {
+                    name
+                }
+            }
+        }
+    }
+`;
