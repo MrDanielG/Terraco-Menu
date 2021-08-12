@@ -128,3 +128,31 @@ export const GET_ORDERS = gql`
         }
     }
 `;
+
+export const GET_ORDER_BY_ID = gql`
+    query getOrderById($orderByIdId: String!) {
+        orderById(id: $orderByIdId) {
+            _id
+            orderNumber
+            table {
+                _id
+                tableNumber
+                name
+                token
+                enabled
+            }
+            items {
+                _id
+                dish {
+                    description
+                    name
+                    price
+                    _id
+                }
+                quantity
+                status
+            }
+            start_time
+        }
+    }
+`;

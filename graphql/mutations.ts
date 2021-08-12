@@ -43,6 +43,7 @@ export const ADD_DISH_TO_MENU = gql`
                 _id
                 name
                 price
+                url_img
             }
         }
     }
@@ -90,6 +91,7 @@ export const CREATE_ORDER = gql`
                     name
                     _id
                     price
+                    url_img
                 }
             }
         }
@@ -106,6 +108,7 @@ export const CREATE_ORDERITEMS = gql`
                 name
                 _id
                 price
+                url_img
             }
         }
     }
@@ -132,6 +135,7 @@ export const ADD_ITEMS_TO_ORDER = gql`
                     name
                     _id
                     price
+                    url_img
                 }
             }
         }
@@ -155,6 +159,28 @@ export const CHANGE_ORDER_ITEM_STATUS = gql`
                 dish {
                     name
                 }
+            }
+        }
+    }
+`;
+
+export const GENERATE_TICKET = gql`
+    mutation GenerateTicket($orderId: String!, $paymentMethod: String, $vat: Float) {
+        generateTicket(orderId: $orderId, paymentMethod: $paymentMethod, vat: $vat) {
+            _id
+            orderId
+            ticketNumber
+            timestamp
+            tableName
+            total
+            paymentMethod
+            vat
+            items {
+                _id
+                quantity
+                dishName
+                dishPrice
+                amount
             }
         }
     }

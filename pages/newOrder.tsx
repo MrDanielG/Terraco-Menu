@@ -32,9 +32,11 @@ const NewOrder = (props: Props) => {
 
     const { items, tableId } = currentOrder;
     let total = dinero({ amount: 0, currency: MXN });
+    let currentTotal = dinero({ amount: 0, currency: MXN });
+
     items.forEach((item) => {
         const amount = multiply(dinero(item.dish.price), item.qty);
-        total = add(total, amount);
+        currentTotal = add(currentTotal, amount);
     });
     if (order) {
         order.items.forEach((item) => {
@@ -46,7 +48,9 @@ const NewOrder = (props: Props) => {
     const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
     const [CreateOrderMutation] = useCreateOrderMutation();
     const [AddItemsToOrderMutation] = useAddItemsToOrderMutation();
-    console.log('order: ', order);
+    const nPending = `${currentOrder ? currentOrder.items.length : ''}`;
+    const nOrder = `${order ? order.items.length : ''}`;
+    const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
     const handleQuantityChange = (idx: number, value: number) => {
         const { qty } = currentOrder.items[idx];
         const sum = qty + value;
@@ -56,7 +60,7 @@ const NewOrder = (props: Props) => {
         setChange(sum);
         setCurrentOrder(currentOrder);
     };
-
+    const handlePayement = () => {};
     const handleCreateOrder = async () => {
         if (tableId !== '') {
             const items = currentOrder.items.map((item) => {
@@ -106,58 +110,28 @@ const NewOrder = (props: Props) => {
             }
         }
     };
+
     return (
         <>
             <div className="bg-gray-200 p-8 h-auto min-h-screen">
-                <Navbar itemsQty={items?.length} />
+                <Navbar itemsQty={nItems} />
                 <BackButton text="Menú" pathNameOnBack={`/?tableId=${tableId}`} />
-                {order && (
-                    <h1 className="font-semibold text-3xl text-brown">
-                        {order.items?.length} Platillos pedidos
-                    </h1>
-                )}
-                <div>
-                    {order &&
-                        order.items.map((item) => (
-                            <ParentCard url_img={item.dish.url_img?.toString()} key={item.dish._id}>
-                                <CardInfo>
-                                    <CardInfo.Title>
-                                        <span>{item.dish.name}</span>
-                                    </CardInfo.Title>
-                                    <CardInfo.Body>
-                                        <div>
-                                            Importe:{' '}
-                                            {intlFormat(
-                                                multiply(
-                                                    dinero(item.dish.price),
-                                                    item.quantity
-                                                ).toJSON(),
-                                                'es-MX'
-                                            )}
-                                        </div>
-                                    </CardInfo.Body>
-                                    <CardInfo.Footer>
-                                        <div>Cant: {item.quantity}</div>
-                                    </CardInfo.Footer>
-                                </CardInfo>
-                            </ParentCard>
-                        ))}
-                </div>
-                {items && (
+                {items && items.length > 0 && (
                     <h1 className="font-semibold text-3xl text-brown">
                         {items?.length} Platillos por pedir
                     </h1>
                 )}
+
                 <div>
                     {items &&
                         items.map((item, idx) => (
-                            <ParentCard url_img={item.dish.url_img?.toString()} key={item.dish._id}>
+                            <ParentCard url_img={item.dish?.url_img?.toString()} key={idx + 1}>
                                 <CardInfo>
                                     <CardInfo.Title>
                                         <span>{item.dish.name}</span>
                                     </CardInfo.Title>
                                     <CardInfo.Body>
-                                        <div>
+                                        <span>
                                             Importe:{' '}
                                             {intlFormat(
                                                 multiply(
@@ -166,10 +140,10 @@ const NewOrder = (props: Props) => {
                                                 ).toJSON(),
                                                 'es-MX'
                                             )}
-                                        </div>
+                                        </span>
                                     </CardInfo.Body>
                                     <CardInfo.Footer>
-                                        <div>Cant: {item.qty}</div>
+                                        <span>Cant: {item.qty}</span>
                                     </CardInfo.Footer>
                                 </CardInfo>
                                 <CardActions>
@@ -185,11 +159,57 @@ const NewOrder = (props: Props) => {
                             </ParentCard>
                         ))}
                 </div>
+                {order && (
+                    <h1 className="font-semibold text-3xl text-brown">
+                        {order.items?.length} Platillos pedidos
+                    </h1>
+                )}
+                <>
+                    {order &&
+                        order.items.map((item, idx) => (
+                            <ParentCard url_img={item.dish?.url_img?.toString()} key={idx + 1}>
+                                <CardInfo>
+                                    <CardInfo.Title>
+                                        <span>{item.dish.name}</span>
+                                    </CardInfo.Title>
+                                    <CardInfo.Body>
+                                        <span>
+                                            Importe:{' '}
+                                            {intlFormat(
+                                                multiply(
+                                                    dinero(item.dish.price),
+                                                    item.quantity
+                                                ).toJSON(),
+                                                'es-MX'
+                                            )}
+                                        </span>
+                                    </CardInfo.Body>
+                                    <CardInfo.Footer>
+                                        <span>Cant: {item.quantity}</span>
+                                    </CardInfo.Footer>
+                                </CardInfo>
+                            </ParentCard>
+                        ))}
+                    {order && items.length > 0 && (
+                        <p className="uppercase mt-2 tracking-wide text-sm text-gray-600 text-center mb-5">
+                            Tu consumo hasta ahora:{' '}
+                            <span>{intlFormat(total.toJSON(), 'es-MX')}</span>
+                        </p>
+                    )}
+                </>
                 <div>
                     {items.length > 0 && (
                         <BigButton
+                            isFloat={false}
                             onClick={() => handleCreateOrder()}
-                            text={'Ordernar: ' + intlFormat(total.toJSON(), 'es-MX')}
+                            text={'Ordernar: ' + intlFormat(currentTotal.toJSON(), 'es-MX')}
+                        />
+                    )}
+                    {order && items.length < 1 && (
+                        <BigButton
+                            isFloat={false}
+                            onClick={() => handlePayement()}
+                            text={'Pagar: ' + intlFormat(total.toJSON(), 'es-MX')}
                         />
                     )}
                 </div>

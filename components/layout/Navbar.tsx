@@ -7,7 +7,7 @@ import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
 import { useAuth } from '../../contexts/AuthContext';
 /* import { useLocalStorage } from '../hooks/useLocalStorage'; */
 interface Props {
-    itemsQty?: number;
+    itemsQty?: string;
 }
 
 const Navbar = (props: Props) => {
@@ -60,7 +60,7 @@ const Navbar = (props: Props) => {
                         onClick={handleMyOrderClick}
                     >
                         <HiOutlineBookOpen className="text-2xl text-white" />
-                        <p className="text-white">{props?.itemsQty || 0}</p>
+                        <p className="text-white">{props?.itemsQty || ""}</p>
                     </div>
                 )}
             </div>

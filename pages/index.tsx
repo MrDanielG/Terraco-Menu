@@ -9,7 +9,7 @@ import ParentCard from '../components/cards/parent-card/ParentCard';
 import CategoryBar from '../components/layout/CategoryBar';
 import Navbar from '../components/layout/Navbar';
 import SearchBar from '../components/layout/SearchBar';
-import { Dish, useGetMenusQuery } from '../graphql/graphql';
+import { Dish, Order, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
@@ -40,12 +40,22 @@ export default function Home() {
     const { tableId } = router.query;
     const t = locale === 'es-MX' ? esMX : enUS;
     const { data } = useGetMenusQuery();
+
     const menus = data ? data.menus.filter((menu) => menu.isActive) : [];
     const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
         tableId: tableId?.toString() || '',
         items: [],
     });
-    const [numItems, setNumItems] = useState(currentOrder.items.length);
+    const [order, _setOrder] = useLocalStorage<Order | null>('myOrder', null);
+    const tableData = useGetTableByIdQuery({
+        variables: { tableByIdId: tableId?.toString() || '' },
+    });
+
+    const isTableEnabled = tableData.data?.tableById.enabled || false;
+    const nPending = `${currentOrder ? currentOrder.items.length : ''}`;
+    const nOrder = `${order ? order.items.length : ''}`;
+    const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
+    const [numItems, setNumItems] = useState(nItems);
 
     const handleLanguageToggle = (myLocale: 'en-US' | 'es-MX') => {
         switch (myLocale) {
@@ -72,7 +82,10 @@ export default function Home() {
             currentOrder.items.push({ qty: 1, dish });
         }
         setCurrentOrder(currentOrder);
-        setNumItems(currentOrder.items.length);
+        const nPending = `${currentOrder ? currentOrder.items.length : ''}`;
+        const nOrder = `${order ? order.items.length : ''}`;
+        const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
+        setNumItems(nItems);
         toast.success(
             <Link href="/newOrder">
                 <span>{`Se agregó 1 ${dish.name}  a tu orden`}</span>
@@ -80,6 +93,15 @@ export default function Home() {
             { className: 'underline cursor-pointer' }
         );
     };
+    if (!isTableEnabled) {
+        return (
+            <div className="bg-gray-200 p-8 h-screen flex">
+                <h1 className="font-semibold text-2xl text-brown">
+                    Por favor soicite que activen su mesa o acuda a nuestra sucursal para ordenar.
+                </h1>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-gray-200 p-8 h-full">
@@ -101,11 +123,19 @@ export default function Home() {
                                     {menu.dishes.map((dish) => (
                                         <ParentCard
                                             url_img={dish.url_img?.toString()}
-                                            onClick={() => router.push(`/dish/${dish._id}`)}
+                                            onClick={() =>
+                                                router.push(
+                                                    `/dish/id=${dish._id}?tableId=${tableId}`
+                                                )
+                                            }
                                             key={dish._id}
                                         >
                                             <CardInfo
-                                                onClick={() => router.push(`/dish/${dish._id}`)}
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/dish/${dish._id}?tableId=${tableId}`
+                                                    )
+                                                }
                                             >
                                                 <CardInfo.Title>
                                                     <span>{dish.name}</span>
