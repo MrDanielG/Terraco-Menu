@@ -1,10 +1,20 @@
 import { useRouter } from 'next/router';
+import CardActions from '../components/card/CardActions';
+import CardInfo from '../components/card/CardInfo';
 import ParentCard from '../components/card/ParentCard';
 import CategoryBar from '../components/CategoryBar';
 import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
+import { useGetMenusQuery } from '../graphql/graphql';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
+import { intlFormat } from '../lib/utils';
+import { HiPlusSm } from 'react-icons/hi';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { Dish } from '../graphql/graphql';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 const categoryData = [
     {
@@ -28,7 +38,15 @@ const categoryData = [
 export default function Home() {
     const router = useRouter();
     const { locale } = router;
+    const { tableId } = router.query;
     const t = locale === 'es-MX' ? esMX : enUS;
+    const { data } = useGetMenusQuery();
+    const menus = data ? data.menus.filter((menu) => menu.isActive) : [];
+    const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
+        tableId: tableId?.toString() || '',
+        items: [],
+    });
+    const [numItems, setNumItems] = useState(currentOrder.items.length);
 
     const handleLanguageToggle = (myLocale: 'en-US' | 'es-MX') => {
         switch (myLocale) {
@@ -45,18 +63,70 @@ export default function Home() {
         }
     };
 
+    const handleAddDish = (dish: Dish) => {
+        const idx = currentOrder.items.findIndex((value) => value.dish._id === dish._id);
+        currentOrder.tableId = tableId?.toString() || '';
+
+        if (idx > -1) {
+            currentOrder.items[idx].qty++;
+        } else {
+            currentOrder.items.push({ qty: 1, dish });
+        }
+        setCurrentOrder(currentOrder);
+        setNumItems(currentOrder.items.length);
+        toast.success(
+            <Link href="/newOrder">
+                <span>{`Se agregó 1 ${dish.name}  a tu orden`}</span>
+            </Link>,
+            { className: 'underline cursor-pointer' }
+        );
+    };
+
     return (
-        <div className="bg-gray-200 p-8 h-screen">
-            <Navbar />
+        <div className="bg-gray-200 p-8 h-full">
+            <Navbar itemsQty={numItems} />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
             <SearchBar />
 
             <CategoryBar data={categoryData} />
-
-            <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
-
-            <ParentCard />
+            <div>
+                {menus.length > 0 &&
+                 menus.map(
+                     (menu) =>
+                         menu.dishes.length > 0 && (
+                             <div key={menu._id}>
+                                 <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
+                                     {menu.title}
+                                 </h2>
+                                 {menu.dishes.map((dish) => (
+                                     <ParentCard
+                                         url_img={dish.url_img?.toString()}
+                                         onClick={() => router.push(`/dish/${dish._id}`)}
+                                         key={dish._id}
+                                     >
+                                         <CardInfo
+                                             onClick={() => router.push(`/dish/${dish._id}`)}
+                                         >
+                                             <CardInfo.Title><span>{dish.name}</span></CardInfo.Title>
+                                             <CardInfo.Footer>
+                                                 <span>{intlFormat(dish.price, 'es-MX')}</span>                                                 
+                                             </CardInfo.Footer>
+                                         </CardInfo>
+                                         <CardActions>
+                                             <CardActions.Bottom
+                                                 icon={<HiPlusSm />}
+                                                 onClick={(_e) => {
+                                                     handleAddDish(dish);
+                                                 }}
+                                             />
+                                         </CardActions>
+                                     </ParentCard>
+                                 ))}
+                             </div>
+                         )
+                )}
+            </div>
         </div>
     );
 }

@@ -1,9 +1,9 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import BigButton from './BigButton';
+import BigButton from './buttons/BigButton';
 
 interface Props {
-    children: JSX.Element | any;
+    children: any;
     title: string;
     isOpen: boolean;
     closeBtnTitle: string;

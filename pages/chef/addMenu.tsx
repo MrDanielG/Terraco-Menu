@@ -1,16 +1,40 @@
 import { useRouter } from 'next/router';
-import { HiOutlineChevronLeft } from 'react-icons/hi';
-import BigButton from '../../components/BigButton';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import BackButton from '../../components/buttons/BackButton';
+import BigButton from '../../components/buttons/BigButton';
 import Navbar from '../../components/Navbar';
-import { enUS } from '../../lib/i18n/enUS';
-import { esMX } from '../../lib/i18n/esMX';
+import { MenuDataInput, useAddMenuMutation } from '../../graphql/graphql';
 
 interface Props {}
 
 const AddMenu = (props: Props) => {
     const router = useRouter();
-    const { locale } = router;
-    const t = locale === 'es-MX' ? esMX : enUS;
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<MenuDataInput>();
+    const [addMenuMutation, { data, loading }] = useAddMenuMutation();
+
+    const onSubmit: SubmitHandler<MenuDataInput> = async (
+        { title, description },
+        e
+    ) => {
+        try {
+            await addMenuMutation({
+                variables: {
+                    addMenuData: { title, description, isActive: true },
+                },
+            });
+            toast.success('Menú Creado');
+            e?.target.reset();
+            router.push('/chef');
+        } catch (err) {
+            console.error(err);
+            toast.error('Error al Crear Menú');
+        }
+    };
 
     return (
         <div className="bg-gray-200 p-8 h-screen">
@@ -19,40 +43,52 @@ const AddMenu = (props: Props) => {
                 Crear Menú
             </h1>
 
-            <div
-                className="flex items-center text-gray-500 mb-6 cursor-pointer"
-                onClick={() => router.push('/chef')}
-            >
-                <HiOutlineChevronLeft /> Regresar
-            </div>
+            <BackButton text="Regresar" pathNameOnBack="/chef" />
 
-            <div className="rounded-md shadow-sm">
-                <div>
-                    <label htmlFor="email-address" className="sr-only">
-                        {t.login.email}
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="my-3">
+                    <label className="text-gray-600 ml-2" htmlFor="title">
+                        Nombre
                     </label>
                     <input
-                        id="email-address"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        className="appearance-none rounded-3xl relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-orange focus:border-orange focus:z-10 sm:text-sm my-3"
-                        placeholder={t.login.email}
+                        {...register('title', {
+                            required: true,
+                        })}
+                        id="title"
+                        name="title"
+                        type="text"
+                        className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
+                        placeholder="Menú Mexicano"
                     />
+                    {errors.title && (
+                        <span className="text-sm ml-2 text-red-600 text-center">
+                            Título requerido
+                        </span>
+                    )}
                 </div>
 
-                <textarea
-                    className="mt-1 block w-full rounded-3xl border-gray-300 shadow-sm focus:border-orange focus:ring focus:ring-orange focus:ring-opacity-50"
-                    rows={3}
-                    placeholder="Descripcion"
-                ></textarea>
-            </div>
+                <div className="my-3">
+                    <label className="text-gray-600 ml-2" htmlFor="description">
+                        Descripción:
+                    </label>
+                    <textarea
+                        {...register('description', {
+                            required: true,
+                        })}
+                        id="description"
+                        className="mt-1 block w-full rounded-3xl border-gray-300 shadow-sm focus:border-brown-light focus:ring focus:ring-brown-light focus:ring-opacity-50"
+                        placeholder="Menú con temática..."
+                        rows={3}
+                    ></textarea>
+                    {errors.description && (
+                        <span className="text-sm ml-2 text-red-600 text-center">
+                            Descripción requerida
+                        </span>
+                    )}
+                </div>
 
-            <BigButton
-                text="Agregar Menu"
-                onClick={() => console.log('add Menu')}
-            />
+                <BigButton text="Agregar Menu" isDisabled={loading} />
+            </form>
         </div>
     );
 };
