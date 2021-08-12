@@ -113,6 +113,7 @@ export type Mutation = {
   updateTable: Table;
   createOrder: Order;
   addItemsToOrder: Order;
+  changeOrderItemsStatus: Order;
   delItemsFromOrder: Order;
   createOrderItem: OrderItem;
   createOrderItems: Array<OrderItem>;
@@ -245,6 +246,12 @@ export type MutationCreateOrderArgs = {
 export type MutationAddItemsToOrderArgs = {
   orderId: Scalars['String'];
   itemsIds: Array<Scalars['String']>;
+};
+
+
+export type MutationChangeOrderItemsStatusArgs = {
+  status: Status;
+  orderId: Scalars['String'];
 };
 
 
@@ -391,7 +398,9 @@ export type RoleDataInput = {
 export enum Status {
   Pending = 'PENDING',
   Cooking = 'COOKING',
-  Served = 'SERVED'
+  Served = 'SERVED',
+  Payingoff = 'PAYINGOFF',
+  Payed = 'PAYED'
 }
 
 export type Subscription = {
@@ -502,7 +511,7 @@ export type AddDishToMenuMutationVariables = Exact<{
 }>;
 
 
-export type AddDishToMenuMutation = { __typename?: 'Mutation', addDishToMenu: { __typename?: 'Menu', _id: string, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, price: any }> } };
+export type AddDishToMenuMutation = { __typename?: 'Mutation', addDishToMenu: { __typename?: 'Menu', _id: string, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, price: any, url_img?: Maybe<string> }> } };
 
 export type GenerateTableMutationVariables = Exact<{
   generateTableName: Scalars['String'];
@@ -525,14 +534,14 @@ export type CreateOrderMutationVariables = Exact<{
 }>;
 
 
-export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any } }> } };
+export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> } };
 
 export type CreateOrderItemsMutationVariables = Exact<{
   createOrderItemsItems: Array<CreateOrderItemsInput> | CreateOrderItemsInput;
 }>;
 
 
-export type CreateOrderItemsMutation = { __typename?: 'Mutation', createOrderItems: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string, _id: string, price: any } }> };
+export type CreateOrderItemsMutation = { __typename?: 'Mutation', createOrderItems: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> };
 
 export type AddItemsToOrderMutationVariables = Exact<{
   addItemsToOrderOrderId: Scalars['String'];
@@ -540,7 +549,16 @@ export type AddItemsToOrderMutationVariables = Exact<{
 }>;
 
 
-export type AddItemsToOrderMutation = { __typename?: 'Mutation', addItemsToOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any } }> } };
+export type AddItemsToOrderMutation = { __typename?: 'Mutation', addItemsToOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> } };
+
+export type GenerateTicketMutationVariables = Exact<{
+  orderId: Scalars['String'];
+  paymentMethod?: Maybe<Scalars['String']>;
+  vat?: Maybe<Scalars['Float']>;
+}>;
+
+
+export type GenerateTicketMutation = { __typename?: 'Mutation', generateTicket: { __typename?: 'Ticket', _id: string, orderId: string, ticketNumber: number, timestamp: any, tableName: string, total: any, paymentMethod: string, vat: number, items: Array<{ __typename?: 'TicketItem', _id: string, quantity: number, dishName: string, dishPrice: any, amount: any }> } };
 
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
@@ -584,6 +602,13 @@ export type GetMenyByIdQueryVariables = Exact<{
 
 
 export type GetMenyByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
+
+export type GetOrderByIdQueryVariables = Exact<{
+  orderByIdId: Scalars['String'];
+}>;
+
+
+export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -710,6 +735,7 @@ export const AddDishToMenuDocument = gql`
       _id
       name
       price
+      url_img
     }
   }
 }
@@ -834,6 +860,7 @@ export const CreateOrderDocument = gql`
         name
         _id
         price
+        url_img
       }
     }
   }
@@ -876,6 +903,7 @@ export const CreateOrderItemsDocument = gql`
       name
       _id
       price
+      url_img
     }
   }
 }
@@ -927,6 +955,7 @@ export const AddItemsToOrderDocument = gql`
         name
         _id
         price
+        url_img
       }
     }
   }
@@ -959,6 +988,55 @@ export function useAddItemsToOrderMutation(baseOptions?: Apollo.MutationHookOpti
 export type AddItemsToOrderMutationHookResult = ReturnType<typeof useAddItemsToOrderMutation>;
 export type AddItemsToOrderMutationResult = Apollo.MutationResult<AddItemsToOrderMutation>;
 export type AddItemsToOrderMutationOptions = Apollo.BaseMutationOptions<AddItemsToOrderMutation, AddItemsToOrderMutationVariables>;
+export const GenerateTicketDocument = gql`
+    mutation GenerateTicket($orderId: String!, $paymentMethod: String, $vat: Float) {
+  generateTicket(orderId: $orderId, paymentMethod: $paymentMethod, vat: $vat) {
+    _id
+    orderId
+    ticketNumber
+    timestamp
+    tableName
+    total
+    paymentMethod
+    vat
+    items {
+      _id
+      quantity
+      dishName
+      dishPrice
+      amount
+    }
+  }
+}
+    `;
+export type GenerateTicketMutationFn = Apollo.MutationFunction<GenerateTicketMutation, GenerateTicketMutationVariables>;
+
+/**
+ * __useGenerateTicketMutation__
+ *
+ * To run a mutation, you first call `useGenerateTicketMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateTicketMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateTicketMutation, { data, loading, error }] = useGenerateTicketMutation({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *      paymentMethod: // value for 'paymentMethod'
+ *      vat: // value for 'vat'
+ *   },
+ * });
+ */
+export function useGenerateTicketMutation(baseOptions?: Apollo.MutationHookOptions<GenerateTicketMutation, GenerateTicketMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateTicketMutation, GenerateTicketMutationVariables>(GenerateTicketDocument, options);
+      }
+export type GenerateTicketMutationHookResult = ReturnType<typeof useGenerateTicketMutation>;
+export type GenerateTicketMutationResult = Apollo.MutationResult<GenerateTicketMutation>;
+export type GenerateTicketMutationOptions = Apollo.BaseMutationOptions<GenerateTicketMutation, GenerateTicketMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {
@@ -1253,6 +1331,61 @@ export function useGetMenyByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetMenyByIdQueryHookResult = ReturnType<typeof useGetMenyByIdQuery>;
 export type GetMenyByIdLazyQueryHookResult = ReturnType<typeof useGetMenyByIdLazyQuery>;
 export type GetMenyByIdQueryResult = Apollo.QueryResult<GetMenyByIdQuery, GetMenyByIdQueryVariables>;
+export const GetOrderByIdDocument = gql`
+    query getOrderById($orderByIdId: String!) {
+  orderById(id: $orderByIdId) {
+    _id
+    orderNumber
+    table {
+      _id
+      tableNumber
+      name
+      token
+      enabled
+    }
+    items {
+      _id
+      dish {
+        description
+        name
+        price
+        _id
+      }
+      quantity
+      status
+    }
+    start_time
+  }
+}
+    `;
+
+/**
+ * __useGetOrderByIdQuery__
+ *
+ * To run a query within a React component, call `useGetOrderByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderByIdQuery({
+ *   variables: {
+ *      orderByIdId: // value for 'orderByIdId'
+ *   },
+ * });
+ */
+export function useGetOrderByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOrderByIdQuery, GetOrderByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrderByIdQuery, GetOrderByIdQueryVariables>(GetOrderByIdDocument, options);
+      }
+export function useGetOrderByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrderByIdQuery, GetOrderByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrderByIdQuery, GetOrderByIdQueryVariables>(GetOrderByIdDocument, options);
+        }
+export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery>;
+export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
+export type GetOrderByIdQueryResult = Apollo.QueryResult<GetOrderByIdQuery, GetOrderByIdQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {
