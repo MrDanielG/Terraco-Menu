@@ -39,7 +39,7 @@ const MenuDetail = (props: Props) => {
     const router = useRouter();
     const { id: menuId } = router.query;
     const [isOpen, setIsOpen] = useState(false);
-    const [removeDishFromMenuMutation, { loading, error }] = useRemoveDishFromMenuMutation();
+    const [removeDishFromMenuMutation] = useRemoveDishFromMenuMutation();
     const { data, refetch } = useGetMenyByIdQuery({
         variables: {
             menuByIdId: menuId?.toString() || '',
@@ -56,6 +56,7 @@ const MenuDetail = (props: Props) => {
                 },
             });
             console.log(res);
+            refetch();
             toast.success('Platillo Eliminado de Menú');
         } catch (error) {
             console.error(error);
@@ -83,6 +84,10 @@ const MenuDetail = (props: Props) => {
                     </span>
                 </p>
                 <p className="text-gray-500 mt-2">{data?.menuById?.description}</p>
+
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                    Desliza a la izquierda para eliminar un platillo
+                </p>
 
                 {springs.map(({ x }, i) => (
                     <animated.div

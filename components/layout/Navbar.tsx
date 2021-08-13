@@ -60,7 +60,7 @@ const Navbar = (props: Props) => {
                         onClick={handleMyOrderClick}
                     >
                         <HiOutlineBookOpen className="text-2xl text-white" />
-                        <p className="text-white">{props?.itemsQty || ""}</p>
+                        <p className="text-white">{props?.itemsQty || ''}</p>
                     </div>
                 )}
             </div>
@@ -143,7 +143,7 @@ const Navbar = (props: Props) => {
                                                         <>
                                                             <li className="my-8">
                                                                 <Link href="/chef">
-                                                                    <a>Inicio</a>
+                                                                    <a>Menús</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
