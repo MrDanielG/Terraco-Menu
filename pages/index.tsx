@@ -125,7 +125,7 @@ export default function Home() {
         const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
         setNumItems(nItems);
         toast.success(
-            <Link href="/newOrder">
+            <Link href="/newOrder" passHref={true}>
                 <span>{`Se agregó 1 ${dish.name}  a tu orden`}</span>
             </Link>,
             { className: 'underline cursor-pointer' }

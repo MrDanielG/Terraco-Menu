@@ -19,7 +19,7 @@ const TicketView = (props: Props) => {
     const router = useRouter();
     const {tableId } = router.query;
     const [ticket, setTicket] = useState<Ticket | null>(null);
-    const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
+    const [_currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
         tableId: '',
         items: [],
     });
@@ -51,12 +51,10 @@ const TicketView = (props: Props) => {
     };
     const handlePrint = () => {
         if(ticket && window){
-            /* window.onafterprint = function(_event){
-             *     console.log("printed");
-             * }; */
+            window.onafterprint = function(event){
+                console.log(event);
+            };
             window.print();
-
-            console.log("Printed 2");
             setOrder(null);
             setCurrentOrder({items: [], tableId: ""});
             router.push('/');
@@ -72,7 +70,6 @@ const TicketView = (props: Props) => {
     let baseImp = dinero({ amount: 0, currency: MXN });
     let vatAmount = dinero({ amount: 0, currency: MXN });
     if (ticket) {
-        console.log(ticket);
         vatAmount = multiply(dinero(ticket.total), {amount: ticket.vat, scale: 2});
         baseImp = subtract(dinero(ticket.total), vatAmount);
     }

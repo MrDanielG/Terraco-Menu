@@ -12,23 +12,26 @@ interface Props {
 }
 
 const InfoTable = ({ tableId }: Props) => {
-    const { data } = useGetTableByIdQuery({
+    
+    let { data } = useGetTableByIdQuery({
         variables: {
             tableByIdId: tableId,
         },
     });
+
+    console.log(data?.tableById?.enabled);
     const [updateTableMutation] = useUpdateTableMutation();
-    const [enabled, setEnabled] = useState(data?.tableById.enabled!);
+    const [enabled, setEnabled] = useState(data?.tableById?.enabled);
     const currentUrl =
         process.env.NEXT_PUBLIC_LOCAL_URI || 'http://localhost:3000';
-    const qrValue = `${currentUrl}?tableId=${data?.tableById._id}`;
+    const qrValue = `${currentUrl}?tableId=${data?.tableById?._id}`;
 
     const handleChange = async () => {
         try {
             await updateTableMutation({
                 variables: {
                     updateTableData: { enabled: !enabled },
-                    updateTableId: data?.tableById._id!,
+                    updateTableId: tableId,
                 },
             });
             setEnabled(!enabled);
@@ -45,13 +48,13 @@ const InfoTable = ({ tableId }: Props) => {
                 <QRCode value={qrValue} className="my-3" size={200} />
             </div>
             <h1 className="text-center my-2 text-brown font-semibold">
-                {data?.tableById.name}
+                {data?.tableById?.name}
             </h1>
 
             <div className="flex justify-around my-4">
                 <p className="text-gray-500">Activada:</p>
                 <Switch
-                    checked={enabled}
+                    checked={enabled ?? false}
                     onChange={handleChange}
                     className={`${
                         enabled ? 'bg-blue-600' : 'bg-gray-200'
