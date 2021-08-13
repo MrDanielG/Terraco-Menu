@@ -82,7 +82,7 @@ const NewOrder = (props: Props) => {
             });
 
             if (!areServed) {
-                setMessage('Aún faltan platos por servir. ¿Desea continuar con el pago?');
+                setMessage('Aún faltan platos por servir. ¿Deseas continuar con el pago?');
                 setIsOpen(true);
             } else {
                 router.push(`/ticketView?tableId=${tableId}`);
