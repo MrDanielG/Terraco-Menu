@@ -2354,13 +2354,9 @@
                 "name": "id",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -2368,13 +2364,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Table",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Table",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2401,13 +2393,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Table",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Table",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
