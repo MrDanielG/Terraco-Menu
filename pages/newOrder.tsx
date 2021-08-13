@@ -18,6 +18,7 @@ import {
     useAddItemsToOrderMutation,
     useCreateOrderItemsMutation,
     useCreateOrderMutation,
+    useGetOrderByIdQuery,
 } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { intlFormat } from '../lib/utils';
@@ -32,7 +33,7 @@ const NewOrder = (props: Props) => {
     const [order, setOrder] = useLocalStorage<Order | null>('myOrder', null);
     const [_change, setChange] = useState(-21);
     const [isOpen, setIsOpen] = useState(false);
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState('');
     const { items, tableId } = currentOrder;
     let total = dinero({ amount: 0, currency: MXN });
     let currentTotal = dinero({ amount: 0, currency: MXN });
@@ -47,7 +48,7 @@ const NewOrder = (props: Props) => {
             total = add(total, amount);
         });
     }
-
+    const { refetch: orderRefetch } = useGetOrderByIdQuery({variables: {orderByIdId: order?._id || ''}});
     const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
     const [CreateOrderMutation] = useCreateOrderMutation();
     const [AddItemsToOrderMutation] = useAddItemsToOrderMutation();
@@ -63,25 +64,30 @@ const NewOrder = (props: Props) => {
         setChange(sum);
         setCurrentOrder(currentOrder);
     };
-    const handlePayement = () => {
-
-        if(currentOrder.items.length > 0){
-            setMessage("Aún quedan ordenes por hacer. ¿Deseas continuar con el pago?");
-            setIsOpen(true);            
+    const handlePayement = async () => {
+        if (currentOrder.items.length > 0) {
+            setMessage('Aún quedan ordenes por hacer. ¿Deseas continuar con el pago?');
+            setIsOpen(true);
         } else {
+            const {
+                data: {
+                    orderById: { items },
+                },
+            } = await orderRefetch({
+                orderByIdId: order?._id,
+            });
             let areServed = true;
-            order?.items.forEach(item => {
-                areServed = areServed && (item.status === Status.Served);
+            items.forEach((item) => {
+                areServed = areServed && item.status === Status.Served;
             });
 
-            if(!areServed){
-                setMessage("Aún faltan platos por servir. ¿Desea continuar con el pago?");
-                setIsOpen(true);                
+            if (!areServed) {
+                setMessage('Aún faltan platos por servir. ¿Desea continuar con el pago?');
+                setIsOpen(true);
+            } else {
+                router.push(`/ticketView?tableId=${tableId}`);
             }
-            
-
         }
-        
     };
     const handleCreateOrder = async () => {
         if (tableId !== '') {
@@ -228,7 +234,11 @@ const NewOrder = (props: Props) => {
                         <div className="flex flex-col items-center justify-center">
                             <p>{message}</p>
                             <div>
-                                <button onClick={()=> router.push(`/ticketView?tableId=${tableId}`) }>Sí</button>
+                                <button
+                                    onClick={() => router.push(`/ticketView?tableId=${tableId}`)}
+                                >
+                                    Sí
+                                </button>
                                 <button onClick={() => setIsOpen(false)}>No</button>
                             </div>
                         </div>
