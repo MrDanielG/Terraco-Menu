@@ -8,7 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 /* import { useLocalStorage } from '../hooks/useLocalStorage'; */
 interface Props {
     itemsQty?: string;
-    onClick?: MouseEventHandler<HTMLDivElement>;
+    onClick?: MouseEventHandler<HTMLDivElement> | any;
     canRedirect?: boolean;
 }
 
@@ -16,7 +16,7 @@ const Navbar = (props: Props) => {
     const router = useRouter();
     const { currentUser, logOut } = useAuth();
     const [open, setOpen] = useState(false);
-    
+
     /* const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
      *     tableId: "",
      *     items: [],

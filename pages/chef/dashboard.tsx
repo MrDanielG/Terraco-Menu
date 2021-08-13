@@ -14,7 +14,6 @@ const Dashboard = (props: Props) => {
     const { data: currentOrders } = useGetOrdersQuery();
     const [orders, setOrders] = useState<Order[]>([]);
     const { data } = useOrderChangesSubscription();
-    let orderArray: Order[] = [];
 
     const filterServedOrders = (orders: Order[]) => {
         const activeOrders = orders.filter((order) => {
@@ -26,9 +25,7 @@ const Dashboard = (props: Props) => {
     useEffect(() => {
         if (data?.orderChanges) {
             const order = data.orderChanges as Order;
-            console.log('pre', orders);
-            orderArray = orders.filter((currentOrder) => currentOrder._id !== order._id);
-            console.log('post', orderArray);
+            const orderArray = orders.filter((currentOrder) => currentOrder._id !== order._id);
             orderArray.push(order);
             setOrders(orderArray);
         }

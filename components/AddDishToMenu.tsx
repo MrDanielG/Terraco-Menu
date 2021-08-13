@@ -66,7 +66,7 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
             const availableDishes = getAvailableDishes(dataDishes?.dishes!, currentDishesId);
             setAvailableDishes(availableDishes);
         }
-    }, [dataDishes]);
+    }, [dataDishes, currentDishesId]);
 
     return (
         <div>

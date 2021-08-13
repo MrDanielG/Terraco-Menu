@@ -74,11 +74,11 @@ export default function Home() {
         }
     };
     const validateTable = async () => {
-        if(!tableId){
+        if (!tableId) {
             setIsOpen(true);
             return false;
         }
-        
+
         const { data } = await tableRefetch({
             tableByIdId: tableId?.toString() || '',
         });
@@ -101,12 +101,11 @@ export default function Home() {
     };
 
     const handleNavbarClick = async () => {
-        
         const validTable = await validateTable();
-        if(validTable && numItems !== ''){
+        if (validTable && numItems !== '') {
             router.push('/newOrder');
-        }                    
-    }
+        }
+    };
     const handleAddDish = async (dish: Dish) => {
         const validTable = await validateTable();
         if (!validTable) return;
@@ -125,7 +124,7 @@ export default function Home() {
         const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
         setNumItems(nItems);
         toast.success(
-            <Link href="/newOrder">
+            <Link href="/newOrder" passHref>
                 <span>{`Se agregó 1 ${dish.name}  a tu orden`}</span>
             </Link>,
             { className: 'underline cursor-pointer' }
@@ -134,7 +133,7 @@ export default function Home() {
 
     return (
         <div className="bg-gray-200 p-8 h-full">
-            <Navbar itemsQty={numItems}  onClick={() => handleNavbarClick() } />
+            <Navbar itemsQty={numItems} onClick={handleNavbarClick} />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
             <SearchBar />
