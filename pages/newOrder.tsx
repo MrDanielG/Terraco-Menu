@@ -168,6 +168,10 @@ const NewOrder = (props: Props) => {
                     </h1>
                 )}
 
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                    Desliza a la izquierda para eliminar un platillo
+                </p>
+
                 {springs.map(({ x }, i) => (
                     <animated.div
                         key={i}
