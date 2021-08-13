@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { HiPencil } from 'react-icons/hi';
+import { animated, useSprings } from 'react-spring';
+import { useDrag } from 'react-use-gesture';
 import AddDishToMenu from '../../../components/AddDishToMenu';
 import AddButton from '../../../components/buttons/AddButton';
 import BackButton from '../../../components/buttons/BackButton';
@@ -41,8 +43,16 @@ const MenuDetail = (props: Props) => {
             menuByIdId: id?.toString() || '',
         },
     });
-    const menu = data?.menuById || null;
     const currentDishesId = data?.menuById?.dishes.map((dish) => dish._id);
+
+    const [springs, api] = useSprings(data?.menuById?.dishes.length || 0, () => ({ x: 0 }));
+    const bind = useDrag(({ args: [index, id], active, movement: [mx], cancel, down }) => {
+        if (mx <= -200) {
+            console.log(index, id);
+            cancel();
+        }
+        api.start((i) => i === index && { x: active ? mx : 0, immediate: active });
+    });
 
     return (
         <>
@@ -50,30 +60,38 @@ const MenuDetail = (props: Props) => {
                 <Navbar />
                 <BackButton text="Inicio" pathNameOnBack="/chef" />
                 <div className="flex items-center">
-                    <h1 className="font-semibold text-3xl text-brown">{menu?.title}</h1>
+                    <h1 className="font-semibold text-3xl text-brown">{data?.menuById?.title}</h1>
                     <button>
                         <HiPencil className="text-3xl text-brown ml-2" />
                     </button>
                 </div>
                 <p className="text-gray-500 mt-1">
                     Status:{' '}
-                    <span className={menu?.isActive ? 'text-mygreen' : 'text-red-600'}>
-                        {menu?.isActive ? 'Activo' : 'Inactivo'}
+                    <span className={data?.menuById?.isActive ? 'text-mygreen' : 'text-red-600'}>
+                        {data?.menuById?.isActive ? 'Activo' : 'Inactivo'}
                     </span>
                 </p>
-                <p className="text-gray-500 mt-2">{menu?.description}</p>
+                <p className="text-gray-500 mt-2">{data?.menuById?.description}</p>
 
-                {menu?.dishes.map((dish) => (
-                    <ParentCard url_img={dish.url_img?.toString()} key={dish._id}>
-                        <CardInfo>
-                            <CardInfo.Title>
-                                <span>{dish.name}</span>
-                            </CardInfo.Title>
-                            <CardInfo.Footer>
-                                <span>{intlFormat(dish.price, 'es-MX')}</span>
-                            </CardInfo.Footer>
-                        </CardInfo>
-                    </ParentCard>
+                {springs.map(({ x }, i) => (
+                    <animated.div
+                        key={i}
+                        {...bind(i, data?.menuById?.dishes[i]._id)}
+                        style={{ x, touchAction: 'pan-y' }}
+                    >
+                        <ParentCard url_img={data?.menuById?.dishes[i].url_img?.toString()}>
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{data?.menuById?.dishes[i].name}</span>
+                                </CardInfo.Title>
+                                <CardInfo.Footer>
+                                    <span>
+                                        {intlFormat(data?.menuById?.dishes[0]?.price, 'es-MX')}
+                                    </span>
+                                </CardInfo.Footer>
+                            </CardInfo>
+                        </ParentCard>
+                    </animated.div>
                 ))}
 
                 <AddButton onClick={() => setIsOpen(true)} />
@@ -89,7 +107,7 @@ const MenuDetail = (props: Props) => {
                 }}
                 closeBtnTitle="Cerrar"
             >
-                <AddDishToMenu menuId={menu?._id!} currentDishesId={currentDishesId!} />
+                <AddDishToMenu menuId={data?.menuById?._id!} currentDishesId={currentDishesId!} />
             </Modal>
         </>
     );

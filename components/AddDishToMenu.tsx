@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { HiPlusSm } from 'react-icons/hi';
 import { Dish, useAddDishToMenuMutation, useGetDishesQuery } from '../graphql/graphql';
@@ -34,17 +34,8 @@ interface Props {
 }
 
 const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
-    const getAvailableDishes = (allDishes: Dish[], dishesIdToFilter: string[]): Dish[] => {
-        const availableDishes = allDishes.filter((dish) => {
-            return !dishesIdToFilter.includes(dish._id);
-        });
-        return availableDishes;
-    };
-
     const { data: dataDishes } = useGetDishesQuery();
-    const [availableDishes, setAvailableDishes] = useState(() =>
-        getAvailableDishes(dataDishes?.dishes!, currentDishesId)
-    );
+    const [availableDishes, setAvailableDishes] = useState<Dish[]>();
     const [addDishToMenuMutation] = useAddDishToMenuMutation();
 
     const addPlatilloToMenu = async (dishId: string) => {
@@ -62,6 +53,20 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
             toast.error('Error al Agregar Platillo');
         }
     };
+
+    const getAvailableDishes = (allDishes: Dish[], dishesIdToFilter: string[]): Dish[] => {
+        const availableDishes = allDishes.filter((dish) => {
+            return !dishesIdToFilter.includes(dish._id);
+        });
+        return availableDishes;
+    };
+
+    useEffect(() => {
+        if (dataDishes) {
+            const availableDishes = getAvailableDishes(dataDishes?.dishes!, currentDishesId);
+            setAvailableDishes(availableDishes);
+        }
+    }, [dataDishes]);
 
     return (
         <div>

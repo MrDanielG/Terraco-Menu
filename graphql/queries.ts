@@ -106,6 +106,29 @@ export const GET_MENU_BY_ID = gql`
     }
 `;
 
+export const GET_ORDERS = gql`
+    query GetOrders {
+        orders {
+            _id
+            orderNumber
+            table {
+                name
+                tableNumber
+            }
+            items {
+                _id
+                dish {
+                    name
+                }
+                quantity
+                status
+            }
+            start_time
+            end_time
+        }
+    }
+`;
+
 export const GET_ORDER_BY_ID = gql`
     query getOrderById($orderByIdId: String!) {
         orderById(id: $orderByIdId) {
