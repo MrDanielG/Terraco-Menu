@@ -325,8 +325,8 @@ export type Query = {
   dishById?: Maybe<Dish>;
   serchDishes?: Maybe<Array<Dish>>;
   tables: Array<Table>;
-  tableById: Table;
-  tableByIdNumber: Table;
+  tableById?: Maybe<Table>;
+  tableByIdNumber?: Maybe<Table>;
   orders: Array<Order>;
   orderById: Order;
   orderItems: Array<OrderItem>;
@@ -365,7 +365,7 @@ export type QuerySerchDishesArgs = {
 
 
 export type QueryTableByIdArgs = {
-  id: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
 };
 
 
@@ -587,7 +587,7 @@ export type GetTableByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTableByIdQuery = { __typename?: 'Query', tableById: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
+export type GetTableByIdQuery = { __typename?: 'Query', tableById?: Maybe<{ __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }> };
 
 export type GetDishByIdQueryVariables = Exact<{
   dishByIdId: Scalars['String'];

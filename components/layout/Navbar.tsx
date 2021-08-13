@@ -2,26 +2,28 @@ import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment, useState } from 'react';
+import { Fragment, MouseEventHandler, useState } from 'react';
 import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
 import { useAuth } from '../../contexts/AuthContext';
 /* import { useLocalStorage } from '../hooks/useLocalStorage'; */
 interface Props {
     itemsQty?: string;
+    onClick?: MouseEventHandler<HTMLDivElement>;
+    canRedirect?: boolean;
 }
 
 const Navbar = (props: Props) => {
     const router = useRouter();
     const { currentUser, logOut } = useAuth();
     const [open, setOpen] = useState(false);
-
+    
     /* const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
      *     tableId: "",
      *     items: [],
      * });
      * const items = currentOrder.items; */
     const handleMyOrderClick = () => {
-        if (props.itemsQty !== null) {
+        if (props.itemsQty !== null && props.canRedirect) {
             router.push('/newOrder');
         }
     };
@@ -57,7 +59,7 @@ const Navbar = (props: Props) => {
                 {currentUser === null && (
                     <div
                         className="rounded-lg bg-orange flex gap-2 px-2 py-1 max-w-sm cursor-pointer"
-                        onClick={handleMyOrderClick}
+                        onClick={props.onClick || handleMyOrderClick}
                     >
                         <HiOutlineBookOpen className="text-2xl text-white" />
                         <p className="text-white">{props?.itemsQty || ""}</p>

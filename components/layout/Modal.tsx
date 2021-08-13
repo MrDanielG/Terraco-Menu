@@ -6,7 +6,7 @@ interface Props {
     children: any;
     title: string;
     isOpen: boolean;
-    closeBtnTitle: string;
+    closeBtnTitle?: string;
     closeModal: () => any;
     onCloseModal: () => any;
 }
@@ -50,7 +50,9 @@ const Modal = ({ title, isOpen, closeBtnTitle, closeModal, onCloseModal, childre
                             </Dialog.Title>
                             {children}
                             <div className="mt-4">
-                                <BigButton onClick={closeModal} text={closeBtnTitle} />
+                                {closeBtnTitle && (
+                                    <BigButton onClick={closeModal} text={closeBtnTitle} />
+                                )}
                             </div>
                         </div>
                     </Transition.Child>
