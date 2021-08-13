@@ -4,11 +4,11 @@ interface ICategoryData {
     action?: () => any;
 }
 
-interface CurrentOrderItem<Tdish=unknown> {
-  qty: number;
-  dish: Tdish;
+interface CurrentOrderItem<Tdish = unknown> {
+    qty: number;
+    dish: Tdish;
 }
-interface CurrentOrder<Tdish=unknown> {
+interface CurrentOrder<Tdish = unknown> {
     tableId: string;
     items: CurrentOrderItem<Tdish>[];
 }

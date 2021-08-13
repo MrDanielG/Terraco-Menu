@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
+import { animated } from 'react-spring';
 import BackButton from '../components/buttons/BackButton';
 import BigButton from '../components/buttons/BigButton';
 import CardActions from '../components/cards/parent-card/CardActions';
@@ -21,6 +22,7 @@ import {
     useGetOrderByIdQuery,
 } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSwipe } from '../hooks/useSwipe';
 import { intlFormat } from '../lib/utils';
 
 interface Props {}
@@ -34,6 +36,7 @@ const NewOrder = (props: Props) => {
     const [_change, setChange] = useState(-21);
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState('');
+
     const { items, tableId } = currentOrder;
     let total = dinero({ amount: 0, currency: MXN });
     let currentTotal = dinero({ amount: 0, currency: MXN });
@@ -48,13 +51,17 @@ const NewOrder = (props: Props) => {
             total = add(total, amount);
         });
     }
-    const { refetch: orderRefetch } = useGetOrderByIdQuery({variables: {orderByIdId: order?._id || ''}});
+    const { refetch: orderRefetch } = useGetOrderByIdQuery({
+        variables: { orderByIdId: order?._id || '' },
+    });
     const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
     const [CreateOrderMutation] = useCreateOrderMutation();
     const [AddItemsToOrderMutation] = useAddItemsToOrderMutation();
+
     const nPending = `${currentOrder ? currentOrder.items.length : ''}`;
     const nOrder = `${order ? order.items.length : ''}`;
     const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
+
     const handleQuantityChange = (idx: number, value: number) => {
         const { qty } = currentOrder.items[idx];
         const sum = qty + value;
@@ -138,6 +145,17 @@ const NewOrder = (props: Props) => {
             }
         }
     };
+    const handleDeleteDish = (id?: string) => {
+        const newItems = currentOrder.items.filter((item) => item.dish._id !== id);
+        const newOrder: CurrentOrder<Dish> = {
+            tableId: currentOrder.tableId,
+            items: newItems,
+        };
+        setCurrentOrder(newOrder);
+        toast.success('Platillo Eliminado de la Orden');
+    };
+
+    const [springs, bind] = useSwipe(currentOrder.items.length, handleDeleteDish);
 
     return (
         <>
@@ -150,48 +168,56 @@ const NewOrder = (props: Props) => {
                     </h1>
                 )}
 
-                <div>
-                    {items &&
-                        items.map((item, idx) => (
-                            <ParentCard url_img={item.dish?.url_img?.toString()} key={idx + 1}>
-                                <CardInfo>
-                                    <CardInfo.Title>
-                                        <span>{item.dish.name}</span>
-                                    </CardInfo.Title>
-                                    <CardInfo.Body>
-                                        <span>
-                                            Importe:{' '}
-                                            {intlFormat(
-                                                multiply(
-                                                    dinero(item.dish.price),
-                                                    item.qty
-                                                ).toJSON(),
-                                                'es-MX'
-                                            )}
-                                        </span>
-                                    </CardInfo.Body>
-                                    <CardInfo.Footer>
-                                        <span>Cant: {item.qty}</span>
-                                    </CardInfo.Footer>
-                                </CardInfo>
-                                <CardActions>
-                                    <CardActions.Top
-                                        icon={<HiPlusSm />}
-                                        onClick={() => handleQuantityChange(idx, 1)}
-                                    />
-                                    <CardActions.Bottom
-                                        icon={<HiMinusSm />}
-                                        onClick={() => handleQuantityChange(idx, -1)}
-                                    />
-                                </CardActions>
-                            </ParentCard>
-                        ))}
-                </div>
+                {springs.map(({ x }, i) => (
+                    <animated.div
+                        key={i}
+                        {...bind(i, currentOrder.items[i].dish._id)}
+                        style={{ x, touchAction: 'pan-y' }}
+                    >
+                        <ParentCard
+                            url_img={currentOrder.items[i].dish?.url_img?.toString()}
+                            key={i + 1}
+                        >
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{currentOrder.items[i].dish.name}</span>
+                                </CardInfo.Title>
+                                <CardInfo.Body>
+                                    <span>
+                                        Importe:{' '}
+                                        {intlFormat(
+                                            multiply(
+                                                dinero(currentOrder.items[i].dish.price),
+                                                currentOrder.items[i].qty
+                                            ).toJSON(),
+                                            'es-MX'
+                                        )}
+                                    </span>
+                                </CardInfo.Body>
+                                <CardInfo.Footer>
+                                    <span>Cant: {currentOrder.items[i].qty}</span>
+                                </CardInfo.Footer>
+                            </CardInfo>
+                            <CardActions>
+                                <CardActions.Top
+                                    icon={<HiPlusSm />}
+                                    onClick={() => handleQuantityChange(i, 1)}
+                                />
+                                <CardActions.Bottom
+                                    icon={<HiMinusSm />}
+                                    onClick={() => handleQuantityChange(i, -1)}
+                                />
+                            </CardActions>
+                        </ParentCard>
+                    </animated.div>
+                ))}
+
                 {order && (
                     <h1 className="font-semibold text-3xl text-brown">
                         {order.items?.length} Platillos pedidos
                     </h1>
                 )}
+
                 <>
                     {order &&
                         order.items.map((item, idx) => (
@@ -244,6 +270,7 @@ const NewOrder = (props: Props) => {
                         </div>
                     </Modal>
                 </>
+
                 <div>
                     {items.length > 0 && (
                         <BigButton
