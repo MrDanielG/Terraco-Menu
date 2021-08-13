@@ -9,13 +9,16 @@ import BigButton from '../components/buttons/BigButton';
 import CardActions from '../components/cards/parent-card/CardActions';
 import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
+import Modal from '../components/layout/Modal';
 import Navbar from '../components/layout/Navbar';
 import {
     Dish,
     Order,
+    Status,
     useAddItemsToOrderMutation,
     useCreateOrderItemsMutation,
     useCreateOrderMutation,
+    useGetOrderByIdQuery,
 } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { intlFormat } from '../lib/utils';
@@ -29,7 +32,8 @@ const NewOrder = (props: Props) => {
     });
     const [order, setOrder] = useLocalStorage<Order | null>('myOrder', null);
     const [_change, setChange] = useState(-21);
-
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState('');
     const { items, tableId } = currentOrder;
     let total = dinero({ amount: 0, currency: MXN });
     let currentTotal = dinero({ amount: 0, currency: MXN });
@@ -44,7 +48,7 @@ const NewOrder = (props: Props) => {
             total = add(total, amount);
         });
     }
-
+    const { refetch: orderRefetch } = useGetOrderByIdQuery({variables: {orderByIdId: order?._id || ''}});
     const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
     const [CreateOrderMutation] = useCreateOrderMutation();
     const [AddItemsToOrderMutation] = useAddItemsToOrderMutation();
@@ -60,7 +64,31 @@ const NewOrder = (props: Props) => {
         setChange(sum);
         setCurrentOrder(currentOrder);
     };
-    const handlePayement = () => {};
+    const handlePayement = async () => {
+        if (currentOrder.items.length > 0) {
+            setMessage('Aún quedan ordenes por hacer. ¿Deseas continuar con el pago?');
+            setIsOpen(true);
+        } else {
+            const {
+                data: {
+                    orderById: { items },
+                },
+            } = await orderRefetch({
+                orderByIdId: order?._id,
+            });
+            let areServed = true;
+            items.forEach((item) => {
+                areServed = areServed && item.status === Status.Served;
+            });
+
+            if (!areServed) {
+                setMessage('Aún faltan platos por servir. ¿Deseas continuar con el pago?');
+                setIsOpen(true);
+            } else {
+                router.push(`/ticketView?tableId=${tableId}`);
+            }
+        }
+    };
     const handleCreateOrder = async () => {
         if (tableId !== '') {
             const items = currentOrder.items.map((item) => {
@@ -196,6 +224,25 @@ const NewOrder = (props: Props) => {
                             <span>{intlFormat(total.toJSON(), 'es-MX')}</span>
                         </p>
                     )}
+                    <Modal
+                        title="Advertencia"
+                        isOpen={isOpen}
+                        closeModal={() => setIsOpen(false)}
+                        onCloseModal={() => setIsOpen(false)}
+                        closeBtnTitle=""
+                    >
+                        <div className="flex flex-col items-center justify-center">
+                            <p>{message}</p>
+                            <div>
+                                <button
+                                    onClick={() => router.push(`/ticketView?tableId=${tableId}`)}
+                                >
+                                    Sí
+                                </button>
+                                <button onClick={() => setIsOpen(false)}>No</button>
+                            </div>
+                        </div>
+                    </Modal>
                 </>
                 <div>
                     {items.length > 0 && (

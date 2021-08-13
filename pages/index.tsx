@@ -7,6 +7,7 @@ import CardActions from '../components/cards/parent-card/CardActions';
 import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
 import CategoryBar from '../components/layout/CategoryBar';
+import Modal from '../components/layout/Modal';
 import Navbar from '../components/layout/Navbar';
 import SearchBar from '../components/layout/SearchBar';
 import { Dish, Order, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
@@ -39,6 +40,7 @@ export default function Home() {
     const { locale } = router;
     const { tableId } = router.query;
     const t = locale === 'es-MX' ? esMX : enUS;
+    const [isOpen, setIsOpen] = useState(false);
     const { data } = useGetMenusQuery();
 
     const menus = data ? data.menus.filter((menu) => menu.isActive) : [];
@@ -47,11 +49,11 @@ export default function Home() {
         items: [],
     });
     const [order, _setOrder] = useLocalStorage<Order | null>('myOrder', null);
-    const tableData = useGetTableByIdQuery({
-        variables: { tableByIdId: tableId?.toString() || '' },
+
+    const { refetch: tableRefetch } = useGetTableByIdQuery({
+        variables: { tableByIdId: tableId?.toString() || '610718dddf48fb045b10da03' },
     });
 
-    const isTableEnabled = tableData.data?.tableById.enabled || false;
     const nPending = `${currentOrder ? currentOrder.items.length : ''}`;
     const nOrder = `${order ? order.items.length : ''}`;
     const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
@@ -71,8 +73,44 @@ export default function Home() {
                 break;
         }
     };
+    const validateTable = async () => {
+        if(!tableId){
+            setIsOpen(true);
+            return false;
+        }
+        
+        const { data } = await tableRefetch({
+            tableByIdId: tableId?.toString() || '',
+        });
 
-    const handleAddDish = (dish: Dish) => {
+        const isTableEnabled = data.tableById?.enabled || false;
+        if (!isTableEnabled || tableId === '') {
+            setIsOpen(true);
+            return false;
+        }
+        return true;
+    };
+
+    const handleDishDetails = async (path: string) => {
+        const validTable = await validateTable();
+        if (!validTable) return;
+
+        if (path && path !== '') {
+            router.push(path);
+        }
+    };
+
+    const handleNavbarClick = async () => {
+        
+        const validTable = await validateTable();
+        if(validTable && numItems !== ''){
+            router.push('/newOrder');
+        }                    
+    }
+    const handleAddDish = async (dish: Dish) => {
+        const validTable = await validateTable();
+        if (!validTable) return;
+
         const idx = currentOrder.items.findIndex((value) => value.dish._id === dish._id);
         currentOrder.tableId = tableId?.toString() || '';
 
@@ -93,19 +131,10 @@ export default function Home() {
             { className: 'underline cursor-pointer' }
         );
     };
-    if (!isTableEnabled) {
-        return (
-            <div className="bg-gray-200 p-8 h-screen flex">
-                <h1 className="font-semibold text-2xl text-brown">
-                    Por favor soicite que activen su mesa o acuda a nuestra sucursal para ordenar.
-                </h1>
-            </div>
-        );
-    }
 
     return (
         <div className="bg-gray-200 p-8 h-full">
-            <Navbar itemsQty={numItems} />
+            <Navbar itemsQty={numItems}  onClick={() => handleNavbarClick() } />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
             <SearchBar />
@@ -124,15 +153,15 @@ export default function Home() {
                                         <ParentCard
                                             url_img={dish.url_img?.toString()}
                                             onClick={() =>
-                                                router.push(
-                                                    `/dish/id=${dish._id}?tableId=${tableId}`
+                                                handleDishDetails(
+                                                    `/dish/${dish._id}?tableId=${tableId}`
                                                 )
                                             }
                                             key={dish._id}
                                         >
                                             <CardInfo
                                                 onClick={() =>
-                                                    router.push(
+                                                    handleDishDetails(
                                                         `/dish/${dish._id}?tableId=${tableId}`
                                                     )
                                                 }
@@ -158,6 +187,21 @@ export default function Home() {
                             )
                     )}
             </div>
+            <Modal
+                title=""
+                isOpen={isOpen}
+                closeBtnTitle="Aceptar"
+                onCloseModal={() => {}}
+                closeModal={() => setIsOpen(false)}
+            >
+                <div className="text-center">
+                    {!tableId || tableId === '' ? (
+                        <p>Accede desde el códgio QR que está en tu mesa para poder ordenar.</p>
+                    ) : (
+                        <p>Solicita que activen tu mesa para poder ordenar.</p>
+                    )}
+                </div>
+            </Modal>
         </div>
     );
 }

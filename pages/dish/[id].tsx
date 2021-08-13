@@ -66,7 +66,7 @@ const DishDetail = (props: Props) => {
                     <div className="flex justify-between items-center z-10 relative">
                         <div
                             className="flex items-center text-white gap-2 cursor-pointer"
-                            onClick={() => router.push('/?tableId=' + order?.table._id)}
+                            onClick={() => router.push('/?tableId=' + tableId)}
                         >
                             <HiArrowLeft /> Detalles
                         </div>

@@ -1,35 +1,42 @@
+import { MXN } from '@dinero.js/currencies';
+import { dinero, multiply, subtract } from 'dinero.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import BackButton from '../components/buttons/BackButton';
+import BigButton from '../components/buttons/BigButton';
 import {
     Dish,
     Order,
     Ticket,
     useGenerateTicketMutation,
-    useGetOrderByIdQuery,
+    useGetOrderByIdQuery
 } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { intlFormat } from '../lib/utils';
-import { dinero, multiply, subtract } from 'dinero.js';
-import { MXN } from '@dinero.js/currencies';
-import BigButton from '../components/buttons/BigButton';
 
 interface Props {}
 const TicketView = (props: Props) => {
     const router = useRouter();
+    const {tableId } = router.query;
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
         tableId: '',
         items: [],
     });
     const [order, setOrder] = useLocalStorage<Order | null>('myOrder', null);
+
     const orderRes = useGetOrderByIdQuery({
         variables: { orderByIdId: order?._id || '' },
     });
-
+    
     const [GenerateTicket] = useGenerateTicketMutation();
 
     const generateTicket = async () => {
+        if(!order) {
+            router.push(`/?tableId=${tableId}`);
+        }
         try {
+
             const ticket = await GenerateTicket({
                 variables: {
                     orderId: orderRes.data?.orderById._id || order?._id || '',
@@ -61,16 +68,19 @@ const TicketView = (props: Props) => {
             generateTicket();
         }
     }, []);
+    
     let baseImp = dinero({ amount: 0, currency: MXN });
     let vatAmount = dinero({ amount: 0, currency: MXN });
     if (ticket) {
-        vatAmount = multiply(dinero(ticket.total), 0.01 * ticket.vat);
+        console.log(ticket);
+        vatAmount = multiply(dinero(ticket.total), {amount: ticket.vat, scale: 2});
         baseImp = subtract(dinero(ticket.total), vatAmount);
     }
     return (
         <div>
+            <BackButton text="Mi orden" pathNameOnBack="/newOrder"/>
             {ticket && (
-                <div>
+                <div>                    
                     <h1>Restarurante Terraco</h1>
                     <div>
                         <p>Tel. 525 9263 939</p>
@@ -96,8 +106,8 @@ const TicketView = (props: Props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {ticket.items.map((item) => (
-                                <tr>
+                            {ticket.items.map((item, idx) => (
+                                <tr key={idx}>
                                     <td>{item.quantity}</td>
                                     <td>{item.dishName}</td>
                                     <td>{intlFormat(item.dishPrice, 'es-MX')}</td>
