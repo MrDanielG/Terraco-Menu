@@ -568,6 +568,14 @@ export type GenerateTicketMutationVariables = Exact<{
 
 export type GenerateTicketMutation = { __typename?: 'Mutation', generateTicket: { __typename?: 'Ticket', _id: string, orderId: string, ticketNumber: number, timestamp: any, tableName: string, total: any, paymentMethod: string, vat: number, items: Array<{ __typename?: 'TicketItem', _id: string, quantity: number, dishName: string, dishPrice: any, amount: any }> } };
 
+export type RemoveDishFromMenuMutationVariables = Exact<{
+  removeDishFromMenuIdDish: Scalars['String'];
+  removeDishFromMenuIdMenu: Scalars['String'];
+}>;
+
+
+export type RemoveDishFromMenuMutation = { __typename?: 'Mutation', removeDishFromMenu: { __typename?: 'Menu', title: string, _id: string, dishes: Array<{ __typename?: 'Dish', name: string, _id: string }> } };
+
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
 }>;
@@ -1095,6 +1103,48 @@ export function useGenerateTicketMutation(baseOptions?: Apollo.MutationHookOptio
 export type GenerateTicketMutationHookResult = ReturnType<typeof useGenerateTicketMutation>;
 export type GenerateTicketMutationResult = Apollo.MutationResult<GenerateTicketMutation>;
 export type GenerateTicketMutationOptions = Apollo.BaseMutationOptions<GenerateTicketMutation, GenerateTicketMutationVariables>;
+export const RemoveDishFromMenuDocument = gql`
+    mutation RemoveDishFromMenu($removeDishFromMenuIdDish: String!, $removeDishFromMenuIdMenu: String!) {
+  removeDishFromMenu(
+    idDish: $removeDishFromMenuIdDish
+    idMenu: $removeDishFromMenuIdMenu
+  ) {
+    title
+    dishes {
+      name
+      _id
+    }
+    _id
+  }
+}
+    `;
+export type RemoveDishFromMenuMutationFn = Apollo.MutationFunction<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>;
+
+/**
+ * __useRemoveDishFromMenuMutation__
+ *
+ * To run a mutation, you first call `useRemoveDishFromMenuMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveDishFromMenuMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeDishFromMenuMutation, { data, loading, error }] = useRemoveDishFromMenuMutation({
+ *   variables: {
+ *      removeDishFromMenuIdDish: // value for 'removeDishFromMenuIdDish'
+ *      removeDishFromMenuIdMenu: // value for 'removeDishFromMenuIdMenu'
+ *   },
+ * });
+ */
+export function useRemoveDishFromMenuMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>(RemoveDishFromMenuDocument, options);
+      }
+export type RemoveDishFromMenuMutationHookResult = ReturnType<typeof useRemoveDishFromMenuMutation>;
+export type RemoveDishFromMenuMutationResult = Apollo.MutationResult<RemoveDishFromMenuMutation>;
+export type RemoveDishFromMenuMutationOptions = Apollo.BaseMutationOptions<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {

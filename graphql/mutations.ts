@@ -185,3 +185,19 @@ export const GENERATE_TICKET = gql`
         }
     }
 `;
+
+export const REMOVE_DISH_FROM_MENU = gql`
+    mutation RemoveDishFromMenu(
+        $removeDishFromMenuIdDish: String!
+        $removeDishFromMenuIdMenu: String!
+    ) {
+        removeDishFromMenu(idDish: $removeDishFromMenuIdDish, idMenu: $removeDishFromMenuIdMenu) {
+            title
+            dishes {
+                name
+                _id
+            }
+            _id
+        }
+    }
+`;

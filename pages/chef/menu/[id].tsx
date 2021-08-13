@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { HiPencil } from 'react-icons/hi';
-import { animated, useSprings } from 'react-spring';
-import { useDrag } from 'react-use-gesture';
+import { animated } from 'react-spring';
 import AddDishToMenu from '../../../components/AddDishToMenu';
 import AddButton from '../../../components/buttons/AddButton';
 import BackButton from '../../../components/buttons/BackButton';
@@ -10,7 +10,8 @@ import CardInfo from '../../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../../components/cards/parent-card/ParentCard';
 import Modal from '../../../components/layout/Modal';
 import Navbar from '../../../components/layout/Navbar';
-import { useGetMenyByIdQuery } from '../../../graphql/graphql';
+import { useGetMenyByIdQuery, useRemoveDishFromMenuMutation } from '../../../graphql/graphql';
+import { useSwipe } from '../../../hooks/useSwipe';
 import { intlFormat } from '../../../lib/utils';
 
 interface Props {}
@@ -35,24 +36,34 @@ const categoryData = [
 ];
 
 const MenuDetail = (props: Props) => {
-    const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
-    const { id } = router.query;
+    const { id: menuId } = router.query;
+    const [isOpen, setIsOpen] = useState(false);
+    const [removeDishFromMenuMutation, { loading, error }] = useRemoveDishFromMenuMutation();
     const { data, refetch } = useGetMenyByIdQuery({
         variables: {
-            menuByIdId: id?.toString() || '',
+            menuByIdId: menuId?.toString() || '',
         },
     });
     const currentDishesId = data?.menuById?.dishes.map((dish) => dish._id);
 
-    const [springs, api] = useSprings(data?.menuById?.dishes.length || 0, () => ({ x: 0 }));
-    const bind = useDrag(({ args: [index, id], active, movement: [mx], cancel, down }) => {
-        if (mx <= -200) {
-            console.log(index, id);
-            cancel();
+    const onSwipe = async (id?: string) => {
+        try {
+            const res = await removeDishFromMenuMutation({
+                variables: {
+                    removeDishFromMenuIdDish: id || '',
+                    removeDishFromMenuIdMenu: menuId?.toString() || '',
+                },
+            });
+            console.log(res);
+            toast.success('Platillo Eliminado de Menú');
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al Eliminar Platillo');
         }
-        api.start((i) => i === index && { x: active ? mx : 0, immediate: active });
-    });
+    };
+
+    const [springs, bind] = useSwipe(data?.menuById?.dishes.length || 0, onSwipe);
 
     return (
         <>
