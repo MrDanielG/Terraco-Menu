@@ -34,7 +34,7 @@ interface Props {
 }
 
 const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
-    const { data: dataDishes } = useGetDishesQuery();
+    const { data: dataDishes, refetch: refetchDishes } = useGetDishesQuery();
     const [availableDishes, setAvailableDishes] = useState<Dish[]>();
     const [addDishToMenuMutation] = useAddDishToMenuMutation();
 
@@ -62,19 +62,23 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
     };
 
     useEffect(() => {
-        if (dataDishes) {
-            const availableDishes = getAvailableDishes(dataDishes?.dishes!, currentDishesId);
+        const filter = async () => {
+            const { data } = await refetchDishes();
+            const availableDishes = getAvailableDishes(data?.dishes || [], currentDishesId);
             setAvailableDishes(availableDishes);
-        }
+        };
+        filter();
     }, [dataDishes, currentDishesId]);
 
     return (
-        <div>
+        <div className="h-screen">
             <SearchBar />
 
             <CategoryBar data={categoryData} />
 
             <h2 className="mt-10 mb-6 text-brown text-lg">Agregar a Menu</h2>
+
+            {!availableDishes || (availableDishes?.length === 0 && <h2>Cargando...</h2>)}
 
             {availableDishes?.map((dish) => (
                 <ParentCard

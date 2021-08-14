@@ -89,7 +89,7 @@ export const GET_DISH_BY_ID = gql`
 `;
 
 export const GET_MENU_BY_ID = gql`
-    query getMenyById($menuByIdId: String!) {
+    query getMenuById($menuByIdId: String!) {
         menuById(id: $menuByIdId) {
             _id
             title

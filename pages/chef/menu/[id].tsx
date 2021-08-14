@@ -10,7 +10,7 @@ import CardInfo from '../../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../../components/cards/parent-card/ParentCard';
 import Modal from '../../../components/layout/Modal';
 import Navbar from '../../../components/layout/Navbar';
-import { useGetMenyByIdQuery, useRemoveDishFromMenuMutation } from '../../../graphql/graphql';
+import { useGetMenuByIdQuery, useRemoveDishFromMenuMutation } from '../../../graphql/graphql';
 import { useSwipe } from '../../../hooks/useSwipe';
 import { intlFormat } from '../../../lib/utils';
 
@@ -40,7 +40,7 @@ const MenuDetail = (props: Props) => {
     const { id: menuId } = router.query;
     const [isOpen, setIsOpen] = useState(false);
     const [removeDishFromMenuMutation] = useRemoveDishFromMenuMutation();
-    const { data, refetch } = useGetMenyByIdQuery({
+    const { data, refetch } = useGetMenuByIdQuery({
         variables: {
             menuByIdId: menuId?.toString() || '',
         },

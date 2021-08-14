@@ -612,12 +612,12 @@ export type GetDishByIdQueryVariables = Exact<{
 
 export type GetDishByIdQuery = { __typename?: 'Query', dishById?: Maybe<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> };
 
-export type GetMenyByIdQueryVariables = Exact<{
+export type GetMenuByIdQueryVariables = Exact<{
   menuByIdId: Scalars['String'];
 }>;
 
 
-export type GetMenyByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
+export type GetMenuByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
 
 export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1394,8 +1394,8 @@ export function useGetDishByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetDishByIdQueryHookResult = ReturnType<typeof useGetDishByIdQuery>;
 export type GetDishByIdLazyQueryHookResult = ReturnType<typeof useGetDishByIdLazyQuery>;
 export type GetDishByIdQueryResult = Apollo.QueryResult<GetDishByIdQuery, GetDishByIdQueryVariables>;
-export const GetMenyByIdDocument = gql`
-    query getMenyById($menuByIdId: String!) {
+export const GetMenuByIdDocument = gql`
+    query getMenuById($menuByIdId: String!) {
   menuById(id: $menuByIdId) {
     _id
     title
@@ -1413,32 +1413,32 @@ export const GetMenyByIdDocument = gql`
     `;
 
 /**
- * __useGetMenyByIdQuery__
+ * __useGetMenuByIdQuery__
  *
- * To run a query within a React component, call `useGetMenyByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMenyByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetMenuByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenuByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetMenyByIdQuery({
+ * const { data, loading, error } = useGetMenuByIdQuery({
  *   variables: {
  *      menuByIdId: // value for 'menuByIdId'
  *   },
  * });
  */
-export function useGetMenyByIdQuery(baseOptions: Apollo.QueryHookOptions<GetMenyByIdQuery, GetMenyByIdQueryVariables>) {
+export function useGetMenuByIdQuery(baseOptions: Apollo.QueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetMenyByIdQuery, GetMenyByIdQueryVariables>(GetMenyByIdDocument, options);
+        return Apollo.useQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
       }
-export function useGetMenyByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenyByIdQuery, GetMenyByIdQueryVariables>) {
+export function useGetMenuByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetMenyByIdQuery, GetMenyByIdQueryVariables>(GetMenyByIdDocument, options);
+          return Apollo.useLazyQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
         }
-export type GetMenyByIdQueryHookResult = ReturnType<typeof useGetMenyByIdQuery>;
-export type GetMenyByIdLazyQueryHookResult = ReturnType<typeof useGetMenyByIdLazyQuery>;
-export type GetMenyByIdQueryResult = Apollo.QueryResult<GetMenyByIdQuery, GetMenyByIdQueryVariables>;
+export type GetMenuByIdQueryHookResult = ReturnType<typeof useGetMenuByIdQuery>;
+export type GetMenuByIdLazyQueryHookResult = ReturnType<typeof useGetMenuByIdLazyQuery>;
+export type GetMenuByIdQueryResult = Apollo.QueryResult<GetMenuByIdQuery, GetMenuByIdQueryVariables>;
 export const GetOrdersDocument = gql`
     query GetOrders {
   orders {
