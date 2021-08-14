@@ -68,7 +68,7 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
             setAvailableDishes(availableDishes);
         };
         filter();
-    }, [dataDishes, currentDishesId]);
+    }, [dataDishes, refetchDishes,  currentDishesId]);
 
     return (
         <div className="h-screen">
