@@ -8,7 +8,7 @@ interface Props {
 const CardInfoTitle = (props: Props) => {
     return (
         <h1
-            className="block text-md leading-tight text-black hover:underline"
+            className="block text-md leading-tight text-black hover:underline w-0 sm:w-full"
             onClick={props.onClick}
         >
             {props.children}
@@ -38,7 +38,7 @@ const CardInfo: React.FC<Props> & {
     Footer: typeof CardInfoFooter;
 } = (props: Props) => {
     return (
-        <div onClick={props.onClick} className="p-5 w-full flex flex-col justify-center">
+        <div onClick={props.onClick} className="p-5 w-full flex flex-col">
             {props.children}
         </div>
     );

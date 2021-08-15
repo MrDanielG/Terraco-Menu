@@ -8,8 +8,8 @@ import AddButton from '../../../components/buttons/AddButton';
 import BackButton from '../../../components/buttons/BackButton';
 import CardInfo from '../../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../../components/cards/parent-card/ParentCard';
-import Modal from '../../../components/layout/Modal';
 import Navbar from '../../../components/layout/Navbar';
+import Modal from '../../../components/modals/Modal';
 import { useGetMenuByIdQuery, useRemoveDishFromMenuMutation } from '../../../graphql/graphql';
 import { useSwipe } from '../../../hooks/useSwipe';
 import { intlFormat } from '../../../lib/utils';
@@ -47,16 +47,15 @@ const MenuDetail = (props: Props) => {
     });
     const currentDishesId = data?.menuById?.dishes.map((dish) => dish._id);
 
-    const onSwipe = async (id?: string) => {
+    const handleDeleteDish = async (id: string) => {
         try {
-            const res = await removeDishFromMenuMutation({
+            await removeDishFromMenuMutation({
                 variables: {
                     removeDishFromMenuIdDish: id || '',
                     removeDishFromMenuIdMenu: menuId?.toString() || '',
                 },
             });
-            console.log(res);
-            refetch();
+            await refetch();
             toast.success('Platillo Eliminado de Menú');
         } catch (error) {
             console.error(error);
@@ -64,11 +63,11 @@ const MenuDetail = (props: Props) => {
         }
     };
 
-    const [springs, bind] = useSwipe(data?.menuById?.dishes.length || 0, onSwipe);
+    const [springs, bind] = useSwipe(data?.menuById?.dishes.length || 0, handleDeleteDish);
 
     return (
         <>
-            <div className="bg-gray-200 p-8 h-auto min-h-screen">
+            <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <BackButton text="Inicio" pathNameOnBack="/chef" />
                 <div className="flex items-center">

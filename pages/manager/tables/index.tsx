@@ -2,8 +2,8 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import AddButton from '../../../components/buttons/AddButton';
 import InfoTable from '../../../components/InfoTable';
-import Modal from '../../../components/layout/Modal';
 import Navbar from '../../../components/layout/Navbar';
+import Modal from '../../../components/modals/Modal';
 import { useGetTablesQuery } from '../../../graphql/graphql';
 
 interface Props {}

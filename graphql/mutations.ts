@@ -201,3 +201,9 @@ export const REMOVE_DISH_FROM_MENU = gql`
         }
     }
 `;
+
+export const DELETE_DISH_BY_ID = gql`
+    mutation DelDishById($delDishByIdId: String!) {
+        delDishById(id: $delDishByIdId)
+    }
+`;

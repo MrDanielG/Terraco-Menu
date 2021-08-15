@@ -3,7 +3,7 @@ import { SpringValue } from '@react-spring/web';
 import { useDrag } from 'react-use-gesture';
 import { ReactEventHandlers } from 'react-use-gesture/dist/types';
 
-export const useSwipe = <T extends unknown>(numSprings: number, onSwipe: (args?: T) => any) => {
+export const useSwipe = <T extends unknown>(numSprings: number, onSwipe: (args: T) => any) => {
     // Create the amount of springs animations needed
     const [springs, api] = useSprings(numSprings, () => ({ x: 0 }));
 
@@ -15,6 +15,8 @@ export const useSwipe = <T extends unknown>(numSprings: number, onSwipe: (args?:
             cancel();
             onSwipe(id);
         }
+
+        if (mx > 0) cancel();
     });
     return [springs, bind] as [
         {

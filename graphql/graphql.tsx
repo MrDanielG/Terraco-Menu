@@ -576,6 +576,13 @@ export type RemoveDishFromMenuMutationVariables = Exact<{
 
 export type RemoveDishFromMenuMutation = { __typename?: 'Mutation', removeDishFromMenu: { __typename?: 'Menu', title: string, _id: string, dishes: Array<{ __typename?: 'Dish', name: string, _id: string }> } };
 
+export type DelDishByIdMutationVariables = Exact<{
+  delDishByIdId: Scalars['String'];
+}>;
+
+
+export type DelDishByIdMutation = { __typename?: 'Mutation', delDishById: number };
+
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
 }>;
@@ -1145,6 +1152,37 @@ export function useRemoveDishFromMenuMutation(baseOptions?: Apollo.MutationHookO
 export type RemoveDishFromMenuMutationHookResult = ReturnType<typeof useRemoveDishFromMenuMutation>;
 export type RemoveDishFromMenuMutationResult = Apollo.MutationResult<RemoveDishFromMenuMutation>;
 export type RemoveDishFromMenuMutationOptions = Apollo.BaseMutationOptions<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>;
+export const DelDishByIdDocument = gql`
+    mutation DelDishById($delDishByIdId: String!) {
+  delDishById(id: $delDishByIdId)
+}
+    `;
+export type DelDishByIdMutationFn = Apollo.MutationFunction<DelDishByIdMutation, DelDishByIdMutationVariables>;
+
+/**
+ * __useDelDishByIdMutation__
+ *
+ * To run a mutation, you first call `useDelDishByIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelDishByIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delDishByIdMutation, { data, loading, error }] = useDelDishByIdMutation({
+ *   variables: {
+ *      delDishByIdId: // value for 'delDishByIdId'
+ *   },
+ * });
+ */
+export function useDelDishByIdMutation(baseOptions?: Apollo.MutationHookOptions<DelDishByIdMutation, DelDishByIdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelDishByIdMutation, DelDishByIdMutationVariables>(DelDishByIdDocument, options);
+      }
+export type DelDishByIdMutationHookResult = ReturnType<typeof useDelDishByIdMutation>;
+export type DelDishByIdMutationResult = Apollo.MutationResult<DelDishByIdMutation>;
+export type DelDishByIdMutationOptions = Apollo.BaseMutationOptions<DelDishByIdMutation, DelDishByIdMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {

@@ -63,22 +63,20 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
 
     useEffect(() => {
         const filter = async () => {
-            const { data } = await refetchDishes();
-            const availableDishes = getAvailableDishes(data?.dishes || [], currentDishesId);
+            await refetchDishes();
+            const availableDishes = getAvailableDishes(dataDishes?.dishes || [], currentDishesId);
             setAvailableDishes(availableDishes);
         };
         filter();
-    }, [dataDishes, refetchDishes,  currentDishesId]);
+    }, [dataDishes, refetchDishes, currentDishesId]);
 
     return (
-        <div className="h-screen">
+        <>
             <SearchBar />
 
             <CategoryBar data={categoryData} />
 
             <h2 className="mt-10 mb-6 text-brown text-lg">Agregar a Menu</h2>
-
-            {!availableDishes || (availableDishes?.length === 0 && <h2>Cargando...</h2>)}
 
             {availableDishes?.map((dish) => (
                 <ParentCard
@@ -104,7 +102,7 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
                     </CardActions>
                 </ParentCard>
             ))}
-        </div>
+        </>
     );
 };
 

@@ -10,8 +10,8 @@ import BigButton from '../components/buttons/BigButton';
 import CardActions from '../components/cards/parent-card/CardActions';
 import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
-import Modal from '../components/layout/Modal';
 import Navbar from '../components/layout/Navbar';
+import Modal from '../components/modals/Modal';
 import {
     Dish,
     Order,
@@ -145,7 +145,7 @@ const NewOrder = (props: Props) => {
             }
         }
     };
-    const handleDeleteDish = (id?: string) => {
+    const handleDeleteDish = (id: string) => {
         const newItems = currentOrder.items.filter((item) => item.dish._id !== id);
         const newOrder: CurrentOrder<Dish> = {
             tableId: currentOrder.tableId,
