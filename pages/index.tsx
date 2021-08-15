@@ -132,7 +132,7 @@ export default function Home() {
     };
 
     return (
-        <div className="bg-gray-200 p-8 h-full">
+        <div className="bg-gray-200 p-8 min-h-screen">
             <Navbar itemsQty={numItems} onClick={handleNavbarClick} />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 

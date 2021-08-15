@@ -103,7 +103,7 @@ const AddDish = (props: Props) => {
     };
 
     return (
-        <div className="bg-gray-200 p-8 h-auto min-h-screen">
+        <div className="bg-gray-200 p-8 min-h-screen">
             <BackButton text="Regresar" pathNameOnBack="/chef/platillos" />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex justify-center items-center flex-col">
@@ -270,10 +270,7 @@ const AddDish = (props: Props) => {
                     />
                 </div>
 
-                <BigButton
-                    text="Agregar Platillo"
-                    isDisabled={loadingRequests || !imgFile}
-                />
+                <BigButton text="Agregar Platillo" isDisabled={loadingRequests || !imgFile} />
             </form>
         </div>
     );

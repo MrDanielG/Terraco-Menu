@@ -26,7 +26,7 @@ const months = [
 
 const SellsStats = (props: Props) => {
     return (
-        <div className="bg-gray-200 p-8 h-auto min-h-screen">
+        <div className="bg-gray-200 p-8 min-h-screen">
             <Navbar />
             <h1 className="font-semibold text-3xl text-brown">Platillos del Mes</h1>
 

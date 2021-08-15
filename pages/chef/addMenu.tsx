@@ -34,7 +34,7 @@ const AddMenu = (props: Props) => {
     };
 
     return (
-        <div className="bg-gray-200 p-8 h-screen">
+        <div className="bg-gray-200 p-8 min-h-screen">
             <Navbar />
             <h1 className="font-semibold text-3xl text-brown mb-8">Crear Menú</h1>
 
