@@ -1,7 +1,7 @@
 import React from 'react';
-import ParentCard from '../../components/card/ParentCard';
-import Navbar from '../../components/Navbar';
-import StatsCard from '../../components/StatsCard';
+import ParentCard from '../../components/cards/parent-card/ParentCard';
+import StatsCard from '../../components/cards/StatsCard';
+import Navbar from '../../components/layout/Navbar';
 
 interface Props {}
 

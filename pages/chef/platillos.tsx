@@ -1,9 +1,17 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { animated } from 'react-spring';
 import AddButton from '../../components/buttons/AddButton';
-import ParentCard from '../../components/card/ParentCard';
-import CategoryBar from '../../components/CategoryBar';
-import Navbar from '../../components/Navbar';
-import SearchBar from '../../components/SearchBar';
+import CardInfo from '../../components/cards/parent-card/CardInfo';
+import ParentCard from '../../components/cards/parent-card/ParentCard';
+import CategoryBar from '../../components/layout/CategoryBar';
+import Navbar from '../../components/layout/Navbar';
+import SearchBar from '../../components/layout/SearchBar';
+import DangerModal from '../../components/modals/DangerModal';
+import { Dish, useDelDishByIdMutation, useGetDishesQuery } from '../../graphql/graphql';
+import { useSwipe } from '../../hooks/useSwipe';
+import { intlFormat } from '../../lib/utils';
 
 interface Props {}
 
@@ -28,22 +36,80 @@ const categoryData = [
 
 const Platillos = (props: Props) => {
     const router = useRouter();
+    const { data, refetch } = useGetDishesQuery();
+    const [isOpen, setIsOpen] = useState(false);
+    const [dish, setDish] = useState<Dish>();
+    const [delDishByIdMutation] = useDelDishByIdMutation();
+
+    const handleDeleteDish = (dishId: string) => {
+        const dish = data?.dishes.find((dish) => dish._id === dishId);
+        setDish(dish);
+        setIsOpen(true);
+    };
+
+    const deleteDish = async () => {
+        try {
+            await delDishByIdMutation({ variables: { delDishByIdId: dish?._id! } });
+            await refetch();
+            setIsOpen(false);
+            toast.success('Platillo Eliminado');
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al Eliminar Platillo');
+        }
+    };
+
+    const [springs, bind] = useSwipe(data?.dishes.length || 0, handleDeleteDish);
 
     return (
-        <div className="bg-gray-200 p-8 h-screen">
-            <Navbar />
-            <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
+        <>
+            <div className="bg-gray-200 p-8 min-h-screen">
+                <Navbar />
+                <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
 
-            <SearchBar />
+                <SearchBar />
 
-            <CategoryBar data={ categoryData } />
+                <CategoryBar data={categoryData} />
 
-            <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
+                <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
 
-            <ParentCard />
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                    Desliza a la izquierda para eliminar un platillo
+                </p>
 
-            <AddButton onClick={() => router.push('/chef/addDish')} />
-        </div>
+                {springs.map(({ x }, i) => (
+                    <animated.div
+                        key={i}
+                        {...bind(i, data?.dishes[i]._id)}
+                        style={{ x, touchAction: 'pan-y' }}
+                    >
+                        <ParentCard url_img={data?.dishes[i].url_img?.toString()}>
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{data?.dishes[i].name}</span>
+                                </CardInfo.Title>
+                                <CardInfo.Footer>
+                                    <span>{intlFormat(data?.dishes[0]?.price, 'es-MX')}</span>
+                                </CardInfo.Footer>
+                            </CardInfo>
+                        </ParentCard>
+                    </animated.div>
+                ))}
+
+                <ParentCard />
+
+                <AddButton onClick={() => router.push('/chef/addDish')} />
+            </div>
+
+            <DangerModal
+                title="Eliminar Platillo"
+                description={`Deseas eliminar el platillo "${dish?.name}"`}
+                isOpen={isOpen}
+                dangerBtnTitle="Eliminar"
+                onCloseModal={() => setIsOpen(false)}
+                onClickDangerBtn={deleteDish}
+            ></DangerModal>
+        </>
     );
 };
 

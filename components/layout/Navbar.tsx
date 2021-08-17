@@ -1,13 +1,15 @@
-import { useRouter } from 'next/router';
 import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Fragment, useState } from 'react';
+import { useRouter } from 'next/router';
+import { Fragment, MouseEventHandler, useState } from 'react';
 import { HiMenuAlt1, HiOutlineBookOpen, HiX } from 'react-icons/hi';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 /* import { useLocalStorage } from '../hooks/useLocalStorage'; */
 interface Props {
-    itemsQty?: number;
+    itemsQty?: string;
+    onClick?: MouseEventHandler<HTMLDivElement> | any;
+    canRedirect?: boolean;
 }
 
 const Navbar = (props: Props) => {
@@ -21,7 +23,7 @@ const Navbar = (props: Props) => {
      * });
      * const items = currentOrder.items; */
     const handleMyOrderClick = () => {
-        if (props.itemsQty !== null) {
+        if (props.itemsQty !== null && props.canRedirect) {
             router.push('/newOrder');
         }
     };
@@ -57,10 +59,10 @@ const Navbar = (props: Props) => {
                 {currentUser === null && (
                     <div
                         className="rounded-lg bg-orange flex gap-2 px-2 py-1 max-w-sm cursor-pointer"
-                        onClick={handleMyOrderClick}
+                        onClick={props.onClick || handleMyOrderClick}
                     >
                         <HiOutlineBookOpen className="text-2xl text-white" />
-                        <p className="text-white">{props?.itemsQty || 0}</p>
+                        <p className="text-white">{props?.itemsQty || ''}</p>
                     </div>
                 )}
             </div>
@@ -143,7 +145,7 @@ const Navbar = (props: Props) => {
                                                         <>
                                                             <li className="my-8">
                                                                 <Link href="/chef">
-                                                                    <a>Inicio</a>
+                                                                    <a>Menús</a>
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">

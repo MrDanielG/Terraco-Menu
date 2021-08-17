@@ -2,8 +2,8 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import AddButton from '../../../components/buttons/AddButton';
 import InfoTable from '../../../components/InfoTable';
-import Modal from '../../../components/Modal';
-import Navbar from '../../../components/Navbar';
+import Navbar from '../../../components/layout/Navbar';
+import Modal from '../../../components/modals/Modal';
 import { useGetTablesQuery } from '../../../graphql/graphql';
 
 interface Props {}
@@ -16,11 +16,9 @@ const Tables = (props: Props) => {
 
     return (
         <>
-            <div className="bg-gray-200 p-8 h-auto min-h-screen">
+            <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown">
-                    Gestion de Mesas
-                </h1>
+                <h1 className="font-semibold text-3xl text-brown">Gestion de Mesas</h1>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 2xl:grid-cols-10 gap-6 mt-6">
                     {data?.tables.map((table) => (
@@ -41,9 +39,7 @@ const Tables = (props: Props) => {
                     ))}
                 </div>
 
-                <AddButton
-                    onClick={() => router.push('/manager/tables/addTable')}
-                />
+                <AddButton onClick={() => router.push('/manager/tables/addTable')} />
             </div>
 
             <Modal

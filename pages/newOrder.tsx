@@ -1,23 +1,29 @@
+import { MXN } from '@dinero.js/currencies';
+import { add, dinero, multiply } from 'dinero.js';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import BigButton from '../components/buttons/BigButton';
-import ParentCard from '../components/card/ParentCard';
-import CardInfo from '../components/card/CardInfo';
-import CardActions from '../components/card/CardActions';
-import Navbar from '../components/Navbar';
-import { intlFormat } from '../lib/utils';
-import BackButton from '../components/buttons/BackButton';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { Dish, Order } from '../graphql/graphql';
-import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
-import {
-    useCreateOrderMutation,
-    useCreateOrderItemsMutation,
-    useAddItemsToOrderMutation,
-} from '../graphql/graphql';
-import { multiply, add, dinero } from 'dinero.js';
-import { MXN } from '@dinero.js/currencies';
 import toast from 'react-hot-toast';
+import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
+import { animated } from 'react-spring';
+import BackButton from '../components/buttons/BackButton';
+import BigButton from '../components/buttons/BigButton';
+import CardActions from '../components/cards/parent-card/CardActions';
+import CardInfo from '../components/cards/parent-card/CardInfo';
+import ParentCard from '../components/cards/parent-card/ParentCard';
+import Navbar from '../components/layout/Navbar';
+import Modal from '../components/modals/Modal';
+import {
+    Dish,
+    Order,
+    Status,
+    useAddItemsToOrderMutation,
+    useCreateOrderItemsMutation,
+    useCreateOrderMutation,
+    useGetOrderByIdQuery,
+} from '../graphql/graphql';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSwipe } from '../hooks/useSwipe';
+import { intlFormat } from '../lib/utils';
 
 interface Props {}
 const NewOrder = (props: Props) => {
@@ -28,12 +34,16 @@ const NewOrder = (props: Props) => {
     });
     const [order, setOrder] = useLocalStorage<Order | null>('myOrder', null);
     const [_change, setChange] = useState(-21);
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState('');
 
     const { items, tableId } = currentOrder;
     let total = dinero({ amount: 0, currency: MXN });
+    let currentTotal = dinero({ amount: 0, currency: MXN });
+
     items.forEach((item) => {
         const amount = multiply(dinero(item.dish.price), item.qty);
-        total = add(total, amount);
+        currentTotal = add(currentTotal, amount);
     });
     if (order) {
         order.items.forEach((item) => {
@@ -41,11 +51,17 @@ const NewOrder = (props: Props) => {
             total = add(total, amount);
         });
     }
-
+    const { refetch: orderRefetch } = useGetOrderByIdQuery({
+        variables: { orderByIdId: order?._id || '' },
+    });
     const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
     const [CreateOrderMutation] = useCreateOrderMutation();
     const [AddItemsToOrderMutation] = useAddItemsToOrderMutation();
-    console.log('order: ', order);
+
+    const nPending = `${currentOrder ? currentOrder.items.length : ''}`;
+    const nOrder = `${order ? order.items.length : ''}`;
+    const nItems = nOrder + (nPending !== '0' ? ' + ' + nPending : '');
+
     const handleQuantityChange = (idx: number, value: number) => {
         const { qty } = currentOrder.items[idx];
         const sum = qty + value;
@@ -55,7 +71,31 @@ const NewOrder = (props: Props) => {
         setChange(sum);
         setCurrentOrder(currentOrder);
     };
+    const handlePayement = async () => {
+        if (currentOrder.items.length > 0) {
+            setMessage('Aún quedan ordenes por hacer. ¿Deseas continuar con el pago?');
+            setIsOpen(true);
+        } else {
+            const {
+                data: {
+                    orderById: { items },
+                },
+            } = await orderRefetch({
+                orderByIdId: order?._id,
+            });
+            let areServed = true;
+            items.forEach((item) => {
+                areServed = areServed && item.status === Status.Served;
+            });
 
+            if (!areServed) {
+                setMessage('Aún faltan platos por servir. ¿Deseas continuar con el pago?');
+                setIsOpen(true);
+            } else {
+                router.push(`/ticketView?tableId=${tableId}`);
+            }
+        }
+    };
     const handleCreateOrder = async () => {
         if (tableId !== '') {
             const items = currentOrder.items.map((item) => {
@@ -105,26 +145,93 @@ const NewOrder = (props: Props) => {
             }
         }
     };
+    const handleDeleteDish = (id: string) => {
+        const newItems = currentOrder.items.filter((item) => item.dish._id !== id);
+        const newOrder: CurrentOrder<Dish> = {
+            tableId: currentOrder.tableId,
+            items: newItems,
+        };
+        setCurrentOrder(newOrder);
+        toast.success('Platillo Eliminado de la Orden');
+    };
+
+    const [springs, bind] = useSwipe(currentOrder.items.length, handleDeleteDish);
+
     return (
         <>
             <div className="bg-gray-200 p-8 h-auto min-h-screen">
-                <Navbar itemsQty={items?.length} />
+                <Navbar itemsQty={nItems} />
                 <BackButton text="Menú" pathNameOnBack={`/?tableId=${tableId}`} />
+                {items && items.length > 0 && (
+                    <h1 className="font-semibold text-3xl text-brown">
+                        {items?.length} Platillos por pedir
+                    </h1>
+                )}
+
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                    Desliza a la izquierda para eliminar un platillo
+                </p>
+
+                {springs.map(({ x }, i) => (
+                    <animated.div
+                        key={i}
+                        {...bind(i, currentOrder.items[i].dish._id)}
+                        style={{ x, touchAction: 'pan-y' }}
+                    >
+                        <ParentCard
+                            url_img={currentOrder.items[i].dish?.url_img?.toString()}
+                            key={i + 1}
+                        >
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{currentOrder.items[i].dish.name}</span>
+                                </CardInfo.Title>
+                                <CardInfo.Body>
+                                    <span>
+                                        Importe:{' '}
+                                        {intlFormat(
+                                            multiply(
+                                                dinero(currentOrder.items[i].dish.price),
+                                                currentOrder.items[i].qty
+                                            ).toJSON(),
+                                            'es-MX'
+                                        )}
+                                    </span>
+                                </CardInfo.Body>
+                                <CardInfo.Footer>
+                                    <span>Cant: {currentOrder.items[i].qty}</span>
+                                </CardInfo.Footer>
+                            </CardInfo>
+                            <CardActions>
+                                <CardActions.Top
+                                    icon={<HiPlusSm />}
+                                    onClick={() => handleQuantityChange(i, 1)}
+                                />
+                                <CardActions.Bottom
+                                    icon={<HiMinusSm />}
+                                    onClick={() => handleQuantityChange(i, -1)}
+                                />
+                            </CardActions>
+                        </ParentCard>
+                    </animated.div>
+                ))}
+
                 {order && (
                     <h1 className="font-semibold text-3xl text-brown">
                         {order.items?.length} Platillos pedidos
                     </h1>
                 )}
-                <div>
+
+                <>
                     {order &&
-                        order.items.map((item) => (
-                            <ParentCard url_img={item.dish.url_img?.toString()} key={item.dish._id}>
+                        order.items.map((item, idx) => (
+                            <ParentCard url_img={item.dish?.url_img?.toString()} key={idx + 1}>
                                 <CardInfo>
                                     <CardInfo.Title>
                                         <span>{item.dish.name}</span>
                                     </CardInfo.Title>
                                     <CardInfo.Body>
-                                        <div>
+                                        <span>
                                             Importe:{' '}
                                             {intlFormat(
                                                 multiply(
@@ -133,62 +240,54 @@ const NewOrder = (props: Props) => {
                                                 ).toJSON(),
                                                 'es-MX'
                                             )}
-                                        </div>
+                                        </span>
                                     </CardInfo.Body>
                                     <CardInfo.Footer>
-                                        <div>Cant: {item.quantity}</div>
+                                        <span>Cant: {item.quantity}</span>
                                     </CardInfo.Footer>
                                 </CardInfo>
                             </ParentCard>
                         ))}
-                </div>
-                {items && (
-                    <h1 className="font-semibold text-3xl text-brown">
-                        {items?.length} Platillos por pedir
-                    </h1>
-                )}
-                <div>
-                    {items &&
-                        items.map((item, idx) => (
-                            <ParentCard url_img={item.dish.url_img?.toString()} key={item.dish._id}>
-                                <CardInfo>
-                                    <CardInfo.Title>
-                                        <span>{item.dish.name}</span>
-                                    </CardInfo.Title>
-                                    <CardInfo.Body>
-                                        <div>
-                                            Importe:{' '}
-                                            {intlFormat(
-                                                multiply(
-                                                    dinero(item.dish.price),
-                                                    item.qty
-                                                ).toJSON(),
-                                                'es-MX'
-                                            )}
-                                        </div>
-                                    </CardInfo.Body>
-                                    <CardInfo.Footer>
-                                        <div>Cant: {item.qty}</div>
-                                    </CardInfo.Footer>
-                                </CardInfo>
-                                <CardActions>
-                                    <CardActions.Top
-                                        icon={<HiPlusSm />}
-                                        onClick={() => handleQuantityChange(idx, 1)}
-                                    />
-                                    <CardActions.Bottom
-                                        icon={<HiMinusSm />}
-                                        onClick={() => handleQuantityChange(idx, -1)}
-                                    />
-                                </CardActions>
-                            </ParentCard>
-                        ))}
-                </div>
+                    {order && items.length > 0 && (
+                        <p className="uppercase mt-2 tracking-wide text-sm text-gray-600 text-center mb-5">
+                            Tu consumo hasta ahora:{' '}
+                            <span>{intlFormat(total.toJSON(), 'es-MX')}</span>
+                        </p>
+                    )}
+                    <Modal
+                        title="Advertencia"
+                        isOpen={isOpen}
+                        closeModal={() => setIsOpen(false)}
+                        onCloseModal={() => setIsOpen(false)}
+                        closeBtnTitle=""
+                    >
+                        <div className="flex flex-col items-center justify-center">
+                            <p>{message}</p>
+                            <div>
+                                <button
+                                    onClick={() => router.push(`/ticketView?tableId=${tableId}`)}
+                                >
+                                    Sí
+                                </button>
+                                <button onClick={() => setIsOpen(false)}>No</button>
+                            </div>
+                        </div>
+                    </Modal>
+                </>
+
                 <div>
                     {items.length > 0 && (
                         <BigButton
+                            isFloat={false}
                             onClick={() => handleCreateOrder()}
-                            text={'Ordernar: ' + intlFormat(total.toJSON(), 'es-MX')}
+                            text={'Ordernar: ' + intlFormat(currentTotal.toJSON(), 'es-MX')}
+                        />
+                    )}
+                    {order && items.length < 1 && (
+                        <BigButton
+                            isFloat={false}
+                            onClick={() => handlePayement()}
+                            text={'Pagar: ' + intlFormat(total.toJSON(), 'es-MX')}
                         />
                     )}
                 </div>

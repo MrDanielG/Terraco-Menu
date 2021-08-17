@@ -113,6 +113,7 @@ export type Mutation = {
   updateTable: Table;
   createOrder: Order;
   addItemsToOrder: Order;
+  changeOrderItemsStatus: Order;
   delItemsFromOrder: Order;
   createOrderItem: OrderItem;
   createOrderItems: Array<OrderItem>;
@@ -248,6 +249,12 @@ export type MutationAddItemsToOrderArgs = {
 };
 
 
+export type MutationChangeOrderItemsStatusArgs = {
+  status: Status;
+  orderId: Scalars['String'];
+};
+
+
 export type MutationDelItemsFromOrderArgs = {
   orderId: Scalars['String'];
   itemsIds: Array<Scalars['String']>;
@@ -318,8 +325,8 @@ export type Query = {
   dishById?: Maybe<Dish>;
   serchDishes?: Maybe<Array<Dish>>;
   tables: Array<Table>;
-  tableById: Table;
-  tableByIdNumber: Table;
+  tableById?: Maybe<Table>;
+  tableByIdNumber?: Maybe<Table>;
   orders: Array<Order>;
   orderById: Order;
   orderItems: Array<OrderItem>;
@@ -358,7 +365,7 @@ export type QuerySerchDishesArgs = {
 
 
 export type QueryTableByIdArgs = {
-  id: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
 };
 
 
@@ -391,7 +398,9 @@ export type RoleDataInput = {
 export enum Status {
   Pending = 'PENDING',
   Cooking = 'COOKING',
-  Served = 'SERVED'
+  Served = 'SERVED',
+  Payingoff = 'PAYINGOFF',
+  Payed = 'PAYED'
 }
 
 export type Subscription = {
@@ -502,7 +511,7 @@ export type AddDishToMenuMutationVariables = Exact<{
 }>;
 
 
-export type AddDishToMenuMutation = { __typename?: 'Mutation', addDishToMenu: { __typename?: 'Menu', _id: string, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, price: any }> } };
+export type AddDishToMenuMutation = { __typename?: 'Mutation', addDishToMenu: { __typename?: 'Menu', _id: string, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, price: any, url_img?: Maybe<string> }> } };
 
 export type GenerateTableMutationVariables = Exact<{
   generateTableName: Scalars['String'];
@@ -525,14 +534,14 @@ export type CreateOrderMutationVariables = Exact<{
 }>;
 
 
-export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any } }> } };
+export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> } };
 
 export type CreateOrderItemsMutationVariables = Exact<{
   createOrderItemsItems: Array<CreateOrderItemsInput> | CreateOrderItemsInput;
 }>;
 
 
-export type CreateOrderItemsMutation = { __typename?: 'Mutation', createOrderItems: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string, _id: string, price: any } }> };
+export type CreateOrderItemsMutation = { __typename?: 'Mutation', createOrderItems: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> };
 
 export type AddItemsToOrderMutationVariables = Exact<{
   addItemsToOrderOrderId: Scalars['String'];
@@ -540,7 +549,39 @@ export type AddItemsToOrderMutationVariables = Exact<{
 }>;
 
 
-export type AddItemsToOrderMutation = { __typename?: 'Mutation', addItemsToOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any } }> } };
+export type AddItemsToOrderMutation = { __typename?: 'Mutation', addItemsToOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> } };
+
+export type ChangeOrderItemsStatusMutationVariables = Exact<{
+  changeOrderItemsStatusStatus: Status;
+  changeOrderItemsStatusOrderId: Scalars['String'];
+}>;
+
+
+export type ChangeOrderItemsStatusMutation = { __typename?: 'Mutation', changeOrderItemsStatus: { __typename?: 'Order', _id: string, items: Array<{ __typename?: 'OrderItem', status: Status, quantity: number, _id: string, dish: { __typename?: 'Dish', name: string } }> } };
+
+export type GenerateTicketMutationVariables = Exact<{
+  orderId: Scalars['String'];
+  paymentMethod?: Maybe<Scalars['String']>;
+  vat?: Maybe<Scalars['Float']>;
+}>;
+
+
+export type GenerateTicketMutation = { __typename?: 'Mutation', generateTicket: { __typename?: 'Ticket', _id: string, orderId: string, ticketNumber: number, timestamp: any, tableName: string, total: any, paymentMethod: string, vat: number, items: Array<{ __typename?: 'TicketItem', _id: string, quantity: number, dishName: string, dishPrice: any, amount: any }> } };
+
+export type RemoveDishFromMenuMutationVariables = Exact<{
+  removeDishFromMenuIdDish: Scalars['String'];
+  removeDishFromMenuIdMenu: Scalars['String'];
+}>;
+
+
+export type RemoveDishFromMenuMutation = { __typename?: 'Mutation', removeDishFromMenu: { __typename?: 'Menu', title: string, _id: string, dishes: Array<{ __typename?: 'Dish', name: string, _id: string }> } };
+
+export type DelDishByIdMutationVariables = Exact<{
+  delDishByIdId: Scalars['String'];
+}>;
+
+
+export type DelDishByIdMutation = { __typename?: 'Mutation', delDishById: number };
 
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
@@ -569,7 +610,7 @@ export type GetTableByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTableByIdQuery = { __typename?: 'Query', tableById: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
+export type GetTableByIdQuery = { __typename?: 'Query', tableById?: Maybe<{ __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }> };
 
 export type GetDishByIdQueryVariables = Exact<{
   dishByIdId: Scalars['String'];
@@ -578,12 +619,24 @@ export type GetDishByIdQueryVariables = Exact<{
 
 export type GetDishByIdQuery = { __typename?: 'Query', dishById?: Maybe<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> };
 
-export type GetMenyByIdQueryVariables = Exact<{
+export type GetMenuByIdQueryVariables = Exact<{
   menuByIdId: Scalars['String'];
 }>;
 
 
-export type GetMenyByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
+export type GetMenuByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
+
+export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'Order', _id: string, orderNumber: number, start_time: any, end_time?: Maybe<any>, table: { __typename?: 'Table', name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> }> };
+
+export type GetOrderByIdQueryVariables = Exact<{
+  orderByIdId: Scalars['String'];
+}>;
+
+
+export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -710,6 +763,7 @@ export const AddDishToMenuDocument = gql`
       _id
       name
       price
+      url_img
     }
   }
 }
@@ -834,6 +888,7 @@ export const CreateOrderDocument = gql`
         name
         _id
         price
+        url_img
       }
     }
   }
@@ -876,6 +931,7 @@ export const CreateOrderItemsDocument = gql`
       name
       _id
       price
+      url_img
     }
   }
 }
@@ -927,6 +983,7 @@ export const AddItemsToOrderDocument = gql`
         name
         _id
         price
+        url_img
       }
     }
   }
@@ -959,6 +1016,173 @@ export function useAddItemsToOrderMutation(baseOptions?: Apollo.MutationHookOpti
 export type AddItemsToOrderMutationHookResult = ReturnType<typeof useAddItemsToOrderMutation>;
 export type AddItemsToOrderMutationResult = Apollo.MutationResult<AddItemsToOrderMutation>;
 export type AddItemsToOrderMutationOptions = Apollo.BaseMutationOptions<AddItemsToOrderMutation, AddItemsToOrderMutationVariables>;
+export const ChangeOrderItemsStatusDocument = gql`
+    mutation ChangeOrderItemsStatus($changeOrderItemsStatusStatus: Status!, $changeOrderItemsStatusOrderId: String!) {
+  changeOrderItemsStatus(
+    status: $changeOrderItemsStatusStatus
+    orderId: $changeOrderItemsStatusOrderId
+  ) {
+    _id
+    items {
+      status
+      quantity
+      _id
+      dish {
+        name
+      }
+    }
+  }
+}
+    `;
+export type ChangeOrderItemsStatusMutationFn = Apollo.MutationFunction<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>;
+
+/**
+ * __useChangeOrderItemsStatusMutation__
+ *
+ * To run a mutation, you first call `useChangeOrderItemsStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeOrderItemsStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeOrderItemsStatusMutation, { data, loading, error }] = useChangeOrderItemsStatusMutation({
+ *   variables: {
+ *      changeOrderItemsStatusStatus: // value for 'changeOrderItemsStatusStatus'
+ *      changeOrderItemsStatusOrderId: // value for 'changeOrderItemsStatusOrderId'
+ *   },
+ * });
+ */
+export function useChangeOrderItemsStatusMutation(baseOptions?: Apollo.MutationHookOptions<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>(ChangeOrderItemsStatusDocument, options);
+      }
+export type ChangeOrderItemsStatusMutationHookResult = ReturnType<typeof useChangeOrderItemsStatusMutation>;
+export type ChangeOrderItemsStatusMutationResult = Apollo.MutationResult<ChangeOrderItemsStatusMutation>;
+export type ChangeOrderItemsStatusMutationOptions = Apollo.BaseMutationOptions<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>;
+export const GenerateTicketDocument = gql`
+    mutation GenerateTicket($orderId: String!, $paymentMethod: String, $vat: Float) {
+  generateTicket(orderId: $orderId, paymentMethod: $paymentMethod, vat: $vat) {
+    _id
+    orderId
+    ticketNumber
+    timestamp
+    tableName
+    total
+    paymentMethod
+    vat
+    items {
+      _id
+      quantity
+      dishName
+      dishPrice
+      amount
+    }
+  }
+}
+    `;
+export type GenerateTicketMutationFn = Apollo.MutationFunction<GenerateTicketMutation, GenerateTicketMutationVariables>;
+
+/**
+ * __useGenerateTicketMutation__
+ *
+ * To run a mutation, you first call `useGenerateTicketMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateTicketMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateTicketMutation, { data, loading, error }] = useGenerateTicketMutation({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *      paymentMethod: // value for 'paymentMethod'
+ *      vat: // value for 'vat'
+ *   },
+ * });
+ */
+export function useGenerateTicketMutation(baseOptions?: Apollo.MutationHookOptions<GenerateTicketMutation, GenerateTicketMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateTicketMutation, GenerateTicketMutationVariables>(GenerateTicketDocument, options);
+      }
+export type GenerateTicketMutationHookResult = ReturnType<typeof useGenerateTicketMutation>;
+export type GenerateTicketMutationResult = Apollo.MutationResult<GenerateTicketMutation>;
+export type GenerateTicketMutationOptions = Apollo.BaseMutationOptions<GenerateTicketMutation, GenerateTicketMutationVariables>;
+export const RemoveDishFromMenuDocument = gql`
+    mutation RemoveDishFromMenu($removeDishFromMenuIdDish: String!, $removeDishFromMenuIdMenu: String!) {
+  removeDishFromMenu(
+    idDish: $removeDishFromMenuIdDish
+    idMenu: $removeDishFromMenuIdMenu
+  ) {
+    title
+    dishes {
+      name
+      _id
+    }
+    _id
+  }
+}
+    `;
+export type RemoveDishFromMenuMutationFn = Apollo.MutationFunction<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>;
+
+/**
+ * __useRemoveDishFromMenuMutation__
+ *
+ * To run a mutation, you first call `useRemoveDishFromMenuMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveDishFromMenuMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeDishFromMenuMutation, { data, loading, error }] = useRemoveDishFromMenuMutation({
+ *   variables: {
+ *      removeDishFromMenuIdDish: // value for 'removeDishFromMenuIdDish'
+ *      removeDishFromMenuIdMenu: // value for 'removeDishFromMenuIdMenu'
+ *   },
+ * });
+ */
+export function useRemoveDishFromMenuMutation(baseOptions?: Apollo.MutationHookOptions<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>(RemoveDishFromMenuDocument, options);
+      }
+export type RemoveDishFromMenuMutationHookResult = ReturnType<typeof useRemoveDishFromMenuMutation>;
+export type RemoveDishFromMenuMutationResult = Apollo.MutationResult<RemoveDishFromMenuMutation>;
+export type RemoveDishFromMenuMutationOptions = Apollo.BaseMutationOptions<RemoveDishFromMenuMutation, RemoveDishFromMenuMutationVariables>;
+export const DelDishByIdDocument = gql`
+    mutation DelDishById($delDishByIdId: String!) {
+  delDishById(id: $delDishByIdId)
+}
+    `;
+export type DelDishByIdMutationFn = Apollo.MutationFunction<DelDishByIdMutation, DelDishByIdMutationVariables>;
+
+/**
+ * __useDelDishByIdMutation__
+ *
+ * To run a mutation, you first call `useDelDishByIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelDishByIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delDishByIdMutation, { data, loading, error }] = useDelDishByIdMutation({
+ *   variables: {
+ *      delDishByIdId: // value for 'delDishByIdId'
+ *   },
+ * });
+ */
+export function useDelDishByIdMutation(baseOptions?: Apollo.MutationHookOptions<DelDishByIdMutation, DelDishByIdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelDishByIdMutation, DelDishByIdMutationVariables>(DelDishByIdDocument, options);
+      }
+export type DelDishByIdMutationHookResult = ReturnType<typeof useDelDishByIdMutation>;
+export type DelDishByIdMutationResult = Apollo.MutationResult<DelDishByIdMutation>;
+export type DelDishByIdMutationOptions = Apollo.BaseMutationOptions<DelDishByIdMutation, DelDishByIdMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {
@@ -1208,8 +1432,8 @@ export function useGetDishByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetDishByIdQueryHookResult = ReturnType<typeof useGetDishByIdQuery>;
 export type GetDishByIdLazyQueryHookResult = ReturnType<typeof useGetDishByIdLazyQuery>;
 export type GetDishByIdQueryResult = Apollo.QueryResult<GetDishByIdQuery, GetDishByIdQueryVariables>;
-export const GetMenyByIdDocument = gql`
-    query getMenyById($menuByIdId: String!) {
+export const GetMenuByIdDocument = gql`
+    query getMenuById($menuByIdId: String!) {
   menuById(id: $menuByIdId) {
     _id
     title
@@ -1227,32 +1451,136 @@ export const GetMenyByIdDocument = gql`
     `;
 
 /**
- * __useGetMenyByIdQuery__
+ * __useGetMenuByIdQuery__
  *
- * To run a query within a React component, call `useGetMenyByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMenyByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetMenuByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenuByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetMenyByIdQuery({
+ * const { data, loading, error } = useGetMenuByIdQuery({
  *   variables: {
  *      menuByIdId: // value for 'menuByIdId'
  *   },
  * });
  */
-export function useGetMenyByIdQuery(baseOptions: Apollo.QueryHookOptions<GetMenyByIdQuery, GetMenyByIdQueryVariables>) {
+export function useGetMenuByIdQuery(baseOptions: Apollo.QueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetMenyByIdQuery, GetMenyByIdQueryVariables>(GetMenyByIdDocument, options);
+        return Apollo.useQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
       }
-export function useGetMenyByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenyByIdQuery, GetMenyByIdQueryVariables>) {
+export function useGetMenuByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenuByIdQuery, GetMenuByIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetMenyByIdQuery, GetMenyByIdQueryVariables>(GetMenyByIdDocument, options);
+          return Apollo.useLazyQuery<GetMenuByIdQuery, GetMenuByIdQueryVariables>(GetMenuByIdDocument, options);
         }
-export type GetMenyByIdQueryHookResult = ReturnType<typeof useGetMenyByIdQuery>;
-export type GetMenyByIdLazyQueryHookResult = ReturnType<typeof useGetMenyByIdLazyQuery>;
-export type GetMenyByIdQueryResult = Apollo.QueryResult<GetMenyByIdQuery, GetMenyByIdQueryVariables>;
+export type GetMenuByIdQueryHookResult = ReturnType<typeof useGetMenuByIdQuery>;
+export type GetMenuByIdLazyQueryHookResult = ReturnType<typeof useGetMenuByIdLazyQuery>;
+export type GetMenuByIdQueryResult = Apollo.QueryResult<GetMenuByIdQuery, GetMenuByIdQueryVariables>;
+export const GetOrdersDocument = gql`
+    query GetOrders {
+  orders {
+    _id
+    orderNumber
+    table {
+      name
+      tableNumber
+    }
+    items {
+      _id
+      dish {
+        name
+      }
+      quantity
+      status
+    }
+    start_time
+    end_time
+  }
+}
+    `;
+
+/**
+ * __useGetOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+      }
+export function useGetOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+        }
+export type GetOrdersQueryHookResult = ReturnType<typeof useGetOrdersQuery>;
+export type GetOrdersLazyQueryHookResult = ReturnType<typeof useGetOrdersLazyQuery>;
+export type GetOrdersQueryResult = Apollo.QueryResult<GetOrdersQuery, GetOrdersQueryVariables>;
+export const GetOrderByIdDocument = gql`
+    query getOrderById($orderByIdId: String!) {
+  orderById(id: $orderByIdId) {
+    _id
+    orderNumber
+    table {
+      _id
+      tableNumber
+      name
+      token
+      enabled
+    }
+    items {
+      _id
+      dish {
+        description
+        name
+        price
+        _id
+      }
+      quantity
+      status
+    }
+    start_time
+  }
+}
+    `;
+
+/**
+ * __useGetOrderByIdQuery__
+ *
+ * To run a query within a React component, call `useGetOrderByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderByIdQuery({
+ *   variables: {
+ *      orderByIdId: // value for 'orderByIdId'
+ *   },
+ * });
+ */
+export function useGetOrderByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOrderByIdQuery, GetOrderByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrderByIdQuery, GetOrderByIdQueryVariables>(GetOrderByIdDocument, options);
+      }
+export function useGetOrderByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrderByIdQuery, GetOrderByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrderByIdQuery, GetOrderByIdQueryVariables>(GetOrderByIdDocument, options);
+        }
+export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery>;
+export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
+export type GetOrderByIdQueryResult = Apollo.QueryResult<GetOrderByIdQuery, GetOrderByIdQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {

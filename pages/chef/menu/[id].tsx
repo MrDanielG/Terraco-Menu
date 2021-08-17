@@ -1,14 +1,17 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { HiPencil } from 'react-icons/hi';
+import { animated } from 'react-spring';
 import AddDishToMenu from '../../../components/AddDishToMenu';
 import AddButton from '../../../components/buttons/AddButton';
 import BackButton from '../../../components/buttons/BackButton';
-import CardInfo from '../../../components/card/CardInfo';
-import ParentCard from '../../../components/card/ParentCard';
-import Modal from '../../../components/Modal';
-import Navbar from '../../../components/Navbar';
-import { useGetMenyByIdQuery } from '../../../graphql/graphql';
+import CardInfo from '../../../components/cards/parent-card/CardInfo';
+import ParentCard from '../../../components/cards/parent-card/ParentCard';
+import Navbar from '../../../components/layout/Navbar';
+import Modal from '../../../components/modals/Modal';
+import { useGetMenuByIdQuery, useRemoveDishFromMenuMutation } from '../../../graphql/graphql';
+import { useSwipe } from '../../../hooks/useSwipe';
 import { intlFormat } from '../../../lib/utils';
 
 interface Props {}
@@ -33,43 +36,77 @@ const categoryData = [
 ];
 
 const MenuDetail = (props: Props) => {
-    const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
-    const { id } = router.query;
-    const { data, refetch } = useGetMenyByIdQuery({
+    const { id: menuId } = router.query;
+    const [isOpen, setIsOpen] = useState(false);
+    const [removeDishFromMenuMutation] = useRemoveDishFromMenuMutation();
+    const { data, refetch } = useGetMenuByIdQuery({
         variables: {
-            menuByIdId: id?.toString() || '',
+            menuByIdId: menuId?.toString() || '',
         },
     });
-    const menu = data?.menuById || null;
     const currentDishesId = data?.menuById?.dishes.map((dish) => dish._id);
+
+    const handleDeleteDish = async (id: string) => {
+        try {
+            await removeDishFromMenuMutation({
+                variables: {
+                    removeDishFromMenuIdDish: id || '',
+                    removeDishFromMenuIdMenu: menuId?.toString() || '',
+                },
+            });
+            await refetch();
+            toast.success('Platillo Eliminado de Menú');
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al Eliminar Platillo');
+        }
+    };
+
+    const [springs, bind] = useSwipe(data?.menuById?.dishes.length || 0, handleDeleteDish);
 
     return (
         <>
-            <div className="bg-gray-200 p-8 h-auto min-h-screen">
+            <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <BackButton text="Inicio" pathNameOnBack="/chef" />
                 <div className="flex items-center">
-                    <h1 className="font-semibold text-3xl text-brown">{menu?.title}</h1>
+                    <h1 className="font-semibold text-3xl text-brown">{data?.menuById?.title}</h1>
                     <button>
                         <HiPencil className="text-3xl text-brown ml-2" />
                     </button>
                 </div>
                 <p className="text-gray-500 mt-1">
                     Status:{' '}
-                    <span className={menu?.isActive ? 'text-mygreen' : 'text-red-600'}>
-                        {menu?.isActive ? 'Activo' : 'Inactivo'}
+                    <span className={data?.menuById?.isActive ? 'text-mygreen' : 'text-red-600'}>
+                        {data?.menuById?.isActive ? 'Activo' : 'Inactivo'}
                     </span>
                 </p>
-                <p className="text-gray-500 mt-2">{menu?.description}</p>
+                <p className="text-gray-500 mt-2">{data?.menuById?.description}</p>
 
-                {menu?.dishes.map((dish) => (
-                    <ParentCard url_img={dish.url_img?.toString()} key={dish._id}>
-                        <CardInfo>
-                            <CardInfo.Title><span>{dish.name}</span></CardInfo.Title>
-                            <CardInfo.Footer><span>{intlFormat(dish.price, 'es-MX')}</span></CardInfo.Footer>
-                        </CardInfo>
-                    </ParentCard>
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                    Desliza a la izquierda para eliminar un platillo
+                </p>
+
+                {springs.map(({ x }, i) => (
+                    <animated.div
+                        key={i}
+                        {...bind(i, data?.menuById?.dishes[i]._id)}
+                        style={{ x, touchAction: 'pan-y' }}
+                    >
+                        <ParentCard url_img={data?.menuById?.dishes[i].url_img?.toString()}>
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{data?.menuById?.dishes[i].name}</span>
+                                </CardInfo.Title>
+                                <CardInfo.Footer>
+                                    <span>
+                                        {intlFormat(data?.menuById?.dishes[0]?.price, 'es-MX')}
+                                    </span>
+                                </CardInfo.Footer>
+                            </CardInfo>
+                        </ParentCard>
+                    </animated.div>
                 ))}
 
                 <AddButton onClick={() => setIsOpen(true)} />
@@ -85,7 +122,7 @@ const MenuDetail = (props: Props) => {
                 }}
                 closeBtnTitle="Cerrar"
             >
-                <AddDishToMenu menuId={menu?._id!} currentDishesId={currentDishesId!} />
+                <AddDishToMenu menuId={data?.menuById?._id!} currentDishesId={currentDishesId!} />
             </Modal>
         </>
     );

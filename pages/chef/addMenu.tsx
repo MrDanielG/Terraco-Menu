@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import BackButton from '../../components/buttons/BackButton';
 import BigButton from '../../components/buttons/BigButton';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/layout/Navbar';
 import { MenuDataInput, useAddMenuMutation } from '../../graphql/graphql';
 
 interface Props {}
@@ -17,10 +17,7 @@ const AddMenu = (props: Props) => {
     } = useForm<MenuDataInput>();
     const [addMenuMutation, { data, loading }] = useAddMenuMutation();
 
-    const onSubmit: SubmitHandler<MenuDataInput> = async (
-        { title, description },
-        e
-    ) => {
+    const onSubmit: SubmitHandler<MenuDataInput> = async ({ title, description }, e) => {
         try {
             await addMenuMutation({
                 variables: {
@@ -37,11 +34,9 @@ const AddMenu = (props: Props) => {
     };
 
     return (
-        <div className="bg-gray-200 p-8 h-screen">
+        <div className="bg-gray-200 p-8 min-h-screen">
             <Navbar />
-            <h1 className="font-semibold text-3xl text-brown mb-8">
-                Crear Menú
-            </h1>
+            <h1 className="font-semibold text-3xl text-brown mb-8">Crear Menú</h1>
 
             <BackButton text="Regresar" pathNameOnBack="/chef" />
 

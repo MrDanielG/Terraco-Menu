@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import BackButton from '../../../components/buttons/BackButton';
 import BigButton from '../../../components/buttons/BigButton';
-import Navbar from '../../../components/Navbar';
+import Navbar from '../../../components/layout/Navbar';
 import { useGenerateTableMutation } from '../../../graphql/graphql';
 
 interface IFormValues {
@@ -39,9 +39,7 @@ const AddTable = () => {
 
             <BackButton text="Regresar" pathNameOnBack="/manager/tables" />
 
-            <h1 className="font-semibold text-3xl text-brown ml-1">
-                Crear Mesa
-            </h1>
+            <h1 className="font-semibold text-3xl text-brown ml-1">Crear Mesa</h1>
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="my-3">
