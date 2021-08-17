@@ -9,6 +9,7 @@ import CategoryBar from '../../components/layout/CategoryBar';
 import Navbar from '../../components/layout/Navbar';
 import SearchBar from '../../components/layout/SearchBar';
 import DangerModal from '../../components/modals/DangerModal';
+import ProtectedPage from '../../components/ProtectedPage';
 import { Dish, useDelDishByIdMutation, useGetDishesQuery } from '../../graphql/graphql';
 import { useSwipe } from '../../hooks/useSwipe';
 import { intlFormat } from '../../lib/utils';
@@ -62,7 +63,7 @@ const Platillos = (props: Props) => {
     const [springs, bind] = useSwipe(data?.dishes.length || 0, handleDeleteDish);
 
     return (
-        <>
+        <ProtectedPage username="Chef" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
@@ -109,7 +110,7 @@ const Platillos = (props: Props) => {
                 onCloseModal={() => setIsOpen(false)}
                 onClickDangerBtn={deleteDish}
             ></DangerModal>
-        </>
+        </ProtectedPage>
     );
 };
 

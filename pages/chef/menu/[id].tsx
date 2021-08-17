@@ -10,6 +10,7 @@ import CardInfo from '../../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../../components/cards/parent-card/ParentCard';
 import Navbar from '../../../components/layout/Navbar';
 import Modal from '../../../components/modals/Modal';
+import ProtectedPage from '../../../components/ProtectedPage';
 import { useGetMenuByIdQuery, useRemoveDishFromMenuMutation } from '../../../graphql/graphql';
 import { useSwipe } from '../../../hooks/useSwipe';
 import { intlFormat } from '../../../lib/utils';
@@ -66,7 +67,7 @@ const MenuDetail = (props: Props) => {
     const [springs, bind] = useSwipe(data?.menuById?.dishes.length || 0, handleDeleteDish);
 
     return (
-        <>
+        <ProtectedPage username="Chef" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <BackButton text="Inicio" pathNameOnBack="/chef" />
@@ -124,7 +125,7 @@ const MenuDetail = (props: Props) => {
             >
                 <AddDishToMenu menuId={data?.menuById?._id!} currentDishesId={currentDishesId!} />
             </Modal>
-        </>
+        </ProtectedPage>
     );
 };
 

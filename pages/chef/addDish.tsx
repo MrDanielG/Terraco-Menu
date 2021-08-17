@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import Select from 'react-select';
 import BackButton from '../../components/buttons/BackButton';
 import BigButton from '../../components/buttons/BigButton';
+import ProtectedPage from '../../components/ProtectedPage';
 import UploadImgWidget, { uploadImage } from '../../components/UploadImgWidget';
 import {
     DishDataInput,
@@ -103,176 +104,178 @@ const AddDish = (props: Props) => {
     };
 
     return (
-        <div className="bg-gray-200 p-8 min-h-screen">
-            <BackButton text="Regresar" pathNameOnBack="/chef/platillos" />
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex justify-center items-center flex-col">
-                    <div className="my-3">
-                        <UploadImgWidget onChange={setImgFile} />
+        <ProtectedPage username="Chef" redirectTo="/">
+            <div className="bg-gray-200 p-8 min-h-screen">
+                <BackButton text="Regresar" pathNameOnBack="/chef/platillos" />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="flex justify-center items-center flex-col">
+                        <div className="my-3">
+                            <UploadImgWidget onChange={setImgFile} />
+                        </div>
+                        {!imgFile && (
+                            <span className="text-sm my-2 text-red-600 text-center">
+                                Imagen requerida
+                            </span>
+                        )}
                     </div>
-                    {!imgFile && (
-                        <span className="text-sm my-2 text-red-600 text-center">
-                            Imagen requerida
-                        </span>
-                    )}
-                </div>
 
-                <div className="my-3">
-                    <label htmlFor="name" className="text-gray-600 ml-2">
-                        Nombre del Platillo
-                    </label>
-                    <input
-                        {...register('name', {
-                            required: true,
-                        })}
-                        id="name"
-                        name="name"
-                        type="text"
-                        className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
-                        placeholder="Sopa Azteca"
-                    />
-                    {errors.name && (
-                        <span className="text-sm ml-2 text-red-600 text-center">
-                            Nombre requerido
-                        </span>
-                    )}
-                </div>
-
-                <div className="my-3">
-                    <label htmlFor="price" className="text-gray-600 ml-2">
-                        Precio
-                    </label>
-                    <input
-                        {...register('price', {
-                            required: true,
-                        })}
-                        id="price"
-                        name="price"
-                        type="number"
-                        className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
-                        min="1"
-                        placeholder="90.00"
-                    />
-                    {errors.name && (
-                        <span className="text-sm ml-2 text-red-600 text-center">
-                            Precio requerido
-                        </span>
-                    )}
-                </div>
-
-                <div className="my-3">
-                    <label className="text-gray-600 ml-2" htmlFor="description">
-                        Descripción
-                    </label>
-                    <textarea
-                        {...register('description', {
-                            required: true,
-                        })}
-                        id="description"
-                        className="mt-1 block w-full rounded-3xl border-gray-300 shadow-sm focus:border-brown-light focus:ring focus:ring-brown-light focus:ring-opacity-50"
-                        placeholder="Platillo con..."
-                        rows={3}
-                    ></textarea>
-                    {errors.description && (
-                        <span className="text-sm ml-2 text-red-600 text-center">
-                            Descripción requerida
-                        </span>
-                    )}
-                </div>
-
-                <div className="my-3">
-                    <label className="text-gray-600 ml-2" htmlFor="menu">
-                        Categorías
-                    </label>
-                    <Controller
-                        name="selectCategories"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                            <Select
-                                {...field}
-                                isMulti
-                                placeholder="Bebida, Postre, etc."
-                                className="mt-2"
-                                id="categories"
-                                name="categories"
-                                options={categoryOpts}
-                                theme={(theme) => ({
-                                    ...theme,
-                                    borderRadius: 30,
-                                    colors: {
-                                        ...theme.colors,
-                                        primary: 'brown',
-                                    },
-                                })}
-                            />
+                    <div className="my-3">
+                        <label htmlFor="name" className="text-gray-600 ml-2">
+                            Nombre del Platillo
+                        </label>
+                        <input
+                            {...register('name', {
+                                required: true,
+                            })}
+                            id="name"
+                            name="name"
+                            type="text"
+                            className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
+                            placeholder="Sopa Azteca"
+                        />
+                        {errors.name && (
+                            <span className="text-sm ml-2 text-red-600 text-center">
+                                Nombre requerido
+                            </span>
                         )}
-                    />
-                </div>
+                    </div>
 
-                <div className="my-3">
-                    <label className="text-gray-600 ml-2" htmlFor="menu">
-                        Agregar a Menu
-                    </label>
-                    <Controller
-                        name="menusId"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                            <Select
-                                {...field}
-                                isMulti
-                                placeholder="Menus disponibles"
-                                className="mt-2"
-                                id="menu"
-                                name="menu"
-                                options={menusOpts}
-                                isLoading={loadingMenus}
-                                theme={(theme) => ({
-                                    ...theme,
-                                    borderRadius: 30,
-                                    colors: {
-                                        ...theme.colors,
-                                        primary: 'brown',
-                                    },
-                                })}
-                            />
+                    <div className="my-3">
+                        <label htmlFor="price" className="text-gray-600 ml-2">
+                            Precio
+                        </label>
+                        <input
+                            {...register('price', {
+                                required: true,
+                            })}
+                            id="price"
+                            name="price"
+                            type="number"
+                            className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-1 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
+                            min="1"
+                            placeholder="90.00"
+                        />
+                        {errors.name && (
+                            <span className="text-sm ml-2 text-red-600 text-center">
+                                Precio requerido
+                            </span>
                         )}
-                    />
-                </div>
+                    </div>
 
-                <div className="my-3">
-                    <label className="text-gray-600 ml-2" htmlFor="time">
-                        Tiempo de Preparación
-                    </label>
-                    <Controller
-                        name="prepTime"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                            <Select
-                                {...field}
-                                placeholder="Mins aprox"
-                                className="mt-2"
-                                id="time"
-                                name="time"
-                                options={timeOpts}
-                                theme={(theme) => ({
-                                    ...theme,
-                                    borderRadius: 30,
-                                    colors: {
-                                        ...theme.colors,
-                                        primary: 'brown',
-                                    },
-                                })}
-                            />
+                    <div className="my-3">
+                        <label className="text-gray-600 ml-2" htmlFor="description">
+                            Descripción
+                        </label>
+                        <textarea
+                            {...register('description', {
+                                required: true,
+                            })}
+                            id="description"
+                            className="mt-1 block w-full rounded-3xl border-gray-300 shadow-sm focus:border-brown-light focus:ring focus:ring-brown-light focus:ring-opacity-50"
+                            placeholder="Platillo con..."
+                            rows={3}
+                        ></textarea>
+                        {errors.description && (
+                            <span className="text-sm ml-2 text-red-600 text-center">
+                                Descripción requerida
+                            </span>
                         )}
-                    />
-                </div>
+                    </div>
 
-                <BigButton text="Agregar Platillo" isDisabled={loadingRequests || !imgFile} />
-            </form>
-        </div>
+                    <div className="my-3">
+                        <label className="text-gray-600 ml-2" htmlFor="menu">
+                            Categorías
+                        </label>
+                        <Controller
+                            name="selectCategories"
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    isMulti
+                                    placeholder="Bebida, Postre, etc."
+                                    className="mt-2"
+                                    id="categories"
+                                    name="categories"
+                                    options={categoryOpts}
+                                    theme={(theme) => ({
+                                        ...theme,
+                                        borderRadius: 30,
+                                        colors: {
+                                            ...theme.colors,
+                                            primary: 'brown',
+                                        },
+                                    })}
+                                />
+                            )}
+                        />
+                    </div>
+
+                    <div className="my-3">
+                        <label className="text-gray-600 ml-2" htmlFor="menu">
+                            Agregar a Menu
+                        </label>
+                        <Controller
+                            name="menusId"
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    isMulti
+                                    placeholder="Menus disponibles"
+                                    className="mt-2"
+                                    id="menu"
+                                    name="menu"
+                                    options={menusOpts}
+                                    isLoading={loadingMenus}
+                                    theme={(theme) => ({
+                                        ...theme,
+                                        borderRadius: 30,
+                                        colors: {
+                                            ...theme.colors,
+                                            primary: 'brown',
+                                        },
+                                    })}
+                                />
+                            )}
+                        />
+                    </div>
+
+                    <div className="my-3">
+                        <label className="text-gray-600 ml-2" htmlFor="time">
+                            Tiempo de Preparación
+                        </label>
+                        <Controller
+                            name="prepTime"
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    placeholder="Mins aprox"
+                                    className="mt-2"
+                                    id="time"
+                                    name="time"
+                                    options={timeOpts}
+                                    theme={(theme) => ({
+                                        ...theme,
+                                        borderRadius: 30,
+                                        colors: {
+                                            ...theme.colors,
+                                            primary: 'brown',
+                                        },
+                                    })}
+                                />
+                            )}
+                        />
+                    </div>
+
+                    <BigButton text="Agregar Platillo" isDisabled={loadingRequests || !imgFile} />
+                </form>
+            </div>
+        </ProtectedPage>
     );
 };
 

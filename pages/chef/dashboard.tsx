@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ComandaCard from '../../components/cards/ComandaCard';
 import Navbar from '../../components/layout/Navbar';
+import ProtectedPage from '../../components/ProtectedPage';
 import {
     Order,
     Status,
@@ -24,10 +25,17 @@ const Dashboard = (props: Props) => {
 
     useEffect(() => {
         if (data?.orderChanges) {
+            console.log('hola');
             const order = data.orderChanges as Order;
-            const orderArray = orders.filter((currentOrder) => currentOrder._id !== order._id);
-            orderArray.push(order);
-            setOrders(orderArray);
+            const orderIsNotCooking = order.items.some((item) => item.status !== Status.Cooking);
+            const idx = orders.findIndex((currentOrder) => currentOrder._id === order._id);
+            const orderIsNotInOrders = idx === -1;
+            if (orderIsNotInOrders) {
+                orders.push(order);
+            } else if (orderIsNotCooking) {
+                orders.splice(idx, 1);
+            }
+            setOrders(orders);
         }
     }, [data]);
 
@@ -39,18 +47,20 @@ const Dashboard = (props: Props) => {
     }, [currentOrders]);
 
     return (
-        <div className="bg-gray-200 p-8 min-h-screen">
-            <Navbar />
-            <h1 className="font-semibold text-3xl text-brown">Dashboard</h1>
+        <ProtectedPage username="Chef" redirectTo="/">
+            <div className="bg-gray-200 p-8 min-h-screen">
+                <Navbar />
+                <h1 className="font-semibold text-3xl text-brown">Dashboard</h1>
 
-            <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
+                <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                {orders.map((order) => (
-                    <ComandaCard order={order} key={order._id} />
-                ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    {orders.map((order) => (
+                        <ComandaCard order={order} key={order._id} />
+                    ))}
+                </div>
             </div>
-        </div>
+        </ProtectedPage>
     );
 };
 
