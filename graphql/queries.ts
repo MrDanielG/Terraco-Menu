@@ -156,3 +156,25 @@ export const GET_ORDER_BY_ID = gql`
         }
     }
 `;
+
+export const GET_MONTH_SALES = gql`
+    query getMonthSales($monthSalesYear: Float!) {
+        monthSales(year: $monthSalesYear) {
+            month
+            year
+            total
+        }
+    }
+`;
+
+export const GET_DISH_SALES = gql`
+    query getDishSales($dishSalesYear: Float!) {
+        dishSales(year: $dishSalesYear) {
+            month
+            year
+            dishName
+            totalUnits
+            totalSales
+        }
+    }
+`;

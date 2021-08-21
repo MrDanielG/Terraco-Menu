@@ -1,32 +1,18 @@
 import Navbar from '../../../components/layout/Navbar';
 import ProtectedPage from '../../../components/ProtectedPage';
-
+import { useGetDishSalesQuery } from '../../../graphql/graphql';
+import { getMonthName, topDishSells } from '../../../lib/utils';
 interface Props {}
 
-const months = [
-    {
-        name: 'Enero',
-        income: '$20,000',
-    },
-    {
-        name: 'Febrero',
-        income: '$20,000',
-    },
-    {
-        name: 'Marzo',
-        income: '$20,000',
-    },
-    {
-        name: 'Abril',
-        income: '$20,000',
-    },
-    {
-        name: 'Mayo',
-        income: '$20,000',
-    },
-];
-
 const SellsStats = (props: Props) => {
+    const currentDate = new Date();
+    const { data } = useGetDishSalesQuery({
+        variables: { dishSalesYear: currentDate.getFullYear() },
+    });
+
+    const dishSales = data?.dishSales || [];
+    const topDishes = topDishSells(dishSales);
+    
     return (
         <ProtectedPage username="Manager" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
@@ -50,23 +36,26 @@ const SellsStats = (props: Props) => {
                                                 scope="col"
                                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                             >
-                                                Ingreso
+                                                Platillo
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {months.map((month, i) => (
-                                            <tr key={i}>
+                                        {topDishes.sort((a, b) => a.month - b.month).map((dishSale, idx) => (
+                                            <tr key={idx}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="text-sm font-medium text-gray-800">
-                                                            {month.name}
+                                                            {getMonthName(
+                                                                dishSale.year,
+                                                                dishSale.month - 1
+                                                            ).toUpperCase()}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="text-sm text-gray-500">
-                                                        {month.income}
+                                                        {dishSale.dishName}
                                                     </div>
                                                 </td>
                                             </tr>
