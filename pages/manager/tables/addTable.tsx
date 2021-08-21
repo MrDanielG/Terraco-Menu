@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import BackButton from '../../../components/buttons/BackButton';
 import BigButton from '../../../components/buttons/BigButton';
 import Navbar from '../../../components/layout/Navbar';
+import ProtectedPage from '../../../components/ProtectedPage';
 import { useGenerateTableMutation } from '../../../graphql/graphql';
 
 interface IFormValues {
@@ -34,38 +35,40 @@ const AddTable = () => {
     };
 
     return (
-        <div className="bg-gray-200 p-8 h-auto min-h-screen">
-            <Navbar />
+        <ProtectedPage username="Manager" redirectTo="/">
+            <div className="bg-gray-200 p-8 h-auto min-h-screen">
+                <Navbar />
 
-            <BackButton text="Regresar" pathNameOnBack="/manager/tables" />
+                <BackButton text="Regresar" pathNameOnBack="/manager/tables" />
 
-            <h1 className="font-semibold text-3xl text-brown ml-1">Crear Mesa</h1>
+                <h1 className="font-semibold text-3xl text-brown ml-1">Crear Mesa</h1>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="my-3">
-                    <label htmlFor="name" className="text-gray-600 ml-2">
-                        Nombre del Platillo
-                    </label>
-                    <input
-                        {...register('tableName', {
-                            required: true,
-                        })}
-                        id="tableName"
-                        name="tableName"
-                        type="text"
-                        className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
-                        placeholder="Mesa del Sol"
-                    />
-                    {errors.tableName && (
-                        <span className="text-sm ml-2 text-red-600 text-center">
-                            Nombre de Mesa requerido
-                        </span>
-                    )}
-                </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="my-3">
+                        <label htmlFor="name" className="text-gray-600 ml-2">
+                            Nombre del Platillo
+                        </label>
+                        <input
+                            {...register('tableName', {
+                                required: true,
+                            })}
+                            id="tableName"
+                            name="tableName"
+                            type="text"
+                            className="appearance-none rounded-3xl relative block w-full px-3 py-2 my-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-brown-light focus:border-brown-light focus:z-10 sm:text-sm "
+                            placeholder="Mesa del Sol"
+                        />
+                        {errors.tableName && (
+                            <span className="text-sm ml-2 text-red-600 text-center">
+                                Nombre de Mesa requerido
+                            </span>
+                        )}
+                    </div>
 
-                <BigButton text="Agregar Mesa" isDisabled={loading} />
-            </form>
-        </div>
+                    <BigButton text="Agregar Mesa" isDisabled={loading} />
+                </form>
+            </div>
+        </ProtectedPage>
     );
 };
 export default AddTable;

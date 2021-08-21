@@ -4,6 +4,7 @@ import AddButton from '../../../components/buttons/AddButton';
 import InfoTable from '../../../components/InfoTable';
 import Navbar from '../../../components/layout/Navbar';
 import Modal from '../../../components/modals/Modal';
+import ProtectedPage from '../../../components/ProtectedPage';
 import { useGetTablesQuery } from '../../../graphql/graphql';
 
 interface Props {}
@@ -15,7 +16,7 @@ const Tables = (props: Props) => {
     const { data } = useGetTablesQuery();
 
     return (
-        <>
+        <ProtectedPage username="Manager" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">Gestion de Mesas</h1>
@@ -51,7 +52,7 @@ const Tables = (props: Props) => {
             >
                 {tableId && <InfoTable tableId={tableId} />}
             </Modal>
-        </>
+        </ProtectedPage>
     );
 };
 
