@@ -58,6 +58,15 @@ export type DishDataInput = {
   categories: Array<Scalars['String']>;
 };
 
+export type DishStats = {
+  __typename?: 'DishStats';
+  month: Scalars['Float'];
+  year: Scalars['Float'];
+  dishName: Scalars['String'];
+  totalUnits: Scalars['Float'];
+  totalSales: Scalars['Dinero'];
+};
+
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   accessToken: Scalars['String'];
@@ -86,6 +95,13 @@ export type MenuDataInput = {
   description?: Maybe<Scalars['String']>;
   isActive: Scalars['Boolean'];
   url_img?: Maybe<Scalars['String']>;
+};
+
+export type MonthStats = {
+  __typename?: 'MonthStats';
+  month: Scalars['Float'];
+  year: Scalars['Float'];
+  total: Scalars['Dinero'];
 };
 
 export type Mutation = {
@@ -331,6 +347,8 @@ export type Query = {
   orderById: Order;
   orderItems: Array<OrderItem>;
   tickets: Array<Ticket>;
+  monthSales: Array<MonthStats>;
+  dishSales: Array<DishStats>;
 };
 
 
@@ -376,6 +394,16 @@ export type QueryTableByIdNumberArgs = {
 
 export type QueryOrderByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryMonthSalesArgs = {
+  year: Scalars['Float'];
+};
+
+
+export type QueryDishSalesArgs = {
+  year: Scalars['Float'];
 };
 
 /** Permissions group that can be assigned to an User. */
@@ -637,6 +665,20 @@ export type GetOrderByIdQueryVariables = Exact<{
 
 
 export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
+
+export type GetMonthSalesQueryVariables = Exact<{
+  monthSalesYear: Scalars['Float'];
+}>;
+
+
+export type GetMonthSalesQuery = { __typename?: 'Query', monthSales: Array<{ __typename?: 'MonthStats', month: number, year: number, total: any }> };
+
+export type GetDishSalesQueryVariables = Exact<{
+  dishSalesYear: Scalars['Float'];
+}>;
+
+
+export type GetDishSalesQuery = { __typename?: 'Query', dishSales: Array<{ __typename?: 'DishStats', month: number, year: number, dishName: string, totalUnits: number, totalSales: any }> };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -1581,6 +1623,82 @@ export function useGetOrderByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery>;
 export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
 export type GetOrderByIdQueryResult = Apollo.QueryResult<GetOrderByIdQuery, GetOrderByIdQueryVariables>;
+export const GetMonthSalesDocument = gql`
+    query getMonthSales($monthSalesYear: Float!) {
+  monthSales(year: $monthSalesYear) {
+    month
+    year
+    total
+  }
+}
+    `;
+
+/**
+ * __useGetMonthSalesQuery__
+ *
+ * To run a query within a React component, call `useGetMonthSalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMonthSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMonthSalesQuery({
+ *   variables: {
+ *      monthSalesYear: // value for 'monthSalesYear'
+ *   },
+ * });
+ */
+export function useGetMonthSalesQuery(baseOptions: Apollo.QueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+      }
+export function useGetMonthSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+        }
+export type GetMonthSalesQueryHookResult = ReturnType<typeof useGetMonthSalesQuery>;
+export type GetMonthSalesLazyQueryHookResult = ReturnType<typeof useGetMonthSalesLazyQuery>;
+export type GetMonthSalesQueryResult = Apollo.QueryResult<GetMonthSalesQuery, GetMonthSalesQueryVariables>;
+export const GetDishSalesDocument = gql`
+    query getDishSales($dishSalesYear: Float!) {
+  dishSales(year: $dishSalesYear) {
+    month
+    year
+    dishName
+    totalUnits
+    totalSales
+  }
+}
+    `;
+
+/**
+ * __useGetDishSalesQuery__
+ *
+ * To run a query within a React component, call `useGetDishSalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDishSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDishSalesQuery({
+ *   variables: {
+ *      dishSalesYear: // value for 'dishSalesYear'
+ *   },
+ * });
+ */
+export function useGetDishSalesQuery(baseOptions: Apollo.QueryHookOptions<GetDishSalesQuery, GetDishSalesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDishSalesQuery, GetDishSalesQueryVariables>(GetDishSalesDocument, options);
+      }
+export function useGetDishSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDishSalesQuery, GetDishSalesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDishSalesQuery, GetDishSalesQueryVariables>(GetDishSalesDocument, options);
+        }
+export type GetDishSalesQueryHookResult = ReturnType<typeof useGetDishSalesQuery>;
+export type GetDishSalesLazyQueryHookResult = ReturnType<typeof useGetDishSalesLazyQuery>;
+export type GetDishSalesQueryResult = Apollo.QueryResult<GetDishSalesQuery, GetDishSalesQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {

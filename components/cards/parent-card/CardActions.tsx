@@ -35,9 +35,9 @@ const CardActions: React.FC<Props> & {
     Bottom: typeof CardActionBottom;
 } = (props: Props) => {
     return (
-        <>
-            <div className="w-56 h-100 flex md:w-full md:h-auto md:block">{props.children}</div>
-        </>
+        <div className="w-56 h-100 flex flex-wrap md:w-full md:h-auto md:block">
+            {props.children}
+        </div>
     );
 };
 

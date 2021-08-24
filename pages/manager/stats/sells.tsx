@@ -1,32 +1,17 @@
 import Navbar from '../../../components/layout/Navbar';
 import ProtectedPage from '../../../components/ProtectedPage';
-
+import { useGetMonthSalesQuery } from '../../../graphql/graphql';
+import { getMonthName, intlFormat } from '../../../lib/utils';
 interface Props {}
 
-const months = [
-    {
-        name: 'Enero',
-        income: '$20,000',
-    },
-    {
-        name: 'Febrero',
-        income: '$20,000',
-    },
-    {
-        name: 'Marzo',
-        income: '$20,000',
-    },
-    {
-        name: 'Abril',
-        income: '$20,000',
-    },
-    {
-        name: 'Mayo',
-        income: '$20,000',
-    },
-];
 
 const SellsStats = (props: Props) => {
+    const currentDate = new Date();
+    const { data } = useGetMonthSalesQuery({
+        variables: { monthSalesYear: currentDate.getFullYear() },
+    });
+    const monthSales = (data?.monthSales || []);
+    const sortedSales = monthSales.slice().sort((a, b) => a.month - b.month);
     return (
         <ProtectedPage username="Manager" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
@@ -55,18 +40,18 @@ const SellsStats = (props: Props) => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {months.map((month, i) => (
-                                            <tr key={i}>
+                                        {sortedSales.map((monthSale, idx) => (
+                                            <tr key={idx}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="text-sm font-medium text-gray-800">
-                                                            {month.name}
+                                                            {getMonthName(monthSale.year, monthSale.month - 1).toUpperCase()}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="text-sm text-gray-500">
-                                                        {month.income}
+                                                        {intlFormat(monthSale.total, 'es-MX')}
                                                     </div>
                                                 </td>
                                             </tr>

@@ -37,7 +37,7 @@ const categoryData = [
 
 const Platillos = (props: Props) => {
     const router = useRouter();
-    const { data, refetch } = useGetDishesQuery();
+    const { data, refetch } = useGetDishesQuery({ fetchPolicy: 'cache-and-network' });
     const [isOpen, setIsOpen] = useState(false);
     const [dish, setDish] = useState<Dish>();
     const [delDishByIdMutation] = useDelDishByIdMutation();
