@@ -1,6 +1,5 @@
 import { Switch } from '@headlessui/react';
 import QRCode from 'qrcode.react';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useGetTableByIdQuery, useUpdateTableMutation } from '../graphql/graphql';
 
@@ -9,16 +8,12 @@ interface Props {
 }
 
 const InfoTable = ({ tableId }: Props) => {
-    
-    let { data } = useGetTableByIdQuery({
+    const { data } = useGetTableByIdQuery({
         variables: {
             tableByIdId: tableId,
         },
     });
-
-    console.log(data?.tableById?.enabled);
     const [updateTableMutation] = useUpdateTableMutation();
-    const [enabled, setEnabled] = useState(data?.tableById?.enabled || false);
     const currentUrl = process.env.NEXT_PUBLIC_LOCAL_URI || 'http://localhost:3000';
     const qrValue = `${currentUrl}?tableId=${data?.tableById?._id}`;
 
@@ -26,11 +21,10 @@ const InfoTable = ({ tableId }: Props) => {
         try {
             await updateTableMutation({
                 variables: {
-                    updateTableData: { enabled: !enabled },
+                    updateTableData: { enabled: !data?.tableById?.enabled },
                     updateTableId: tableId,
                 },
             });
-            setEnabled(!enabled);
             toast.success('Mesa Actualizada');
         } catch (error) {
             console.error(error);
@@ -48,16 +42,16 @@ const InfoTable = ({ tableId }: Props) => {
             <div className="flex justify-around my-4">
                 <p className="text-gray-500">Activada:</p>
                 <Switch
-                    checked={enabled ?? false}
+                    checked={data?.tableById?.enabled!}
                     onChange={handleChange}
                     className={`${
-                        enabled ? 'bg-blue-600' : 'bg-gray-200'
+                        data?.tableById?.enabled ? 'bg-blue-600' : 'bg-gray-200'
                     } relative inline-flex items-center h-6 rounded-full w-11`}
                 >
                     <span className="sr-only">Enable notifications</span>
                     <span
                         className={`${
-                            enabled ? 'translate-x-6' : 'translate-x-1'
+                            data?.tableById?.enabled ? 'translate-x-6' : 'translate-x-1'
                         } inline-block w-4 h-4 transform bg-white rounded-full`}
                     />
                 </Switch>
