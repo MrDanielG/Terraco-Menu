@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { HiPlusSm } from 'react-icons/hi';
 import CardActions from '../components/cards/parent-card/CardActions';
@@ -10,7 +10,7 @@ import CategoryBar from '../components/layout/CategoryBar';
 import Navbar from '../components/layout/Navbar';
 import SearchBar from '../components/layout/SearchBar';
 import Modal from '../components/modals/Modal';
-import { Dish, Order, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
+import { Dish, Order, Menu, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
@@ -41,9 +41,18 @@ export default function Home() {
     const { tableId } = router.query;
     const t = locale === 'es-MX' ? esMX : enUS;
     const [isOpen, setIsOpen] = useState(false);
+    const [menus, setMenus] = useState<Menu[]>([]);
+    const [dishes, setDishes] = useState<Dish[]>([]);
     const { data } = useGetMenusQuery();
+    const fullMenus = data ? data.menus.filter((menu) => menu.isActive) : [];
+    const fullDishes =
+        fullMenus.length > 0
+            ? fullMenus.map((menu) => menu.dishes).reduce((prev, cur) => prev.concat(cur))
+            : [];
+    useEffect(() => {
+        setMenus(fullMenus);
+    }, [data]);
 
-    const menus = data ? data.menus.filter((menu) => menu.isActive) : [];
     const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
         tableId: tableId?.toString() || '',
         items: [],
@@ -136,7 +145,19 @@ export default function Home() {
             <Navbar itemsQty={numItems} onClick={handleNavbarClick} />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
-            <SearchBar />
+            <SearchBar
+                list={fullDishes}
+                keys={['name', 'description', 'categories']}
+                onSearch={(results, pattern) => {
+                    if (pattern !== '' || results.length > 0) {
+                        setMenus([]);
+                        setDishes(results);
+                    } else {
+                        setMenus(fullMenus);
+                        setDishes([]);
+                    }
+                }}
+            />
 
             <CategoryBar data={categoryData} />
             <div>
@@ -185,6 +206,47 @@ export default function Home() {
                                 </div>
                             )
                     )}
+            </div>
+            <div>
+                {menus.length === 0 && (
+                    <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
+                        Resultados de la búsqueda
+                    </h2>
+                )}
+                {dishes.length > 0 && (
+                    <div>
+                        {dishes.map((dish) => (
+                            <ParentCard
+                                url_img={dish.url_img?.toString()}
+                                onClick={() =>
+                                    handleDishDetails(`/dish/${dish._id}?tableId=${tableId}`)
+                                }
+                                key={dish._id}
+                            >
+                                <CardInfo
+                                    onClick={() =>
+                                        handleDishDetails(`/dish/${dish._id}?tableId=${tableId}`)
+                                    }
+                                >
+                                    <CardInfo.Title>
+                                        <span>{dish.name}</span>
+                                    </CardInfo.Title>
+                                    <CardInfo.Footer>
+                                        <span>{intlFormat(dish.price, 'es-MX')}</span>
+                                    </CardInfo.Footer>
+                                </CardInfo>
+                                <CardActions>
+                                    <CardActions.Bottom
+                                        icon={<HiPlusSm />}
+                                        onClick={(_e) => {
+                                            handleAddDish(dish);
+                                        }}
+                                    />
+                                </CardActions>
+                            </ParentCard>
+                        ))}
+                    </div>
+                )}
             </div>
             <Modal
                 title=""
