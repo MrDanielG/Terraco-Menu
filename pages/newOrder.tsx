@@ -11,7 +11,7 @@ import CardActions from '../components/cards/parent-card/CardActions';
 import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
 import Navbar from '../components/layout/Navbar';
-import Modal from '../components/modals/Modal';
+import DangerModal from '../components/modals/DangerModal';
 import {
     Dish,
     Order,
@@ -222,58 +222,44 @@ const NewOrder = (props: Props) => {
                     </h1>
                 )}
 
-                <>
-                    {order &&
-                        order.items.map((item, idx) => (
-                            <ParentCard url_img={item.dish?.url_img?.toString()} key={idx + 1}>
-                                <CardInfo>
-                                    <CardInfo.Title>
-                                        <span>{item.dish.name}</span>
-                                    </CardInfo.Title>
-                                    <CardInfo.Body>
-                                        <span>
-                                            Importe:{' '}
-                                            {intlFormat(
-                                                multiply(
-                                                    dinero(item.dish.price),
-                                                    item.quantity
-                                                ).toJSON(),
-                                                'es-MX'
-                                            )}
-                                        </span>
-                                    </CardInfo.Body>
-                                    <CardInfo.Footer>
-                                        <span>Cant: {item.quantity}</span>
-                                    </CardInfo.Footer>
-                                </CardInfo>
-                            </ParentCard>
-                        ))}
-                    {order && items.length > 0 && (
-                        <p className="uppercase mt-2 tracking-wide text-sm text-gray-600 text-center mb-5">
-                            Tu consumo hasta ahora:{' '}
-                            <span>{intlFormat(total.toJSON(), 'es-MX')}</span>
-                        </p>
-                    )}
-                    <Modal
-                        title="Advertencia"
-                        isOpen={isOpen}
-                        closeModal={() => setIsOpen(false)}
-                        onCloseModal={() => setIsOpen(false)}
-                        closeBtnTitle=""
-                    >
-                        <div className="flex flex-col items-center justify-center">
-                            <p>{message}</p>
-                            <div>
-                                <button
-                                    onClick={() => router.push(`/ticketView?tableId=${tableId}`)}
-                                >
-                                    Sí
-                                </button>
-                                <button onClick={() => setIsOpen(false)}>No</button>
-                            </div>
-                        </div>
-                    </Modal>
-                </>
+                {order &&
+                    order.items.map((item, idx) => (
+                        <ParentCard url_img={item.dish?.url_img?.toString()} key={idx + 1}>
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{item.dish.name}</span>
+                                </CardInfo.Title>
+                                <CardInfo.Body>
+                                    <span>
+                                        Importe:{' '}
+                                        {intlFormat(
+                                            multiply(
+                                                dinero(item.dish.price),
+                                                item.quantity
+                                            ).toJSON(),
+                                            'es-MX'
+                                        )}
+                                    </span>
+                                </CardInfo.Body>
+                                <CardInfo.Footer>
+                                    <span>Cant: {item.quantity}</span>
+                                </CardInfo.Footer>
+                            </CardInfo>
+                        </ParentCard>
+                    ))}
+                {order && items.length > 0 && (
+                    <p className="uppercase mt-2 tracking-wide text-sm text-gray-600 text-center mb-5">
+                        Tu consumo hasta ahora: <span>{intlFormat(total.toJSON(), 'es-MX')}</span>
+                    </p>
+                )}
+                <DangerModal
+                    title="Advertencia"
+                    description={message}
+                    isOpen={isOpen}
+                    dangerBtnTitle="Continuar"
+                    onCloseModal={() => setIsOpen(false)}
+                    onClickDangerBtn={() => router.push(`/ticketView?tableId=${tableId}`)}
+                />
 
                 <div>
                     {items.length > 0 && (
