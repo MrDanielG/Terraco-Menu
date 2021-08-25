@@ -7,7 +7,9 @@ import Modal from '../../../components/modals/Modal';
 import ProtectedPage from '../../../components/ProtectedPage';
 import { useGetTablesQuery } from '../../../graphql/graphql';
 
+
 interface Props {}
+
 
 const Tables = (props: Props) => {
     const router = useRouter();
@@ -19,7 +21,7 @@ const Tables = (props: Props) => {
         <ProtectedPage username="Manager" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown">Gestion de Mesas</h1>
+                <h1 className="font-semibold text-3xl text-brown">Gestión de Mesas</h1>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-8 2xl:grid-cols-10 gap-6 mt-6">
                     {data?.tables.map((table) => (
@@ -48,9 +50,11 @@ const Tables = (props: Props) => {
                 title="Mesa Info"
                 closeModal={() => setIsOpen(false)}
                 onCloseModal={() => setIsOpen(false)}
-                closeBtnTitle="Imprimir QR"
+                closeBtnTitle="Cerrar"
             >
-                {tableId && <InfoTable tableId={tableId} />}
+                {tableId && (
+                    <InfoTable tableId={tableId} />
+                )}
             </Modal>
         </ProtectedPage>
     );
