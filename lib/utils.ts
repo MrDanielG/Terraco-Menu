@@ -46,6 +46,6 @@ export function topDishSells(dishSales: DishStats[]): DishStats[] {
 }
 
 export function search<T>(pattern: string, list: T[], keys: Fuse.FuseOptionKey[]) {
-    const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys });
+  const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys, threshold: 0.2 });
     return fuse.search(pattern);
 }

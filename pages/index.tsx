@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { HiPlusSm } from 'react-icons/hi';
 import CardActions from '../components/cards/parent-card/CardActions';
 import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
-import CategoryBar from '../components/layout/CategoryBar';
+import CategoryBar, { CategoryBarRef } from '../components/layout/CategoryBar';
 import Navbar from '../components/layout/Navbar';
 import SearchBar from '../components/layout/SearchBar';
 import Modal from '../components/modals/Modal';
@@ -41,6 +41,7 @@ export default function Home() {
     const { tableId } = router.query;
     const t = locale === 'es-MX' ? esMX : enUS;
     const [isOpen, setIsOpen] = useState(false);
+    const catBarRef = useRef<CategoryBarRef>(null);
     const [menus, setMenus] = useState<Menu[]>([]);
     const [dishes, setDishes] = useState<Dish[]>([]);
     const { data } = useGetMenusQuery();
@@ -139,7 +140,28 @@ export default function Home() {
             { className: 'underline cursor-pointer' }
         );
     };
+    const handleSearch = (results: Dish[], pattern: string) => {
+        catBarRef.current?.reset();
+        if (pattern !== '' || results.length > 0) {
+            setMenus([]);
+            setDishes(results);
+        } else {
+            setMenus(fullMenus);
+            setDishes([]);
+        }
+    };
 
+    const handleCategoryFilter = (category: ICategoryData) => {
+        const name = category.name;
+        let filteredMenus = fullMenus;
+        if (name !== '') {
+            filteredMenus = fullMenus.map((menu) => {
+                const dishes = menu.dishes.filter((dish) => dish.categories.includes(name));
+                return { ...menu, dishes };
+            });
+        }
+        setMenus(filteredMenus);
+    };
     return (
         <div className="bg-gray-200 p-8 min-h-screen">
             <Navbar itemsQty={numItems} onClick={handleNavbarClick} />
@@ -148,18 +170,10 @@ export default function Home() {
             <SearchBar
                 list={fullDishes}
                 keys={['name', 'description', 'categories']}
-                onSearch={(results, pattern) => {
-                    if (pattern !== '' || results.length > 0) {
-                        setMenus([]);
-                        setDishes(results);
-                    } else {
-                        setMenus(fullMenus);
-                        setDishes([]);
-                    }
-                }}
+                onSearch={handleSearch}
             />
 
-            <CategoryBar data={categoryData} />
+            <CategoryBar data={categoryData} onClick={handleCategoryFilter} ref={catBarRef} />
             <div>
                 {menus.length > 0 &&
                     menus.map(
