@@ -1,21 +1,37 @@
+import { forwardRef, useImperativeHandle, Ref, useRef, ReactElement } from 'react';
 import { search } from '../../lib/utils';
+
+export interface SearchBarRef {
+    clear: () => void;
+}
 
 interface Props<T> {
     list: T[];
     keys: string[];
     onSearch?: (resutls: T[], pattern: string) => void;
+    ref?: Ref<SearchBarRef>;
 }
 
-const SearchBar = <T extends unknown>({ list, keys, onSearch }: Props<T>) => {
-    
+function SearchBarT<T>({ list, keys, onSearch }: Props<T>, ref: Ref<SearchBarRef>) {
+    const input = useRef<HTMLInputElement>(null);
     const handleInput = (pattern: string) => {
         if (onSearch) {
             const results = search(pattern, list, keys).map((r) => r.item);
             onSearch(results, pattern);
         }
     };
+
+    useImperativeHandle(ref, () => ({
+        clear: () => {
+            if (input.current) {
+                input.current.value = '';
+                handleInput('');
+            }
+        },
+    }));
     return (
         <input
+            ref={input}
             type="text"
             name="first-name"
             id="first-name"
@@ -25,6 +41,7 @@ const SearchBar = <T extends unknown>({ list, keys, onSearch }: Props<T>) => {
             onChange={(e) => handleInput(e.target.value)}
         />
     );
-};
-
+}
+const SearchBar = forwardRef(SearchBarT) as <T>( props: Props<T> & {ref?: Ref<SearchBarRef>}) => ReactElement;
+//SearchBar.displayName = 'SearchBar';
 export default SearchBar;

@@ -8,7 +8,7 @@ import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
 import CategoryBar, { CategoryBarRef } from '../components/layout/CategoryBar';
 import Navbar from '../components/layout/Navbar';
-import SearchBar from '../components/layout/SearchBar';
+import SearchBar, { SearchBarRef } from '../components/layout/SearchBar';
 import Modal from '../components/modals/Modal';
 import { Dish, Order, Menu, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -19,7 +19,7 @@ import { intlFormat } from '../lib/utils';
 const categoryData = [
     {
         name: 'Platillos',
-        url: 'https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
+        url: 'https://images.unsplash.com/photo-1519077336050-4ca5cac9d64f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
     },
     {
         name: 'Bebidas',
@@ -42,6 +42,7 @@ export default function Home() {
     const t = locale === 'es-MX' ? esMX : enUS;
     const [isOpen, setIsOpen] = useState(false);
     const catBarRef = useRef<CategoryBarRef>(null);
+    const searchBarRef = useRef<SearchBarRef>(null);
     const [menus, setMenus] = useState<Menu[]>([]);
     const [dishes, setDishes] = useState<Dish[]>([]);
     const { data } = useGetMenusQuery();
@@ -152,6 +153,7 @@ export default function Home() {
     };
 
     const handleCategoryFilter = (category: ICategoryData) => {
+        searchBarRef.current?.clear();
         const name = category.name;
         let filteredMenus = fullMenus;
         if (name !== '') {
@@ -171,6 +173,7 @@ export default function Home() {
                 list={fullDishes}
                 keys={['name', 'description', 'categories']}
                 onSearch={handleSearch}
+                ref={searchBarRef}
             />
 
             <CategoryBar data={categoryData} onClick={handleCategoryFilter} ref={catBarRef} />
