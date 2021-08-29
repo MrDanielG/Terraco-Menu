@@ -176,7 +176,7 @@ export default function Home() {
                 ref={searchBarRef}
             />
 
-            <CategoryBar data={categoryData} onClick={handleCategoryFilter} ref={catBarRef} />
+            <CategoryBar data={categoryData} onClick={handleCategoryFilter} ref={catBarRef} all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" />
             <div>
                 {menus.length > 0 &&
                     menus.map(

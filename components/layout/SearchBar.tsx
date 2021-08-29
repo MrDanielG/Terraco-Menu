@@ -3,6 +3,7 @@ import { search } from '../../lib/utils';
 
 export interface SearchBarRef {
     clear: () => void;
+    setInput: (text: string) => void;
 }
 
 interface Props<T> {
@@ -28,6 +29,11 @@ function SearchBarT<T>({ list, keys, onSearch }: Props<T>, ref: Ref<SearchBarRef
                 handleInput('');
             }
         },
+        setInput: (text) => {
+            if (input.current) {
+                input.current.value = text;
+            }
+        },
     }));
     return (
         <input
@@ -42,6 +48,8 @@ function SearchBarT<T>({ list, keys, onSearch }: Props<T>, ref: Ref<SearchBarRef
         />
     );
 }
-const SearchBar = forwardRef(SearchBarT) as <T>( props: Props<T> & {ref?: Ref<SearchBarRef>}) => ReactElement;
+const SearchBar = forwardRef(SearchBarT) as <T>(
+    props: Props<T> & { ref?: Ref<SearchBarRef> }
+) => ReactElement;
 //SearchBar.displayName = 'SearchBar';
 export default SearchBar;
