@@ -79,7 +79,7 @@ const Platillos = (props: Props) => {
         const name = category.name;
         let filtered = allDishes;
         if(name !== '') {
-            filtered = allDishes.filter(dish => dish.categories.includes(name));
+            filtered = filtered.filter(dish => dish.categories.includes(name));
         }
         setDishes(filtered);
     };
@@ -93,7 +93,7 @@ const Platillos = (props: Props) => {
                 <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
 
                 <SearchBar
-                    list={dishes}
+                    list={allDishes}
                     keys={['name', 'description']}
                     onSearch={handleSearch}
                     ref={searchRef}
