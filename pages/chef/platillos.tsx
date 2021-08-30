@@ -124,7 +124,7 @@ const Platillos = (props: Props) => {
                                     <span>{dishes[i].name}</span>
                                 </CardInfo.Title>
                                 <CardInfo.Footer>
-                                    <span>{intlFormat(dishes[0]?.price, 'es-MX')}</span>
+                                    <span>{intlFormat(dishes[i]?.price, 'es-MX')}</span>
                                 </CardInfo.Footer>
                             </CardInfo>
                         </ParentCard>
