@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { HiPlusSm } from 'react-icons/hi';
 import CardActions from '../components/cards/parent-card/CardActions';
 import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
-import CategoryBar from '../components/layout/CategoryBar';
+import CategoryBar, { CategoryBarRef } from '../components/layout/CategoryBar';
 import Navbar from '../components/layout/Navbar';
-import SearchBar from '../components/layout/SearchBar';
+import SearchBar, { SearchBarRef } from '../components/layout/SearchBar';
 import Modal from '../components/modals/Modal';
-import { Dish, Order, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
+import { Dish, Order, Menu, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
@@ -19,7 +19,7 @@ import { intlFormat } from '../lib/utils';
 const categoryData = [
     {
         name: 'Platillos',
-        url: 'https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
+        url: 'https://images.unsplash.com/photo-1519077336050-4ca5cac9d64f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
     },
     {
         name: 'Bebidas',
@@ -41,9 +41,20 @@ export default function Home() {
     const { tableId } = router.query;
     const t = locale === 'es-MX' ? esMX : enUS;
     const [isOpen, setIsOpen] = useState(false);
+    const catBarRef = useRef<CategoryBarRef>(null);
+    const searchBarRef = useRef<SearchBarRef>(null);
+    const [menus, setMenus] = useState<Menu[]>([]);
+    const [dishes, setDishes] = useState<Dish[]>([]);
     const { data } = useGetMenusQuery();
+    const fullMenus = data ? data.menus.filter((menu) => menu.isActive) : [];
+    const fullDishes =
+        fullMenus.length > 0
+            ? fullMenus.map((menu) => menu.dishes).reduce((prev, cur) => prev.concat(cur))
+            : [];
+    useEffect(() => {
+        setMenus(fullMenus);
+    }, [data]);
 
-    const menus = data ? data.menus.filter((menu) => menu.isActive) : [];
     const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
         tableId: tableId?.toString() || '',
         items: [],
@@ -130,15 +141,42 @@ export default function Home() {
             { className: 'underline cursor-pointer' }
         );
     };
+    const handleSearch = (results: Dish[], pattern: string) => {
+        catBarRef.current?.reset();
+        if (pattern !== '' || results.length > 0) {
+            setMenus([]);
+            setDishes(results);
+        } else {
+            setMenus(fullMenus);
+            setDishes([]);
+        }
+    };
 
+    const handleCategoryFilter = (category: ICategoryData) => {
+        searchBarRef.current?.clear();
+        const name = category.name;
+        let filteredMenus = fullMenus;
+        if (name !== '') {
+            filteredMenus = fullMenus.map((menu) => {
+                const dishes = menu.dishes.filter((dish) => dish.categories.includes(name));
+                return { ...menu, dishes };
+            });
+        }
+        setMenus(filteredMenus);
+    };
     return (
         <div className="bg-gray-200 p-8 min-h-screen">
             <Navbar itemsQty={numItems} onClick={handleNavbarClick} />
             <h1 className="font-semibold text-3xl text-brown">Menú</h1>
 
-            <SearchBar />
+            <SearchBar
+                list={fullDishes}
+                keys={['name', 'description', 'categories']}
+                onSearch={handleSearch}
+                ref={searchBarRef}
+            />
 
-            <CategoryBar data={categoryData} />
+            <CategoryBar data={categoryData} onClick={handleCategoryFilter} ref={catBarRef} all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" />
             <div>
                 {menus.length > 0 &&
                     menus.map(
@@ -185,6 +223,47 @@ export default function Home() {
                                 </div>
                             )
                     )}
+            </div>
+            <div>
+                {menus.length === 0 && (
+                    <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
+                        Resultados de la búsqueda
+                    </h2>
+                )}
+                {dishes.length > 0 && (
+                    <div>
+                        {dishes.map((dish) => (
+                            <ParentCard
+                                url_img={dish.url_img?.toString()}
+                                onClick={() =>
+                                    handleDishDetails(`/dish/${dish._id}?tableId=${tableId}`)
+                                }
+                                key={dish._id}
+                            >
+                                <CardInfo
+                                    onClick={() =>
+                                        handleDishDetails(`/dish/${dish._id}?tableId=${tableId}`)
+                                    }
+                                >
+                                    <CardInfo.Title>
+                                        <span>{dish.name}</span>
+                                    </CardInfo.Title>
+                                    <CardInfo.Footer>
+                                        <span>{intlFormat(dish.price, 'es-MX')}</span>
+                                    </CardInfo.Footer>
+                                </CardInfo>
+                                <CardActions>
+                                    <CardActions.Bottom
+                                        icon={<HiPlusSm />}
+                                        onClick={(_e) => {
+                                            handleAddDish(dish);
+                                        }}
+                                    />
+                                </CardActions>
+                            </ParentCard>
+                        ))}
+                    </div>
+                )}
             </div>
             <Modal
                 title=""

@@ -1,15 +1,15 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { HiPencil } from 'react-icons/hi';
 import AddButton from '../../components/buttons/AddButton';
 import CardActions from '../../components/cards/parent-card/CardActions';
 import CardInfo from '../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../components/cards/parent-card/ParentCard';
-import CategoryBar from '../../components/layout/CategoryBar';
+import CategoryBar, { CategoryBarRef } from '../../components/layout/CategoryBar';
 import Navbar from '../../components/layout/Navbar';
-import SearchBar from '../../components/layout/SearchBar';
+import SearchBar, { SearchBarRef } from '../../components/layout/SearchBar';
 import ProtectedPage from '../../components/ProtectedPage';
-import { useGetMenusQuery } from '../../graphql/graphql';
+import { useGetMenusQuery, Menu } from '../../graphql/graphql';
 import useRedirect from '../../hooks/useRedirect';
 
 const categoryData = [
@@ -27,15 +27,36 @@ interface Props {}
 
 const ChefHome = (props: Props) => {
     useRedirect();
-    const [active, setActive] = useState(true);
     const router = useRouter();
     const { data } = useGetMenusQuery();
-    const menus = data?.menus.filter((menu) => menu.isActive === active);
-    const handleOnClick = (category: ICategoryData) => {
-        if (category.name === 'Activos') {
-            setActive(true);
+    const catBarRef = useRef<CategoryBarRef | null>(null);
+    const searchBarRef = useRef<SearchBarRef | null>(null);
+    const [menus, setMenus] = useState<Menu[]>([]);
+    const [loading, setLoading] = useState(true);
+    const allMenus = data?.menus || [];
+
+    const handleCategoryFilter = (category: ICategoryData) => {
+        if (searchBarRef.current) {
+            searchBarRef.current.setInput('');
+        }
+        const isActive = category.name === 'Activos';
+        setMenus(allMenus.filter((menu) => menu.isActive === isActive));
+    };
+
+    const handleSearch = (results: Menu[], pattern: string) => {
+        catBarRef.current?.reset();
+        if (pattern !== '' || results.length > 0) {
+            setMenus(results);
         } else {
-            setActive(false);
+            catBarRef.current?.select(0);
+        }
+    };
+
+    const handleCatRef = (ref: CategoryBarRef | null) => {
+        catBarRef.current = ref;
+        if (loading && ref && data) {
+            ref.select(0);
+            setLoading(false);
         }
     };
     return (
@@ -43,28 +64,37 @@ const ChefHome = (props: Props) => {
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">Menús</h1>
+                <SearchBar
+                    list={allMenus}
+                    keys={['title', 'description']}
+                    onSearch={handleSearch}
+                    ref={searchBarRef}
+                />
 
-                <SearchBar />
-
-                <CategoryBar data={categoryData} onClick={handleOnClick} />
+                <CategoryBar
+                    data={categoryData}
+                    onClick={handleCategoryFilter}
+                    ref={(ref) => handleCatRef(ref)}
+                />
                 <div>
-                    {menus &&
-                        menus.map((menu) => (
-                            <ParentCard
-                                url_img="https://images.unsplash.com/photo-1529270296466-b09d5f5c2bab?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1490&q=80"
-                                key={menu._id}
-                                onClick={() => router.push(`/chef/menu/${menu._id}`)}
-                            >
-                                <CardInfo>
-                                    <CardInfo.Title>
-                                        <span>{menu.title}</span>
-                                    </CardInfo.Title>
-                                </CardInfo>
-                                <CardActions>
-                                    <CardActions.Bottom icon={<HiPencil />} />
-                                </CardActions>
-                            </ParentCard>
-                        ))}
+                    {menus.map((menu, idx) => (
+                        <ParentCard
+                            url_img="https://images.unsplash.com/photo-1529270296466-b09d5f5c2bab?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1490&q=80"
+                            key={idx}                           
+                        >
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{menu.title}</span>
+                                </CardInfo.Title>
+                            </CardInfo>
+                            <CardActions>
+                                <CardActions.Bottom
+                                    icon={<HiPencil />}
+                                    onClick={() => router.push(`/chef/menu/${menu._id}`)}
+                                />
+                            </CardActions>
+                        </ParentCard>
+                    ))}
                 </div>
                 <AddButton onClick={() => router.push('/chef/addMenu')} />
             </div>

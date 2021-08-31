@@ -1,5 +1,6 @@
 import { toFormat, dinero, DineroOptions } from 'dinero.js';
 import { DishStats } from '../graphql/graphql';
+import Fuse from 'fuse.js';
 
 const deftransformer = ({ amount }: DineroOptions<number>) => `\$ ${amount}`;
 
@@ -42,4 +43,9 @@ export function topDishSells(dishSales: DishStats[]): DishStats[] {
         }, {})
     );
     return topDishes;
+}
+
+export function search<T>(pattern: string, list: T[], keys: Fuse.FuseOptionKey[]) {
+  const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys, threshold: 0.2 });
+    return fuse.search(pattern);
 }

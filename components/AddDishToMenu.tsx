@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { HiPlusSm } from 'react-icons/hi';
 import { Dish, useAddDishToMenuMutation, useGetDishesQuery } from '../graphql/graphql';
@@ -6,8 +6,8 @@ import { intlFormat } from '../lib/utils';
 import CardActions from './cards/parent-card/CardActions';
 import CardInfo from './cards/parent-card/CardInfo';
 import ParentCard from './cards/parent-card/ParentCard';
-import CategoryBar from './layout/CategoryBar';
-import SearchBar from './layout/SearchBar';
+import CategoryBar, { CategoryBarRef } from './layout/CategoryBar';
+import SearchBar, { SearchBarRef } from './layout/SearchBar';
 
 const categoryData = [
     {
@@ -37,7 +37,9 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
     const { data: dataDishes, refetch: refetchDishes } = useGetDishesQuery();
     const [availableDishes, setAvailableDishes] = useState<Dish[]>();
     const [addDishToMenuMutation] = useAddDishToMenuMutation();
-
+    const allAvailableDishes = useRef<Dish[]>([]);
+    const searchRef = useRef<SearchBarRef | null>(null);
+    const catBarRef = useRef<CategoryBarRef | null>(null);
     const addPlatilloToMenu = async (dishId: string) => {
         try {
             const { data } = await addDishToMenuMutation({
@@ -45,7 +47,7 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
             });
             const newCurrentDishes = data?.addDishToMenu.dishes.map((dish) => dish._id);
             const newAvailableDishes = getAvailableDishes(dataDishes?.dishes!, newCurrentDishes!);
-
+            allAvailableDishes.current = newAvailableDishes;
             setAvailableDishes(newAvailableDishes);
             toast.success('Platillo Agregado a Menú');
         } catch (error) {
@@ -60,11 +62,30 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
         });
         return availableDishes;
     };
+    const handleSearch = (results: Dish[], pattern: string) => {
+        catBarRef.current?.reset();
+        if (pattern !== '' || results.length > 0) {
+            setAvailableDishes(results);
+        } else {
+            setAvailableDishes(allAvailableDishes.current);
+        }
+    };
+
+    const handleCategoryFilter = (category: ICategoryData) => {
+        searchRef.current?.clear();
+        const name = category.name;
+        let filtered = allAvailableDishes.current;
+        if (name !== '') {
+            filtered = filtered.filter((dish) => dish.categories.includes(name));
+        }
+        setAvailableDishes(filtered);
+    };
 
     useEffect(() => {
         const filter = async () => {
             await refetchDishes();
             const availableDishes = getAvailableDishes(dataDishes?.dishes || [], currentDishesId);
+            allAvailableDishes.current = availableDishes;
             setAvailableDishes(availableDishes);
         };
         filter();
@@ -72,11 +93,21 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
 
     return (
         <>
-            <SearchBar />
+            <SearchBar
+                list={allAvailableDishes.current}
+                keys={['name', 'description']}
+                onSearch={handleSearch}
+                ref={searchRef}
+            />
 
-            <CategoryBar data={categoryData} />
+            <CategoryBar
+                data={categoryData}
+                onClick={handleCategoryFilter}
+                ref={catBarRef}
+                all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+            />
 
-            <h2 className="mt-10 mb-6 text-brown text-lg">Agregar a Menu</h2>
+            <h2 className="mt-10 mb-6 text-brown text-lg">Agregar a Menú</h2>
 
             {availableDishes?.map((dish) => (
                 <ParentCard

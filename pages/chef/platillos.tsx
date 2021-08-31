@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { animated } from 'react-spring';
 import AddButton from '../../components/buttons/AddButton';
 import CardInfo from '../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../components/cards/parent-card/ParentCard';
-import CategoryBar from '../../components/layout/CategoryBar';
+import CategoryBar,{CategoryBarRef} from '../../components/layout/CategoryBar';
+import SearchBar, {SearchBarRef} from '../../components/layout/SearchBar';
 import Navbar from '../../components/layout/Navbar';
-import SearchBar from '../../components/layout/SearchBar';
 import DangerModal from '../../components/modals/DangerModal';
 import ProtectedPage from '../../components/ProtectedPage';
 import { Dish, useDelDishByIdMutation, useGetDishesQuery } from '../../graphql/graphql';
@@ -39,15 +39,21 @@ const Platillos = (props: Props) => {
     const router = useRouter();
     const { data, refetch } = useGetDishesQuery({ fetchPolicy: 'cache-and-network' });
     const [isOpen, setIsOpen] = useState(false);
+    const [dishes, setDishes] = useState<Dish[]>([]);
     const [dish, setDish] = useState<Dish>();
+    const searchRef = useRef<SearchBarRef | null>(null);
+    const catBarRef = useRef<CategoryBarRef | null>(null);
     const [delDishByIdMutation] = useDelDishByIdMutation();
-
+    const allDishes: Dish[] = data?.dishes || [];
     const handleDeleteDish = (dishId: string) => {
         const dish = data?.dishes.find((dish) => dish._id === dishId);
         setDish(dish);
         setIsOpen(true);
     };
 
+    useEffect(() => {
+        setDishes(allDishes);
+    }, [data]);
     const deleteDish = async () => {
         try {
             await delDishByIdMutation({ variables: { delDishByIdId: dish?._id! } });
@@ -60,7 +66,25 @@ const Platillos = (props: Props) => {
         }
     };
 
-    const [springs, bind] = useSwipe(data?.dishes.length || 0, handleDeleteDish);
+    const handleSearch = (results: Dish[], pattern: string) => {
+        catBarRef.current?.reset();        
+        if (pattern !== '' || results.length > 0) {
+            setDishes(results);
+        } else {
+            setDishes(allDishes);
+        }
+    };
+    const handleCategoryFilter = (category: ICategoryData) => {
+        searchRef.current?.clear();
+        const name = category.name;
+        let filtered = allDishes;
+        if(name !== '') {
+            filtered = filtered.filter(dish => dish.categories.includes(name));
+        }
+        setDishes(filtered);
+    };
+
+    const [springs, bind] = useSwipe(dishes.length || 0, handleDeleteDish);
 
     return (
         <ProtectedPage username="Chef" redirectTo="/">
@@ -68,9 +92,19 @@ const Platillos = (props: Props) => {
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
 
-                <SearchBar />
+                <SearchBar
+                    list={allDishes}
+                    keys={['name', 'description']}
+                    onSearch={handleSearch}
+                    ref={searchRef}
+                />
 
-                <CategoryBar data={categoryData} />
+                <CategoryBar
+                    data={categoryData}
+                    onClick={handleCategoryFilter}
+                    ref={catBarRef}
+                    all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                />
 
                 <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
 
@@ -81,16 +115,16 @@ const Platillos = (props: Props) => {
                 {springs.map(({ x }, i) => (
                     <animated.div
                         key={i}
-                        {...bind(i, data?.dishes[i]._id)}
+                        {...bind(i, dishes[i]._id)}
                         style={{ x, touchAction: 'pan-y' }}
                     >
-                        <ParentCard url_img={data?.dishes[i].url_img?.toString()}>
+                        <ParentCard url_img={dishes[i].url_img?.toString()}>
                             <CardInfo>
                                 <CardInfo.Title>
-                                    <span>{data?.dishes[i].name}</span>
+                                    <span>{dishes[i].name}</span>
                                 </CardInfo.Title>
                                 <CardInfo.Footer>
-                                    <span>{intlFormat(data?.dishes[0]?.price, 'es-MX')}</span>
+                                    <span>{intlFormat(dishes[i]?.price, 'es-MX')}</span>
                                 </CardInfo.Footer>
                             </CardInfo>
                         </ParentCard>

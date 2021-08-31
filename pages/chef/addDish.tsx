@@ -47,7 +47,7 @@ const AddDish = (props: Props) => {
             label: time,
         };
     });
-    const categoryValues = ['Comida', 'Bebida', 'Postre', 'Entrada', 'Licor'];
+    const categoryValues = ['Platillos', 'Bebidas', 'Postres', 'Ensaladas'];
     const categoryOpts = categoryValues.map((category) => {
         return {
             value: category,
@@ -75,7 +75,7 @@ const AddDish = (props: Props) => {
                 name,
                 description,
                 url_img,
-                price: dinero({ amount: +price, currency: MXN }),
+                price: dinero({ amount: Math.trunc(price * 100), currency: MXN }),
                 categories: myCategories,
             };
 
@@ -194,7 +194,7 @@ const AddDish = (props: Props) => {
                                 <Select
                                     {...field}
                                     isMulti
-                                    placeholder="Bebida, Postre, etc."
+                                    placeholder="Bebidas, Postres, etc."
                                     className="mt-2"
                                     id="categories"
                                     name="categories"
@@ -254,7 +254,7 @@ const AddDish = (props: Props) => {
                             render={({ field }) => (
                                 <Select
                                     {...field}
-                                    placeholder="Mins aprox"
+                                    placeholder="Mins. aprox."
                                     className="mt-2"
                                     id="time"
                                     name="time"
