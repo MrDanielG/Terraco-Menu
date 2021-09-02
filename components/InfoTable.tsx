@@ -77,7 +77,7 @@ const InfoTable = ({ tableId }: Props) => {
         if (canvas) {
             setQRURL(canvas.toDataURL('image/png'));
         }
-    }, [setQRURL]);
+    }, [setQRURL, data]);
     const handleChange = async () => {
         try {
             await updateTableMutation({
