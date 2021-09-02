@@ -75,7 +75,7 @@ const InfoTable = ({ tableId }: Props) => {
     useEffect(() => {
         const canvas = document.getElementById('qrcode') as HTMLCanvasElement;
         if (canvas) {
-            setQRURL(canvas.toDataURL());
+            setQRURL(canvas.toDataURL('image/png'));
         }
     }, [setQRURL]);
     const handleChange = async () => {
