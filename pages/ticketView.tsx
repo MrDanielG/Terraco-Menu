@@ -1,4 +1,5 @@
 import { MXN } from '@dinero.js/currencies';
+import dynamic from 'next/dynamic';
 import { dinero, multiply, subtract } from 'dinero.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -13,6 +14,54 @@ import {
 } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { intlFormat } from '../lib/utils';
+import html2canvas from 'html2canvas';
+import ReactPDF, { Page, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+
+const BlobProvider = dynamic<ReactPDF.BlobProviderProps>(
+    () => import('@react-pdf/renderer').then((mod) => mod.BlobProvider),
+    { ssr: false }
+);
+
+const styles = StyleSheet.create({
+    page: {
+        flexDirection: 'row',
+    },
+    section: {
+        flex: 1,
+        margin: 'auto',
+        padding: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    image: {
+        width: '5cm',
+    },
+    text: {
+        padding: 10,
+        fontSize: '24pt',
+        color: '#401D0A',
+    },
+    link: {
+        color: '#2563EB',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+});
+interface TicketDocumentProps {
+    ticketImgUrl: string;
+}
+const TicketDocument = ({ ticketImgUrl }: TicketDocumentProps) => {
+    return (
+        <Document>
+            <Page size={{ width: '7cm' }} style={styles.page}>
+                <View style={styles.section} wrap={true}>
+                    <Image src={ticketImgUrl} style={styles.image} />
+                </View>
+            </Page>
+        </Document>
+    );
+};
 
 interface Props {}
 const TicketView = (props: Props) => {
@@ -28,6 +77,9 @@ const TicketView = (props: Props) => {
     const orderRes = useGetOrderByIdQuery({
         variables: { orderByIdId: order?._id || '' },
     });
+    const [ticketURL, setTicketURL] = useState(
+        'https://res.cloudinary.com/brosimgstorage/image/upload/v1629850963/noimage_ycfq5j.png'
+    );
 
     const [GenerateTicket] = useGenerateTicketMutation();
 
@@ -48,12 +100,24 @@ const TicketView = (props: Props) => {
             console.error(err);
         }
     };
-    const handlePrint = () => {
-        if (ticket && window) {
-            window.onafterprint = function (event) {
-                console.log(event);
-            };
-            window.print();
+
+    const updateTicketURL = async () => {
+        const ticketDiv = document.getElementById('ticket') || new HTMLDivElement();
+        try {
+            const canvas = await html2canvas(ticketDiv);
+            setTicketURL(canvas.toDataURL('image/png'));
+        } catch (err) {
+            console.error('Cannot convert html to canvas');
+            console.error(err);
+        }
+    };
+
+    const handlePDFDownload = (url: string | null) => {
+        if (url && window) {
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = 'Terraco-ticket.pdf';
+            anchor.click();
             setOrder(null);
             setCurrentOrder({ items: [], tableId: '' });
             router.push('/');
@@ -62,6 +126,8 @@ const TicketView = (props: Props) => {
     useEffect(() => {
         if (!ticket) {
             generateTicket();
+        } else {
+            updateTicketURL();
         }
     }, [ticket]);
 
@@ -75,7 +141,7 @@ const TicketView = (props: Props) => {
         <div className="bg-gray-200 p-8 min-h-screen">
             <BackButton text="Mi orden" pathNameOnBack="/newOrder" />
             {ticket && (
-                <div>
+                <div id="ticket">
                     <h1 className="text-center text-brown font-semibold text-lg mb-1">
                         Restarurante Terraco
                     </h1>
@@ -137,10 +203,25 @@ const TicketView = (props: Props) => {
                     </div>
 
                     <p className="text-center text-gray-600 text-xs pt-8">IVA Incluido</p>
-                    <p className="text-center text-gray-700 text-xs">Gracias por su prefencia</p>
-                    <BigButton text="Imprimir" onClick={() => handlePrint()} />
+                    <p className="text-center text-gray-700 text-xs pb-2">
+                        Gracias por su prefencia
+                    </p>
                 </div>
             )}
+            <BlobProvider document={<TicketDocument ticketImgUrl={ticketURL} />}>
+                {({ loading, url, error }) => {
+                    if (error) {
+                        console.error(error);
+                        return <p>Error</p>;
+                    }
+
+                    return loading ? (
+                        <p className="text-center">Generando PDF...</p>
+                    ) : (
+                        <BigButton text="Descargar PDF" onClick={() => handlePDFDownload(url)} />
+                    );
+                }}
+            </BlobProvider>
         </div>
     );
 };

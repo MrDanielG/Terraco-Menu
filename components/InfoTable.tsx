@@ -70,14 +70,14 @@ const InfoTable = ({ tableId }: Props) => {
         'https://res.cloudinary.com/brosimgstorage/image/upload/v1629850963/noimage_ycfq5j.png'
     );
     const [updateTableMutation] = useUpdateTableMutation();
-    const currentUrl = process.env.NEXT_PUBLIC_LOCAL_URI || 'http://localhost:3000';
+    const currentUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
     const qrValue = `${currentUrl}?tableId=${data?.tableById?._id}`;
     useEffect(() => {
         const canvas = document.getElementById('qrcode') as HTMLCanvasElement;
         if (canvas) {
-            setQRURL(canvas.toDataURL());
+            setQRURL(canvas.toDataURL('image/png'));
         }
-    }, [setQRURL]);
+    }, [setQRURL, data]);
     const handleChange = async () => {
         try {
             await updateTableMutation({
