@@ -754,6 +754,15 @@ export type GetMonthSalesQueryVariables = Exact<{
 
 export type GetMonthSalesQuery = { __typename?: 'Query', monthSales: Array<{ __typename?: 'MonthSalesStats', year: number, month: number, dayOfMonth: number, dayOfWeek: number, total: any }> };
 
+export type GetDailySalesQueryVariables = Exact<{
+  daySalesDay: Scalars['Float'];
+  daySalesMonth: Scalars['Float'];
+  daySalesYear: Scalars['Float'];
+}>;
+
+
+export type GetDailySalesQuery = { __typename?: 'Query', daySales: Array<{ __typename?: 'DaySalesStats', year: number, tableNumber: number, tableName: string, totalSum: any, salesCount: number, sales?: Maybe<Array<{ __typename?: 'Ticket', total: any, timestamp: any }>> }> };
+
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1813,6 +1822,51 @@ export function useGetMonthSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetMonthSalesQueryHookResult = ReturnType<typeof useGetMonthSalesQuery>;
 export type GetMonthSalesLazyQueryHookResult = ReturnType<typeof useGetMonthSalesLazyQuery>;
 export type GetMonthSalesQueryResult = Apollo.QueryResult<GetMonthSalesQuery, GetMonthSalesQueryVariables>;
+export const GetDailySalesDocument = gql`
+    query getDailySales($daySalesDay: Float!, $daySalesMonth: Float!, $daySalesYear: Float!) {
+  daySales(day: $daySalesDay, month: $daySalesMonth, year: $daySalesYear) {
+    year
+    tableNumber
+    tableName
+    totalSum
+    salesCount
+    sales {
+      total
+      timestamp
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDailySalesQuery__
+ *
+ * To run a query within a React component, call `useGetDailySalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDailySalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDailySalesQuery({
+ *   variables: {
+ *      daySalesDay: // value for 'daySalesDay'
+ *      daySalesMonth: // value for 'daySalesMonth'
+ *      daySalesYear: // value for 'daySalesYear'
+ *   },
+ * });
+ */
+export function useGetDailySalesQuery(baseOptions: Apollo.QueryHookOptions<GetDailySalesQuery, GetDailySalesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDailySalesQuery, GetDailySalesQueryVariables>(GetDailySalesDocument, options);
+      }
+export function useGetDailySalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDailySalesQuery, GetDailySalesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDailySalesQuery, GetDailySalesQueryVariables>(GetDailySalesDocument, options);
+        }
+export type GetDailySalesQueryHookResult = ReturnType<typeof useGetDailySalesQuery>;
+export type GetDailySalesLazyQueryHookResult = ReturnType<typeof useGetDailySalesLazyQuery>;
+export type GetDailySalesQueryResult = Apollo.QueryResult<GetDailySalesQuery, GetDailySalesQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {

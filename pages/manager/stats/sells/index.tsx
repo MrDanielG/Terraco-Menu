@@ -42,17 +42,20 @@ const SellsStats = (props: Props) => {
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {sortedSales.map((monthSale, idx) => (
-                                            <tr key={idx}>
+                                            <tr
+                                                key={idx}
+                                                className="cursor-pointer hover:bg-gray-100"
+                                                onClick={() =>
+                                                    router.push({
+                                                        pathname:
+                                                            '/manager/stats/sells/month/[month]',
+                                                        query: { month: monthSale.month },
+                                                    })
+                                                }
+                                            >
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
-                                                        <a
-                                                            className="text-sm font-medium text-gray-800 cursor-pointer"
-                                                            onClick={() =>
-                                                                router.push(
-                                                                    `/manager/stats/sells/month/${monthSale.month}`
-                                                                )
-                                                            }
-                                                        >
+                                                        <a className="text-sm font-medium text-gray-800">
                                                             {getMonthName(
                                                                 monthSale.year,
                                                                 monthSale.month - 1

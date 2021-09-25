@@ -1,10 +1,10 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import BackButton from '../../../../../components/buttons/BackButton';
-import Navbar from '../../../../../components/layout/Navbar';
-import ProtectedPage from '../../../../../components/ProtectedPage';
-import { useGetMonthSalesQuery } from '../../../../../graphql/graphql';
-import { getCustomDayNumberDate, getMonthName, intlFormat } from '../../../../../lib/utils';
+import BackButton from '../../../../../../components/buttons/BackButton';
+import Navbar from '../../../../../../components/layout/Navbar';
+import ProtectedPage from '../../../../../../components/ProtectedPage';
+import { useGetMonthSalesQuery } from '../../../../../../graphql/graphql';
+import { getCustomDayNumberDate, getMonthName, intlFormat } from '../../../../../../lib/utils';
 
 interface Props {}
 
@@ -13,7 +13,7 @@ const MonthlySales = (props: Props) => {
     const { locale } = router;
     const { month } = router.query;
     const currentDate = new Date();
-    const { data, loading, error } = useGetMonthSalesQuery({
+    const { data } = useGetMonthSalesQuery({
         variables: {
             monthSalesMonth: Number(month),
             monthSalesYear: currentDate.getFullYear(),
@@ -23,14 +23,16 @@ const MonthlySales = (props: Props) => {
     return (
         <ProtectedPage username="Manager" redirectTo="/">
             <Head>
-                <title>Estadísticas {getMonthName(currentDate.getFullYear(), Number(month))}</title>
+                <title>
+                    Estadísticas {getMonthName(currentDate.getFullYear(), Number(month) - 1)}
+                </title>
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             </Head>
 
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">
-                    Ventas {getMonthName(currentDate.getFullYear(), Number(month))}
+                    Ventas {getMonthName(currentDate.getFullYear(), Number(month) - 1)}
                 </h1>
 
                 <br />
@@ -59,7 +61,17 @@ const MonthlySales = (props: Props) => {
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {data?.monthSales.map((monthSale, idx) => (
-                                            <tr key={idx}>
+                                            <tr
+                                                key={idx}
+                                                className="cursor-pointer hover:bg-gray-100"
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/manager/stats/sells/month/${
+                                                            monthSale.month
+                                                        }/day/${monthSale.dayOfMonth - 1}`
+                                                    )
+                                                }
+                                            >
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="text-sm font-medium text-gray-800">

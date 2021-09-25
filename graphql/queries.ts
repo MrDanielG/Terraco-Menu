@@ -190,3 +190,19 @@ export const GET_MONTH_SALES = gql`
         }
     }
 `;
+
+export const GET_DAILY_SALES = gql`
+    query getDailySales($daySalesDay: Float!, $daySalesMonth: Float!, $daySalesYear: Float!) {
+        daySales(day: $daySalesDay, month: $daySalesMonth, year: $daySalesYear) {
+            year
+            tableNumber
+            tableName
+            totalSum
+            salesCount
+            sales {
+                total
+                timestamp
+            }
+        }
+    }
+`;
