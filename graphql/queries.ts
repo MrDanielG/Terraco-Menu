@@ -157,9 +157,9 @@ export const GET_ORDER_BY_ID = gql`
     }
 `;
 
-export const GET_MONTH_SALES = gql`
-    query getMonthSales($monthSalesYear: Float!) {
-        monthSales(year: $monthSalesYear) {
+export const GET_YEAR_SALES = gql`
+    query getYearSales($yearSalesYear: Float!) {
+        yearSales(year: $yearSalesYear) {
             month
             year
             total

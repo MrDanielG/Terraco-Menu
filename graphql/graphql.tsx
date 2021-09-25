@@ -24,6 +24,19 @@ export type CreateOrderItemsInput = {
 };
 
 
+export type DaySalesStats = {
+  __typename?: 'DaySalesStats';
+  year: Scalars['Float'];
+  month: Scalars['Float'];
+  dayOfMonth: Scalars['Float'];
+  dayOfWeek: Scalars['Float'];
+  tableNumber: Scalars['Float'];
+  tableName: Scalars['String'];
+  totalSum: Scalars['Dinero'];
+  salesCount: Scalars['Float'];
+  sales?: Maybe<Array<Ticket>>;
+};
+
 
 /** A dish describing an option for consumers. */
 export type Dish = {
@@ -58,8 +71,8 @@ export type DishDataInput = {
   categories: Array<Scalars['String']>;
 };
 
-export type DishStats = {
-  __typename?: 'DishStats';
+export type DishSalesStats = {
+  __typename?: 'DishSalesStats';
   month: Scalars['Float'];
   year: Scalars['Float'];
   dishName: Scalars['String'];
@@ -97,10 +110,12 @@ export type MenuDataInput = {
   url_img?: Maybe<Scalars['String']>;
 };
 
-export type MonthStats = {
-  __typename?: 'MonthStats';
-  month: Scalars['Float'];
+export type MonthSalesStats = {
+  __typename?: 'MonthSalesStats';
   year: Scalars['Float'];
+  month: Scalars['Float'];
+  dayOfMonth: Scalars['Float'];
+  dayOfWeek: Scalars['Float'];
   total: Scalars['Dinero'];
 };
 
@@ -135,6 +150,7 @@ export type Mutation = {
   createOrderItems: Array<OrderItem>;
   sumToOrderItem: OrderItem;
   delOrderItemById: Scalars['Int'];
+  setTicketStatus?: Maybe<Ticket>;
   generateTicket: Ticket;
 };
 
@@ -299,6 +315,12 @@ export type MutationDelOrderItemByIdArgs = {
 };
 
 
+export type MutationSetTicketStatusArgs = {
+  status: TicketStatus;
+  tikcetId: Scalars['String'];
+};
+
+
 export type MutationGenerateTicketArgs = {
   vat?: Maybe<Scalars['Float']>;
   paymentMethod?: Maybe<Scalars['String']>;
@@ -324,7 +346,7 @@ export type OrderItem = {
   dish: Dish;
   /** Units ordered by the customer. */
   quantity: Scalars['Float'];
-  /** Whether if this order is pending, . */
+  /** Whether if this order is pending, cooking, served, being paid or paid. */
   status: Status;
 };
 
@@ -347,8 +369,11 @@ export type Query = {
   orderById: Order;
   orderItems: Array<OrderItem>;
   tickets: Array<Ticket>;
-  monthSales: Array<MonthStats>;
-  dishSales: Array<DishStats>;
+  ticketById: Ticket;
+  yearSales: Array<YearSalesStats>;
+  dishSales: Array<DishSalesStats>;
+  monthSales: Array<MonthSalesStats>;
+  daySales: Array<DaySalesStats>;
 };
 
 
@@ -397,12 +422,34 @@ export type QueryOrderByIdArgs = {
 };
 
 
-export type QueryMonthSalesArgs = {
+export type QueryTicketByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryYearSalesArgs = {
+  status?: Maybe<TicketStatus>;
   year: Scalars['Float'];
 };
 
 
 export type QueryDishSalesArgs = {
+  status?: Maybe<TicketStatus>;
+  year: Scalars['Float'];
+};
+
+
+export type QueryMonthSalesArgs = {
+  status?: Maybe<TicketStatus>;
+  month: Scalars['Float'];
+  year: Scalars['Float'];
+};
+
+
+export type QueryDaySalesArgs = {
+  status?: Maybe<TicketStatus>;
+  day: Scalars['Float'];
+  month: Scalars['Float'];
   year: Scalars['Float'];
 };
 
@@ -427,13 +474,14 @@ export enum Status {
   Pending = 'PENDING',
   Cooking = 'COOKING',
   Served = 'SERVED',
-  Payingoff = 'PAYINGOFF',
-  Payed = 'PAYED'
+  Beingpaid = 'BEINGPAID',
+  Paid = 'PAID'
 }
 
 export type Subscription = {
   __typename?: 'Subscription';
   orderChanges: Order;
+  ticketChanges: Ticket;
 };
 
 export type Table = {
@@ -471,12 +519,16 @@ export type Ticket = {
   timestamp: Scalars['DateTime'];
   /** Registered table name or identifier. */
   tableName: Scalars['String'];
+  /** Registered table number. */
+  tableNumber: Scalars['Float'];
   total: Scalars['Dinero'];
   /** The payment method used by the customer. */
   paymentMethod: Scalars['String'];
   /** Value Added Tax */
   vat: Scalars['Float'];
   items: Array<TicketItem>;
+  /** Wether if the ticket is being paid, was paid or canceled */
+  status: TicketStatus;
 };
 
 /** A ticket entry item to register costumer consume. */
@@ -492,6 +544,13 @@ export type TicketItem = {
   /** The result of dishPrice times quantity. */
   amount: Scalars['Dinero'];
 };
+
+/** Ticket status */
+export enum TicketStatus {
+  Beingpaid = 'BEINGPAID',
+  Paid = 'PAID',
+  Canceled = 'CANCELED'
+}
 
 /** User profile data. */
 export type User = {
@@ -509,6 +568,13 @@ export type UserDataInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   roles: Array<Scalars['String']>;
+};
+
+export type YearSalesStats = {
+  __typename?: 'YearSalesStats';
+  month: Scalars['Float'];
+  year: Scalars['Float'];
+  total: Scalars['Dinero'];
 };
 
 export type LoginMutationVariables = Exact<{
@@ -666,19 +732,19 @@ export type GetOrderByIdQueryVariables = Exact<{
 
 export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
 
-export type GetMonthSalesQueryVariables = Exact<{
-  monthSalesYear: Scalars['Float'];
+export type GetYearSalesQueryVariables = Exact<{
+  yearSalesYear: Scalars['Float'];
 }>;
 
 
-export type GetMonthSalesQuery = { __typename?: 'Query', monthSales: Array<{ __typename?: 'MonthStats', month: number, year: number, total: any }> };
+export type GetYearSalesQuery = { __typename?: 'Query', yearSales: Array<{ __typename?: 'YearSalesStats', month: number, year: number, total: any }> };
 
 export type GetDishSalesQueryVariables = Exact<{
   dishSalesYear: Scalars['Float'];
 }>;
 
 
-export type GetDishSalesQuery = { __typename?: 'Query', dishSales: Array<{ __typename?: 'DishStats', month: number, year: number, dishName: string, totalUnits: number, totalSales: any }> };
+export type GetDishSalesQuery = { __typename?: 'Query', dishSales: Array<{ __typename?: 'DishSalesStats', month: number, year: number, dishName: string, totalUnits: number, totalSales: any }> };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -1623,9 +1689,9 @@ export function useGetOrderByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery>;
 export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
 export type GetOrderByIdQueryResult = Apollo.QueryResult<GetOrderByIdQuery, GetOrderByIdQueryVariables>;
-export const GetMonthSalesDocument = gql`
-    query getMonthSales($monthSalesYear: Float!) {
-  monthSales(year: $monthSalesYear) {
+export const GetYearSalesDocument = gql`
+    query getYearSales($yearSalesYear: Float!) {
+  yearSales(year: $yearSalesYear) {
     month
     year
     total
@@ -1634,32 +1700,32 @@ export const GetMonthSalesDocument = gql`
     `;
 
 /**
- * __useGetMonthSalesQuery__
+ * __useGetYearSalesQuery__
  *
- * To run a query within a React component, call `useGetMonthSalesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMonthSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetYearSalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetYearSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetMonthSalesQuery({
+ * const { data, loading, error } = useGetYearSalesQuery({
  *   variables: {
- *      monthSalesYear: // value for 'monthSalesYear'
+ *      yearSalesYear: // value for 'yearSalesYear'
  *   },
  * });
  */
-export function useGetMonthSalesQuery(baseOptions: Apollo.QueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+export function useGetYearSalesQuery(baseOptions: Apollo.QueryHookOptions<GetYearSalesQuery, GetYearSalesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+        return Apollo.useQuery<GetYearSalesQuery, GetYearSalesQueryVariables>(GetYearSalesDocument, options);
       }
-export function useGetMonthSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+export function useGetYearSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetYearSalesQuery, GetYearSalesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+          return Apollo.useLazyQuery<GetYearSalesQuery, GetYearSalesQueryVariables>(GetYearSalesDocument, options);
         }
-export type GetMonthSalesQueryHookResult = ReturnType<typeof useGetMonthSalesQuery>;
-export type GetMonthSalesLazyQueryHookResult = ReturnType<typeof useGetMonthSalesLazyQuery>;
-export type GetMonthSalesQueryResult = Apollo.QueryResult<GetMonthSalesQuery, GetMonthSalesQueryVariables>;
+export type GetYearSalesQueryHookResult = ReturnType<typeof useGetYearSalesQuery>;
+export type GetYearSalesLazyQueryHookResult = ReturnType<typeof useGetYearSalesLazyQuery>;
+export type GetYearSalesQueryResult = Apollo.QueryResult<GetYearSalesQuery, GetYearSalesQueryVariables>;
 export const GetDishSalesDocument = gql`
     query getDishSales($dishSalesYear: Float!) {
   dishSales(year: $dishSalesYear) {

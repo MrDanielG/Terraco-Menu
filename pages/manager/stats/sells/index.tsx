@@ -1,17 +1,17 @@
 import { useRouter } from 'next/router';
 import Navbar from '../../../../components/layout/Navbar';
 import ProtectedPage from '../../../../components/ProtectedPage';
-import { useGetMonthSalesQuery } from '../../../../graphql/graphql';
+import { useGetYearSalesQuery } from '../../../../graphql/graphql';
 import { getMonthName, intlFormat } from '../../../../lib/utils';
 interface Props {}
 
 const SellsStats = (props: Props) => {
     const router = useRouter();
     const currentDate = new Date();
-    const { data } = useGetMonthSalesQuery({
-        variables: { monthSalesYear: currentDate.getFullYear() },
+    const { data } = useGetYearSalesQuery({
+        variables: { yearSalesYear: currentDate.getFullYear() },
     });
-    const monthSales = data?.monthSales || [];
+    const monthSales = data?.yearSales || [];
     const sortedSales = monthSales.slice().sort((a, b) => a.month - b.month);
     return (
         <ProtectedPage username="Manager" redirectTo="/">
