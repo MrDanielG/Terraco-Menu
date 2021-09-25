@@ -5,15 +5,32 @@
 @tailwind utilities;
 
 @layer utilities {
-  @variants responsive {
-    /* Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
+    @variants responsive {
+        /* Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
 
-    .no-scrollbar {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
     }
-  }
+}
+
+/* Collapsable Component Styles */
+.Collapsible {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    color: rgba(107, 114, 128);
+    margin: 1rem 0 1rem 0;
+}
+
+.Collapsible__contentInner {
+    margin-top: 10px;
+}
+
+.Collapsible .Collapsible__trigger {
+    width: 800px;
 }

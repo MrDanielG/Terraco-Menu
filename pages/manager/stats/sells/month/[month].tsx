@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Navbar from '../../../../../components/layout/Navbar';
 import ProtectedPage from '../../../../../components/ProtectedPage';
@@ -10,6 +11,11 @@ const MonthlySales = (props: Props) => {
 
     return (
         <ProtectedPage username="Manager" redirectTo="/">
+            <Head>
+                <title>Estadísticas {month}</title>
+                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+            </Head>
+
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
                 <h1 className="font-semibold text-3xl text-brown">Ventas {month}</h1>
