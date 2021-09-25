@@ -1,6 +1,6 @@
-import { toFormat, dinero, DineroOptions } from 'dinero.js';
-import { DishStats } from '../graphql/graphql';
+import { dinero, DineroOptions, toFormat } from 'dinero.js';
 import Fuse from 'fuse.js';
+import { DishStats } from '../graphql/graphql';
 
 const deftransformer = ({ amount }: DineroOptions<number>) => `\$ ${amount}`;
 
@@ -30,6 +30,11 @@ export function getMonthName(year: number, month: number) {
     return date.toLocaleString('es-MX', { month: 'long' });
 }
 
+export function getDayNumberDate(locale: string) {
+    const date = new Date();
+    return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
+}
+
 export function topDishSells(dishSales: DishStats[]): DishStats[] {
     const topDishes: DishStats[] = Object.values(
         dishSales.reduce((reduced: any, current) => {
@@ -46,6 +51,6 @@ export function topDishSells(dishSales: DishStats[]): DishStats[] {
 }
 
 export function search<T>(pattern: string, list: T[], keys: Fuse.FuseOptionKey[]) {
-  const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys, threshold: 0.2 });
+    const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys, threshold: 0.2 });
     return fuse.search(pattern);
 }
