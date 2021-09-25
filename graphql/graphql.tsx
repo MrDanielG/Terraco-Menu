@@ -746,6 +746,14 @@ export type GetDishSalesQueryVariables = Exact<{
 
 export type GetDishSalesQuery = { __typename?: 'Query', dishSales: Array<{ __typename?: 'DishSalesStats', month: number, year: number, dishName: string, totalUnits: number, totalSales: any }> };
 
+export type GetMonthSalesQueryVariables = Exact<{
+  monthSalesMonth: Scalars['Float'];
+  monthSalesYear: Scalars['Float'];
+}>;
+
+
+export type GetMonthSalesQuery = { __typename?: 'Query', monthSales: Array<{ __typename?: 'MonthSalesStats', year: number, month: number, dayOfMonth: number, dayOfWeek: number, total: any }> };
+
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1765,6 +1773,46 @@ export function useGetDishSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetDishSalesQueryHookResult = ReturnType<typeof useGetDishSalesQuery>;
 export type GetDishSalesLazyQueryHookResult = ReturnType<typeof useGetDishSalesLazyQuery>;
 export type GetDishSalesQueryResult = Apollo.QueryResult<GetDishSalesQuery, GetDishSalesQueryVariables>;
+export const GetMonthSalesDocument = gql`
+    query getMonthSales($monthSalesMonth: Float!, $monthSalesYear: Float!) {
+  monthSales(month: $monthSalesMonth, year: $monthSalesYear) {
+    year
+    month
+    dayOfMonth
+    dayOfWeek
+    total
+  }
+}
+    `;
+
+/**
+ * __useGetMonthSalesQuery__
+ *
+ * To run a query within a React component, call `useGetMonthSalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMonthSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMonthSalesQuery({
+ *   variables: {
+ *      monthSalesMonth: // value for 'monthSalesMonth'
+ *      monthSalesYear: // value for 'monthSalesYear'
+ *   },
+ * });
+ */
+export function useGetMonthSalesQuery(baseOptions: Apollo.QueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+      }
+export function useGetMonthSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+        }
+export type GetMonthSalesQueryHookResult = ReturnType<typeof useGetMonthSalesQuery>;
+export type GetMonthSalesLazyQueryHookResult = ReturnType<typeof useGetMonthSalesLazyQuery>;
+export type GetMonthSalesQueryResult = Apollo.QueryResult<GetMonthSalesQuery, GetMonthSalesQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {

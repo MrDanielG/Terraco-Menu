@@ -49,10 +49,7 @@ const SellsStats = (props: Props) => {
                                                             className="text-sm font-medium text-gray-800 cursor-pointer"
                                                             onClick={() =>
                                                                 router.push(
-                                                                    `/manager/stats/sells/month/${getMonthName(
-                                                                        monthSale.year,
-                                                                        monthSale.month - 1
-                                                                    )}`
+                                                                    `/manager/stats/sells/month/${monthSale.month}`
                                                                 )
                                                             }
                                                         >

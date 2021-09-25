@@ -178,3 +178,15 @@ export const GET_DISH_SALES = gql`
         }
     }
 `;
+
+export const GET_MONTH_SALES = gql`
+    query getMonthSales($monthSalesMonth: Float!, $monthSalesYear: Float!) {
+        monthSales(month: $monthSalesMonth, year: $monthSalesYear) {
+            year
+            month
+            dayOfMonth
+            dayOfWeek
+            total
+        }
+    }
+`;

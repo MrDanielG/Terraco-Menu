@@ -1,6 +1,6 @@
 import { dinero, DineroOptions, toFormat } from 'dinero.js';
 import Fuse from 'fuse.js';
-import { DishStats } from '../graphql/graphql';
+import { DishSalesStats } from '../graphql/graphql';
 
 const deftransformer = ({ amount }: DineroOptions<number>) => `\$ ${amount}`;
 
@@ -35,8 +35,18 @@ export function getDayNumberDate(locale: string) {
     return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
 }
 
-export function topDishSells(dishSales: DishStats[]): DishStats[] {
-    const topDishes: DishStats[] = Object.values(
+export function getCustomDayNumberDate(
+    locale: string,
+    year: number,
+    month: number,
+    dayOfMonth: number
+) {
+    const date = new Date(Date.UTC(year, month, dayOfMonth));
+    return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
+}
+
+export function topDishSells(dishSales: DishSalesStats[]): DishSalesStats[] {
+    const topDishes: DishSalesStats[] = Object.values(
         dishSales.reduce((reduced: any, current) => {
             const monthName = getMonthName(current.year, current.month - 1);
             reduced[monthName] =
