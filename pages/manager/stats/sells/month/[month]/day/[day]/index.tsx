@@ -1,11 +1,16 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Collapsible from 'react-collapsible';
 import BackButton from '../../../../../../../../components/buttons/BackButton';
 import Navbar from '../../../../../../../../components/layout/Navbar';
 import ProtectedPage from '../../../../../../../../components/ProtectedPage';
 import { useGetDailySalesQuery } from '../../../../../../../../graphql/graphql';
-import { getCustomDayNumberDate, getMonthName } from '../../../../../../../../lib/utils';
+import {
+    getCustomDayNumberDate,
+    getMonthName,
+    getTime,
+    intlFormat,
+} from '../../../../../../../../lib/utils';
 
 interface Props {}
 
@@ -14,19 +19,16 @@ const DailySales = (props: Props) => {
     const { locale } = router;
     const { day, month } = router.query;
     const currentDate = new Date();
-    const [state, setState] = useState();
 
     const { data, loading, error } = useGetDailySalesQuery({
         variables: {
-            daySalesDay: 26,
-            daySalesMonth: 8,
+            daySalesDay: Number(day) + 1,
+            daySalesMonth: Number(month),
             daySalesYear: currentDate.getFullYear(),
         },
     });
-
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
+    console.log(data);
+    console.log(day, month);
 
     return (
         <ProtectedPage username="Manager" redirectTo="/">
@@ -52,16 +54,26 @@ const DailySales = (props: Props) => {
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                <Collapsible trigger="Table">
-                                    <p>
-                                        This is the collapsible content. It can be any element or
-                                        React component you like.
-                                    </p>
-                                    <p>
-                                        It can even be another Collapsible component. Check out the
-                                        next section!
-                                    </p>
-                                </Collapsible>
+                                {data?.daySales.map((daySale, i) => (
+                                    <Collapsible trigger={daySale.tableName} key={i}>
+                                        {daySale.sales?.map((sale) => (
+                                            <div
+                                                key={sale.timestamp}
+                                                className="flex justify-between"
+                                            >
+                                                <p> {getTime(sale.timestamp, 'en-US')} </p>
+                                                <p className="font-semibold">
+                                                    {intlFormat(sale.total, locale!)}
+                                                </p>
+                                            </div>
+                                        ))}
+                                        <hr className="my-2" />
+                                        <div className="flex justify-between font-semibold">
+                                            <p>Total:</p>
+                                            <p> {intlFormat(daySale.totalSum, locale!)}</p>
+                                        </div>
+                                    </Collapsible>
+                                ))}
                             </div>
                         </div>
                     </div>

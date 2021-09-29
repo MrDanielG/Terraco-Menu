@@ -35,6 +35,11 @@ export function getDayNumberDate(locale: string) {
     return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
 }
 
+export function getTime(timestamp: any, locale: string) {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString(locale);
+}
+
 export function getCustomDayNumberDate(
     locale: string,
     year: number,
