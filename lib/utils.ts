@@ -37,7 +37,7 @@ export function getDayNumberDate(locale: string) {
 
 export function getTime(timestamp: any, locale: string) {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString(locale);
+    return date.toLocaleTimeString(locale, { hour12: true, hour: '2-digit', minute: '2-digit' });
 }
 
 export function getCustomDayNumberDate(
