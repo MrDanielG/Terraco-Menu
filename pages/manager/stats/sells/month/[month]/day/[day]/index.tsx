@@ -51,54 +51,32 @@ const DailySales = (props: Props) => {
                 <div className="flex flex-col mt-4">
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                {data?.daySales.map((daySale, i) => (
-                                    <Collapsible
-                                        trigger={
-                                            <div className="flex items-center justify-between">
-                                                <span>{daySale.tableName}</span>
-                                                <AiFillCaretDown />
-                                            </div>
-                                        }
-                                        key={i}
-                                    >
-                                        {daySale.sales?.map((sale) => (
-                                            <div
-                                                key={sale.timestamp}
-                                                className="flex justify-between"
-                                            >
-                                                <p> {getTime(sale.timestamp, 'en-US')} </p>
-                                                <p className="font-semibold">
-                                                    {intlFormat(sale.total, locale!)}
-                                                </p>
-                                            </div>
-                                        ))}
-                                        <hr className="my-2" />
-                                        <div className="flex justify-between font-semibold">
-                                            <p>Total:</p>
-                                            <p> {intlFormat(daySale.totalSum, locale!)}</p>
+                            {data?.daySales.map((daySale, i) => (
+                                <Collapsible
+                                    trigger={
+                                        <div className="flex items-center justify-between">
+                                            <span>{daySale.tableName}</span>
+                                            <AiFillCaretDown />
                                         </div>
+                                    }
+                                    key={i}
+                                >
+                                    {daySale.sales?.map((sale) => (
+                                        <div key={sale.timestamp} className="flex justify-between">
+                                            <p> {getTime(sale.timestamp, 'en-US')} </p>
+                                            <p className="font-semibold">
+                                                {intlFormat(sale.total, locale!)}
+                                            </p>
+                                        </div>
+                                    ))}
 
-                                        {/* {daySale.sales
-                                            ?.sort(
-                                                (x, y) =>
-                                                    new Date(x.timestamp).getTime() -
-                                                    new Date(y.timestamp).getTime()
-                                            )
-                                            .map((sale) => (
-                                                <div
-                                                    key={sale.timestamp}
-                                                    className="flex justify-between"
-                                                >
-                                                    <p> {getTime(sale.timestamp, 'en-US')} </p>
-                                                    <p className="font-semibold">
-                                                        {intlFormat(sale.total, locale!)}
-                                                    </p>
-                                                </div>
-                                            ))} */}
-                                    </Collapsible>
-                                ))}
-                            </div>
+                                    <hr className="my-2" />
+                                    <div className="flex justify-between font-semibold">
+                                        <p>Total:</p>
+                                        <p> {intlFormat(daySale.totalSum, locale!)}</p>
+                                    </div>
+                                </Collapsible>
+                            ))}
                         </div>
                     </div>
                 </div>
