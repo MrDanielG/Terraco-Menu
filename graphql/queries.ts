@@ -157,9 +157,21 @@ export const GET_ORDER_BY_ID = gql`
     }
 `;
 
-export const GET_MONTH_SALES = gql`
-    query getMonthSales($monthSalesYear: Float!) {
-        monthSales(year: $monthSalesYear) {
+export const GET_DISH_SALES = gql`
+    query getDishSales($dishSalesTimezone: String!, $dishSalesYear: Float!) {
+        dishSales(timezone: $dishSalesTimezone, year: $dishSalesYear) {
+            month
+            year
+            dishName
+            totalUnits
+            totalSales
+        }
+    }
+`;
+
+export const GET_YEAR_SALES = gql`
+    query getYearSales($yearSalesTimezone: String!, $yearSalesYear: Float!) {
+        yearSales(timezone: $yearSalesTimezone, year: $yearSalesYear) {
             month
             year
             total
@@ -167,14 +179,44 @@ export const GET_MONTH_SALES = gql`
     }
 `;
 
-export const GET_DISH_SALES = gql`
-    query getDishSales($dishSalesYear: Float!) {
-        dishSales(year: $dishSalesYear) {
-            month
+export const GET_MONTH_SALES = gql`
+    query getMonthSales(
+        $monthSalesTimezone: String!
+        $monthSalesMonth: Float!
+        $monthSalesYear: Float!
+    ) {
+        monthSales(timezone: $monthSalesTimezone, month: $monthSalesMonth, year: $monthSalesYear) {
             year
-            dishName
-            totalUnits
-            totalSales
+            month
+            dayOfMonth
+            dayOfWeek
+            total
+        }
+    }
+`;
+
+export const GET_DAILY_SALES = gql`
+    query getDailySales(
+        $daySalesTimezone: String!
+        $daySalesDay: Float!
+        $daySalesMonth: Float!
+        $daySalesYear: Float!
+    ) {
+        daySales(
+            timezone: $daySalesTimezone
+            day: $daySalesDay
+            month: $daySalesMonth
+            year: $daySalesYear
+        ) {
+            year
+            tableNumber
+            tableName
+            totalSum
+            salesCount
+            sales {
+                total
+                timestamp
+            }
         }
     }
 `;

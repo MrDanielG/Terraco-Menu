@@ -51,10 +51,22 @@ const AuthProvider = ({ children }: any) => {
 
             toast.success('Sesión Iniciada');
 
-            if (user.name === 'Chef') {
-                router.push('/chef');
-            } else if (user.name === 'Manager') {
-                router.push('/manager');
+            switch (user.name) {
+                case 'Chef':
+                    router.push('/chef');
+                    break;
+
+                case 'Manager':
+                    router.push('/manager');
+                    break;
+
+                case 'Cashier':
+                    router.push('/cashier');
+                    break;
+
+                default:
+                    toast.error('Tipo de Usuario Desconocido');
+                    break;
             }
         } catch (err) {
             toast.error('Error al Iniciar Sesion');

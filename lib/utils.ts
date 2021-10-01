@@ -1,6 +1,6 @@
-import { toFormat, dinero, DineroOptions } from 'dinero.js';
-import { DishStats } from '../graphql/graphql';
+import { dinero, DineroOptions, toFormat } from 'dinero.js';
 import Fuse from 'fuse.js';
+import { DishSalesStats } from '../graphql/graphql';
 
 const deftransformer = ({ amount }: DineroOptions<number>) => `\$ ${amount}`;
 
@@ -30,8 +30,32 @@ export function getMonthName(year: number, month: number) {
     return date.toLocaleString('es-MX', { month: 'long' });
 }
 
-export function topDishSells(dishSales: DishStats[]): DishStats[] {
-    const topDishes: DishStats[] = Object.values(
+export function getDayNumberDate(locale: string) {
+    const date = new Date();
+    return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
+}
+
+export function getTime(timestamp: any, locale: string) {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString(locale, { hour12: true, hour: '2-digit', minute: '2-digit' });
+}
+
+export function getCustomDayNumberDate(
+    locale: string,
+    year: number,
+    month: number,
+    dayOfMonth: number
+) {
+
+  const date = new Date();
+  date.setDate(dayOfMonth);
+  date.setMonth(month);
+  date.setFullYear(year);
+  return date.toLocaleString(locale, { weekday: 'long', day: 'numeric', });
+}
+
+export function topDishSells(dishSales: DishSalesStats[]): DishSalesStats[] {
+    const topDishes: DishSalesStats[] = Object.values(
         dishSales.reduce((reduced: any, current) => {
             const monthName = getMonthName(current.year, current.month - 1);
             reduced[monthName] =
@@ -46,6 +70,6 @@ export function topDishSells(dishSales: DishStats[]): DishStats[] {
 }
 
 export function search<T>(pattern: string, list: T[], keys: Fuse.FuseOptionKey[]) {
-  const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys, threshold: 0.2 });
+    const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys, threshold: 0.2 });
     return fuse.search(pattern);
 }

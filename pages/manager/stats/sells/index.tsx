@@ -1,16 +1,20 @@
-import Navbar from '../../../components/layout/Navbar';
-import ProtectedPage from '../../../components/ProtectedPage';
-import { useGetMonthSalesQuery } from '../../../graphql/graphql';
-import { getMonthName, intlFormat } from '../../../lib/utils';
+import { useRouter } from 'next/router';
+import Navbar from '../../../../components/layout/Navbar';
+import ProtectedPage from '../../../../components/ProtectedPage';
+import { useGetYearSalesQuery } from '../../../../graphql/graphql';
+import { getMonthName, intlFormat } from '../../../../lib/utils';
 interface Props {}
 
-
 const SellsStats = (props: Props) => {
+    const router = useRouter();
     const currentDate = new Date();
-    const { data } = useGetMonthSalesQuery({
-        variables: { monthSalesYear: currentDate.getFullYear() },
+    const { data } = useGetYearSalesQuery({
+        variables: {
+            yearSalesYear: currentDate.getFullYear(),
+            yearSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
     });
-    const monthSales = (data?.monthSales || []);
+    const monthSales = data?.yearSales || [];
     const sortedSales = monthSales.slice().sort((a, b) => a.month - b.month);
     return (
         <ProtectedPage username="Manager" redirectTo="/">
@@ -41,12 +45,25 @@ const SellsStats = (props: Props) => {
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {sortedSales.map((monthSale, idx) => (
-                                            <tr key={idx}>
+                                            <tr
+                                                key={idx}
+                                                className="cursor-pointer hover:bg-gray-100"
+                                                onClick={() =>
+                                                    router.push({
+                                                        pathname:
+                                                            '/manager/stats/sells/month/[month]',
+                                                        query: { month: monthSale.month },
+                                                    })
+                                                }
+                                            >
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
-                                                        <div className="text-sm font-medium text-gray-800">
-                                                            {getMonthName(monthSale.year, monthSale.month - 1).toUpperCase()}
-                                                        </div>
+                                                        <a className="text-sm font-medium text-gray-800">
+                                                            {getMonthName(
+                                                                monthSale.year,
+                                                                monthSale.month - 1
+                                                            ).toUpperCase()}
+                                                        </a>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">

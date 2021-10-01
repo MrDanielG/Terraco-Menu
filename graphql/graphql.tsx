@@ -24,6 +24,19 @@ export type CreateOrderItemsInput = {
 };
 
 
+export type DaySalesStats = {
+  __typename?: 'DaySalesStats';
+  year: Scalars['Int'];
+  month: Scalars['Int'];
+  dayOfMonth: Scalars['Int'];
+  dayOfWeek: Scalars['Int'];
+  tableNumber: Scalars['Int'];
+  tableName: Scalars['String'];
+  totalSum: Scalars['Dinero'];
+  salesCount: Scalars['Int'];
+  sales?: Maybe<Array<Ticket>>;
+};
+
 
 /** A dish describing an option for consumers. */
 export type Dish = {
@@ -58,12 +71,12 @@ export type DishDataInput = {
   categories: Array<Scalars['String']>;
 };
 
-export type DishStats = {
-  __typename?: 'DishStats';
-  month: Scalars['Float'];
-  year: Scalars['Float'];
+export type DishSalesStats = {
+  __typename?: 'DishSalesStats';
+  month: Scalars['Int'];
+  year: Scalars['Int'];
   dishName: Scalars['String'];
-  totalUnits: Scalars['Float'];
+  totalUnits: Scalars['Int'];
   totalSales: Scalars['Dinero'];
 };
 
@@ -97,10 +110,12 @@ export type MenuDataInput = {
   url_img?: Maybe<Scalars['String']>;
 };
 
-export type MonthStats = {
-  __typename?: 'MonthStats';
-  month: Scalars['Float'];
-  year: Scalars['Float'];
+export type MonthSalesStats = {
+  __typename?: 'MonthSalesStats';
+  year: Scalars['Int'];
+  month: Scalars['Int'];
+  dayOfMonth: Scalars['Int'];
+  dayOfWeek: Scalars['Int'];
   total: Scalars['Dinero'];
 };
 
@@ -135,6 +150,7 @@ export type Mutation = {
   createOrderItems: Array<OrderItem>;
   sumToOrderItem: OrderItem;
   delOrderItemById: Scalars['Int'];
+  setTicketStatus?: Maybe<Ticket>;
   generateTicket: Ticket;
 };
 
@@ -299,6 +315,12 @@ export type MutationDelOrderItemByIdArgs = {
 };
 
 
+export type MutationSetTicketStatusArgs = {
+  status: TicketStatus;
+  tikcetId: Scalars['String'];
+};
+
+
 export type MutationGenerateTicketArgs = {
   vat?: Maybe<Scalars['Float']>;
   paymentMethod?: Maybe<Scalars['String']>;
@@ -309,7 +331,7 @@ export type MutationGenerateTicketArgs = {
 export type Order = {
   __typename?: 'Order';
   _id: Scalars['String'];
-  orderNumber: Scalars['Float'];
+  orderNumber: Scalars['Int'];
   table: Table;
   items: Array<OrderItem>;
   start_time: Scalars['DateTime'];
@@ -323,8 +345,8 @@ export type OrderItem = {
   /** The recorded dish name. */
   dish: Dish;
   /** Units ordered by the customer. */
-  quantity: Scalars['Float'];
-  /** Whether if this order is pending, . */
+  quantity: Scalars['Int'];
+  /** Whether if this order is pending, cooking, served, being paid or paid. */
   status: Status;
 };
 
@@ -347,8 +369,11 @@ export type Query = {
   orderById: Order;
   orderItems: Array<OrderItem>;
   tickets: Array<Ticket>;
-  monthSales: Array<MonthStats>;
-  dishSales: Array<DishStats>;
+  ticketById: Ticket;
+  yearSales: Array<YearSalesStats>;
+  dishSales: Array<DishSalesStats>;
+  monthSales: Array<MonthSalesStats>;
+  daySales: Array<DaySalesStats>;
 };
 
 
@@ -397,12 +422,38 @@ export type QueryOrderByIdArgs = {
 };
 
 
-export type QueryMonthSalesArgs = {
+export type QueryTicketByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryYearSalesArgs = {
+  status?: Maybe<TicketStatus>;
+  timezone: Scalars['String'];
   year: Scalars['Float'];
 };
 
 
 export type QueryDishSalesArgs = {
+  status?: Maybe<TicketStatus>;
+  timezone: Scalars['String'];
+  year: Scalars['Float'];
+};
+
+
+export type QueryMonthSalesArgs = {
+  status?: Maybe<TicketStatus>;
+  timezone: Scalars['String'];
+  month: Scalars['Float'];
+  year: Scalars['Float'];
+};
+
+
+export type QueryDaySalesArgs = {
+  status?: Maybe<TicketStatus>;
+  timezone: Scalars['String'];
+  day: Scalars['Float'];
+  month: Scalars['Float'];
   year: Scalars['Float'];
 };
 
@@ -427,20 +478,21 @@ export enum Status {
   Pending = 'PENDING',
   Cooking = 'COOKING',
   Served = 'SERVED',
-  Payingoff = 'PAYINGOFF',
-  Payed = 'PAYED'
+  Beingpaid = 'BEINGPAID',
+  Paid = 'PAID'
 }
 
 export type Subscription = {
   __typename?: 'Subscription';
   orderChanges: Order;
+  ticketChanges: Ticket;
 };
 
 export type Table = {
   __typename?: 'Table';
   _id: Scalars['String'];
   /** The unique table number identificator. */
-  tableNumber: Scalars['Float'];
+  tableNumber: Scalars['Int'];
   /** A descriptive name for this table. */
   name?: Maybe<Scalars['String']>;
   /** Stored token to build an obfuscated URL. */
@@ -451,7 +503,7 @@ export type Table = {
 
 export type TableInputData = {
   /** The unique table number identificator. */
-  tableNumber?: Maybe<Scalars['Float']>;
+  tableNumber?: Maybe<Scalars['Int']>;
   /** A descriptive name for this table. */
   name?: Maybe<Scalars['String']>;
   /** Stored token to build an obfuscated URL. */
@@ -466,17 +518,21 @@ export type Ticket = {
   _id: Scalars['String'];
   orderId: Scalars['String'];
   /** Unique number for this selling transaction. */
-  ticketNumber: Scalars['Float'];
+  ticketNumber: Scalars['Int'];
   /** When the ticket was generated. */
   timestamp: Scalars['DateTime'];
   /** Registered table name or identifier. */
   tableName: Scalars['String'];
+  /** Registered table number. */
+  tableNumber: Scalars['Int'];
   total: Scalars['Dinero'];
   /** The payment method used by the customer. */
   paymentMethod: Scalars['String'];
   /** Value Added Tax */
   vat: Scalars['Float'];
   items: Array<TicketItem>;
+  /** Wether if the ticket is being paid, was paid or canceled */
+  status: TicketStatus;
 };
 
 /** A ticket entry item to register costumer consume. */
@@ -492,6 +548,13 @@ export type TicketItem = {
   /** The result of dishPrice times quantity. */
   amount: Scalars['Dinero'];
 };
+
+/** Ticket status */
+export enum TicketStatus {
+  Beingpaid = 'BEINGPAID',
+  Paid = 'PAID',
+  Canceled = 'CANCELED'
+}
 
 /** User profile data. */
 export type User = {
@@ -509,6 +572,13 @@ export type UserDataInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   roles: Array<Scalars['String']>;
+};
+
+export type YearSalesStats = {
+  __typename?: 'YearSalesStats';
+  month: Scalars['Int'];
+  year: Scalars['Int'];
+  total: Scalars['Dinero'];
 };
 
 export type LoginMutationVariables = Exact<{
@@ -666,19 +736,40 @@ export type GetOrderByIdQueryVariables = Exact<{
 
 export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
 
-export type GetMonthSalesQueryVariables = Exact<{
-  monthSalesYear: Scalars['Float'];
-}>;
-
-
-export type GetMonthSalesQuery = { __typename?: 'Query', monthSales: Array<{ __typename?: 'MonthStats', month: number, year: number, total: any }> };
-
 export type GetDishSalesQueryVariables = Exact<{
+  dishSalesTimezone: Scalars['String'];
   dishSalesYear: Scalars['Float'];
 }>;
 
 
-export type GetDishSalesQuery = { __typename?: 'Query', dishSales: Array<{ __typename?: 'DishStats', month: number, year: number, dishName: string, totalUnits: number, totalSales: any }> };
+export type GetDishSalesQuery = { __typename?: 'Query', dishSales: Array<{ __typename?: 'DishSalesStats', month: number, year: number, dishName: string, totalUnits: number, totalSales: any }> };
+
+export type GetYearSalesQueryVariables = Exact<{
+  yearSalesTimezone: Scalars['String'];
+  yearSalesYear: Scalars['Float'];
+}>;
+
+
+export type GetYearSalesQuery = { __typename?: 'Query', yearSales: Array<{ __typename?: 'YearSalesStats', month: number, year: number, total: any }> };
+
+export type GetMonthSalesQueryVariables = Exact<{
+  monthSalesTimezone: Scalars['String'];
+  monthSalesMonth: Scalars['Float'];
+  monthSalesYear: Scalars['Float'];
+}>;
+
+
+export type GetMonthSalesQuery = { __typename?: 'Query', monthSales: Array<{ __typename?: 'MonthSalesStats', year: number, month: number, dayOfMonth: number, dayOfWeek: number, total: any }> };
+
+export type GetDailySalesQueryVariables = Exact<{
+  daySalesTimezone: Scalars['String'];
+  daySalesDay: Scalars['Float'];
+  daySalesMonth: Scalars['Float'];
+  daySalesYear: Scalars['Float'];
+}>;
+
+
+export type GetDailySalesQuery = { __typename?: 'Query', daySales: Array<{ __typename?: 'DaySalesStats', year: number, tableNumber: number, tableName: string, totalSum: any, salesCount: number, sales?: Maybe<Array<{ __typename?: 'Ticket', total: any, timestamp: any }>> }> };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -1623,46 +1714,9 @@ export function useGetOrderByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetOrderByIdQueryHookResult = ReturnType<typeof useGetOrderByIdQuery>;
 export type GetOrderByIdLazyQueryHookResult = ReturnType<typeof useGetOrderByIdLazyQuery>;
 export type GetOrderByIdQueryResult = Apollo.QueryResult<GetOrderByIdQuery, GetOrderByIdQueryVariables>;
-export const GetMonthSalesDocument = gql`
-    query getMonthSales($monthSalesYear: Float!) {
-  monthSales(year: $monthSalesYear) {
-    month
-    year
-    total
-  }
-}
-    `;
-
-/**
- * __useGetMonthSalesQuery__
- *
- * To run a query within a React component, call `useGetMonthSalesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMonthSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMonthSalesQuery({
- *   variables: {
- *      monthSalesYear: // value for 'monthSalesYear'
- *   },
- * });
- */
-export function useGetMonthSalesQuery(baseOptions: Apollo.QueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
-      }
-export function useGetMonthSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
-        }
-export type GetMonthSalesQueryHookResult = ReturnType<typeof useGetMonthSalesQuery>;
-export type GetMonthSalesLazyQueryHookResult = ReturnType<typeof useGetMonthSalesLazyQuery>;
-export type GetMonthSalesQueryResult = Apollo.QueryResult<GetMonthSalesQuery, GetMonthSalesQueryVariables>;
 export const GetDishSalesDocument = gql`
-    query getDishSales($dishSalesYear: Float!) {
-  dishSales(year: $dishSalesYear) {
+    query getDishSales($dishSalesTimezone: String!, $dishSalesYear: Float!) {
+  dishSales(timezone: $dishSalesTimezone, year: $dishSalesYear) {
     month
     year
     dishName
@@ -1684,6 +1738,7 @@ export const GetDishSalesDocument = gql`
  * @example
  * const { data, loading, error } = useGetDishSalesQuery({
  *   variables: {
+ *      dishSalesTimezone: // value for 'dishSalesTimezone'
  *      dishSalesYear: // value for 'dishSalesYear'
  *   },
  * });
@@ -1699,6 +1754,140 @@ export function useGetDishSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetDishSalesQueryHookResult = ReturnType<typeof useGetDishSalesQuery>;
 export type GetDishSalesLazyQueryHookResult = ReturnType<typeof useGetDishSalesLazyQuery>;
 export type GetDishSalesQueryResult = Apollo.QueryResult<GetDishSalesQuery, GetDishSalesQueryVariables>;
+export const GetYearSalesDocument = gql`
+    query getYearSales($yearSalesTimezone: String!, $yearSalesYear: Float!) {
+  yearSales(timezone: $yearSalesTimezone, year: $yearSalesYear) {
+    month
+    year
+    total
+  }
+}
+    `;
+
+/**
+ * __useGetYearSalesQuery__
+ *
+ * To run a query within a React component, call `useGetYearSalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetYearSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetYearSalesQuery({
+ *   variables: {
+ *      yearSalesTimezone: // value for 'yearSalesTimezone'
+ *      yearSalesYear: // value for 'yearSalesYear'
+ *   },
+ * });
+ */
+export function useGetYearSalesQuery(baseOptions: Apollo.QueryHookOptions<GetYearSalesQuery, GetYearSalesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetYearSalesQuery, GetYearSalesQueryVariables>(GetYearSalesDocument, options);
+      }
+export function useGetYearSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetYearSalesQuery, GetYearSalesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetYearSalesQuery, GetYearSalesQueryVariables>(GetYearSalesDocument, options);
+        }
+export type GetYearSalesQueryHookResult = ReturnType<typeof useGetYearSalesQuery>;
+export type GetYearSalesLazyQueryHookResult = ReturnType<typeof useGetYearSalesLazyQuery>;
+export type GetYearSalesQueryResult = Apollo.QueryResult<GetYearSalesQuery, GetYearSalesQueryVariables>;
+export const GetMonthSalesDocument = gql`
+    query getMonthSales($monthSalesTimezone: String!, $monthSalesMonth: Float!, $monthSalesYear: Float!) {
+  monthSales(
+    timezone: $monthSalesTimezone
+    month: $monthSalesMonth
+    year: $monthSalesYear
+  ) {
+    year
+    month
+    dayOfMonth
+    dayOfWeek
+    total
+  }
+}
+    `;
+
+/**
+ * __useGetMonthSalesQuery__
+ *
+ * To run a query within a React component, call `useGetMonthSalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMonthSalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMonthSalesQuery({
+ *   variables: {
+ *      monthSalesTimezone: // value for 'monthSalesTimezone'
+ *      monthSalesMonth: // value for 'monthSalesMonth'
+ *      monthSalesYear: // value for 'monthSalesYear'
+ *   },
+ * });
+ */
+export function useGetMonthSalesQuery(baseOptions: Apollo.QueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+      }
+export function useGetMonthSalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMonthSalesQuery, GetMonthSalesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMonthSalesQuery, GetMonthSalesQueryVariables>(GetMonthSalesDocument, options);
+        }
+export type GetMonthSalesQueryHookResult = ReturnType<typeof useGetMonthSalesQuery>;
+export type GetMonthSalesLazyQueryHookResult = ReturnType<typeof useGetMonthSalesLazyQuery>;
+export type GetMonthSalesQueryResult = Apollo.QueryResult<GetMonthSalesQuery, GetMonthSalesQueryVariables>;
+export const GetDailySalesDocument = gql`
+    query getDailySales($daySalesTimezone: String!, $daySalesDay: Float!, $daySalesMonth: Float!, $daySalesYear: Float!) {
+  daySales(
+    timezone: $daySalesTimezone
+    day: $daySalesDay
+    month: $daySalesMonth
+    year: $daySalesYear
+  ) {
+    year
+    tableNumber
+    tableName
+    totalSum
+    salesCount
+    sales {
+      total
+      timestamp
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetDailySalesQuery__
+ *
+ * To run a query within a React component, call `useGetDailySalesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetDailySalesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetDailySalesQuery({
+ *   variables: {
+ *      daySalesTimezone: // value for 'daySalesTimezone'
+ *      daySalesDay: // value for 'daySalesDay'
+ *      daySalesMonth: // value for 'daySalesMonth'
+ *      daySalesYear: // value for 'daySalesYear'
+ *   },
+ * });
+ */
+export function useGetDailySalesQuery(baseOptions: Apollo.QueryHookOptions<GetDailySalesQuery, GetDailySalesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetDailySalesQuery, GetDailySalesQueryVariables>(GetDailySalesDocument, options);
+      }
+export function useGetDailySalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDailySalesQuery, GetDailySalesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetDailySalesQuery, GetDailySalesQueryVariables>(GetDailySalesDocument, options);
+        }
+export type GetDailySalesQueryHookResult = ReturnType<typeof useGetDailySalesQuery>;
+export type GetDailySalesLazyQueryHookResult = ReturnType<typeof useGetDailySalesLazyQuery>;
+export type GetDailySalesQueryResult = Apollo.QueryResult<GetDailySalesQuery, GetDailySalesQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {

@@ -1,33 +1,40 @@
 import React from 'react';
-import ParentCard from '../../components/cards/parent-card/ParentCard';
 import CardInfo from '../../components/cards/parent-card/CardInfo';
+import ParentCard from '../../components/cards/parent-card/ParentCard';
 import StatsCard from '../../components/cards/StatsCard';
 import Navbar from '../../components/layout/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
-import { useGetDishSalesQuery, useGetMonthSalesQuery } from '../../graphql/graphql';
-import { topDishSells, getMonthName } from '../../lib/utils';
+import { useGetDishSalesQuery, useGetYearSalesQuery } from '../../graphql/graphql';
+import { getMonthName, topDishSells } from '../../lib/utils';
 //import { dinero, subtract, toUnit } from 'dinero.js';
 
 interface Props {}
 
 const Index = (props: Props) => {
     const currentDate = new Date();
-    const { data: salesData } = useGetMonthSalesQuery({
-        variables: { monthSalesYear: currentDate.getFullYear() },
+    const { data: salesData } = useGetYearSalesQuery({
+        variables: {
+            yearSalesYear: currentDate.getFullYear(),
+            yearSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
     });
     const { data: dishData } = useGetDishSalesQuery({
-        variables: { dishSalesYear: currentDate.getFullYear() },
+        variables: {
+            dishSalesYear: currentDate.getFullYear(),
+            dishSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
     });
 
     const dishSales = dishData?.dishSales || [];
-    const monthSales = salesData?.monthSales || [];
+    const monthSales = salesData?.yearSales || [];
     const topDishes = topDishSells(dishSales).sort((a, b) => b.month - a.month);
     const sortedSales = monthSales.slice().sort((a, b) => b.month - a.month);
     let profit = 0;
+    console.log(sortedSales);
     if (sortedSales.length > 1) {
         const currentMontSales = sortedSales[0].total.amount;
         const prevMonthSales = sortedSales[1].total.amount;
-        profit = (1 - prevMonthSales / currentMontSales) * 100;
+        profit = (currentMontSales / prevMonthSales - 1) * 100;
     }
 
     return (
