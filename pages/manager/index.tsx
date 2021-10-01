@@ -13,10 +13,16 @@ interface Props {}
 const Index = (props: Props) => {
     const currentDate = new Date();
     const { data: salesData } = useGetYearSalesQuery({
-        variables: { yearSalesYear: currentDate.getFullYear() },
+        variables: {
+            yearSalesYear: currentDate.getFullYear(),
+            yearSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
     });
     const { data: dishData } = useGetDishSalesQuery({
-        variables: { dishSalesYear: currentDate.getFullYear() },
+        variables: {
+            dishSalesYear: currentDate.getFullYear(),
+            dishSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
     });
 
     const dishSales = dishData?.dishSales || [];

@@ -46,8 +46,12 @@ export function getCustomDayNumberDate(
     month: number,
     dayOfMonth: number
 ) {
-    const date = new Date(Date.UTC(year, month, dayOfMonth));
-    return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
+
+  const date = new Date();
+  date.setDate(dayOfMonth);
+  date.setMonth(month);
+  date.setFullYear(year);
+  return date.toLocaleString(locale, { weekday: 'long', day: 'numeric', });
 }
 
 export function topDishSells(dishSales: DishSalesStats[]): DishSalesStats[] {

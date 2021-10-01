@@ -20,7 +20,7 @@ const DailySales = (props: Props) => {
     const { locale } = router;
     const { day, month } = router.query;
     const currentDate = new Date();
-    const newDay = Number(day) + 1;
+    const newDay = Number(day);
     const { data } = useGetDailySalesQuery({
         variables: {
             daySalesDay: newDay,
@@ -30,7 +30,6 @@ const DailySales = (props: Props) => {
         },
     });
 
-    console.log(newDay, month, Intl.DateTimeFormat().resolvedOptions().timeZone);
 
     let dataClone: GetDailySalesQuery | undefined;
 
@@ -54,7 +53,7 @@ const DailySales = (props: Props) => {
                         locale!,
                         currentDate.getFullYear(),
                         Number(month) - 1,
-                        Number(day) + 1
+                        Number(day)
                     )}{' '}
                     de {getMonthName(currentDate.getFullYear(), Number(month) - 1)}
                 </h1>

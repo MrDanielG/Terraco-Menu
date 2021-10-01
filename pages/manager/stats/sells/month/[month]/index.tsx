@@ -20,7 +20,6 @@ const MonthlySales = (props: Props) => {
             monthSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
     });
-
     return (
         <ProtectedPage username="Manager" redirectTo="/">
             <Head>
@@ -69,7 +68,7 @@ const MonthlySales = (props: Props) => {
                                                     router.push(
                                                         `/manager/stats/sells/month/${
                                                             monthSale.month
-                                                        }/day/${monthSale.dayOfMonth - 1}`
+                                                        }/day/${monthSale.dayOfMonth}`
                                                     )
                                                 }
                                             >
@@ -79,8 +78,8 @@ const MonthlySales = (props: Props) => {
                                                             {getCustomDayNumberDate(
                                                                 locale!,
                                                                 monthSale.year,
-                                                                monthSale.month - 1,
-                                                                monthSale.dayOfMonth + 1
+                                                                monthSale.month -1,
+                                                                monthSale.dayOfMonth
                                                             ).toUpperCase()}
                                                         </div>
                                                     </div>
