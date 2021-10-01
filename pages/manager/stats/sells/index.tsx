@@ -9,7 +9,10 @@ const SellsStats = (props: Props) => {
     const router = useRouter();
     const currentDate = new Date();
     const { data } = useGetYearSalesQuery({
-        variables: { yearSalesYear: currentDate.getFullYear() },
+        variables: {
+            yearSalesYear: currentDate.getFullYear(),
+            yearSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
     });
     const monthSales = data?.yearSales || [];
     const sortedSales = monthSales.slice().sort((a, b) => a.month - b.month);

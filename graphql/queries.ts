@@ -157,19 +157,9 @@ export const GET_ORDER_BY_ID = gql`
     }
 `;
 
-export const GET_YEAR_SALES = gql`
-    query getYearSales($yearSalesYear: Float!) {
-        yearSales(year: $yearSalesYear) {
-            month
-            year
-            total
-        }
-    }
-`;
-
 export const GET_DISH_SALES = gql`
-    query getDishSales($dishSalesYear: Float!) {
-        dishSales(year: $dishSalesYear) {
+    query getDishSales($dishSalesTimezone: String!, $dishSalesYear: Float!) {
+        dishSales(timezone: $dishSalesTimezone, year: $dishSalesYear) {
             month
             year
             dishName
@@ -179,9 +169,23 @@ export const GET_DISH_SALES = gql`
     }
 `;
 
+export const GET_YEAR_SALES = gql`
+    query getYearSales($yearSalesTimezone: String!, $yearSalesYear: Float!) {
+        yearSales(timezone: $yearSalesTimezone, year: $yearSalesYear) {
+            month
+            year
+            total
+        }
+    }
+`;
+
 export const GET_MONTH_SALES = gql`
-    query getMonthSales($monthSalesMonth: Float!, $monthSalesYear: Float!) {
-        monthSales(month: $monthSalesMonth, year: $monthSalesYear) {
+    query getMonthSales(
+        $monthSalesTimezone: String!
+        $monthSalesMonth: Float!
+        $monthSalesYear: Float!
+    ) {
+        monthSales(timezone: $monthSalesTimezone, month: $monthSalesMonth, year: $monthSalesYear) {
             year
             month
             dayOfMonth
@@ -192,8 +196,18 @@ export const GET_MONTH_SALES = gql`
 `;
 
 export const GET_DAILY_SALES = gql`
-    query getDailySales($daySalesDay: Float!, $daySalesMonth: Float!, $daySalesYear: Float!) {
-        daySales(day: $daySalesDay, month: $daySalesMonth, year: $daySalesYear) {
+    query getDailySales(
+        $daySalesTimezone: String!
+        $daySalesDay: Float!
+        $daySalesMonth: Float!
+        $daySalesYear: Float!
+    ) {
+        daySales(
+            timezone: $daySalesTimezone
+            day: $daySalesDay
+            month: $daySalesMonth
+            year: $daySalesYear
+        ) {
             year
             tableNumber
             tableName

@@ -17,6 +17,7 @@ const MonthlySales = (props: Props) => {
         variables: {
             monthSalesMonth: Number(month),
             monthSalesYear: currentDate.getFullYear(),
+            monthSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
     });
 
@@ -79,7 +80,7 @@ const MonthlySales = (props: Props) => {
                                                                 locale!,
                                                                 monthSale.year,
                                                                 monthSale.month - 1,
-                                                                monthSale.dayOfMonth
+                                                                monthSale.dayOfMonth + 1
                                                             ).toUpperCase()}
                                                         </div>
                                                     </div>

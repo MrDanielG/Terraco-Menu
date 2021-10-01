@@ -7,12 +7,15 @@ interface Props {}
 const SellsStats = (props: Props) => {
     const currentDate = new Date();
     const { data } = useGetDishSalesQuery({
-        variables: { dishSalesYear: currentDate.getFullYear() },
+        variables: {
+            dishSalesYear: currentDate.getFullYear(),
+            dishSalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
     });
 
     const dishSales = data?.dishSales || [];
     const topDishes = topDishSells(dishSales);
-    
+
     return (
         <ProtectedPage username="Manager" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
@@ -41,25 +44,27 @@ const SellsStats = (props: Props) => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {topDishes.sort((a, b) => a.month - b.month).map((dishSale, idx) => (
-                                            <tr key={idx}>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center">
-                                                        <div className="text-sm font-medium text-gray-800">
-                                                            {getMonthName(
-                                                                dishSale.year,
-                                                                dishSale.month - 1
-                                                            ).toUpperCase()}
+                                        {topDishes
+                                            .sort((a, b) => a.month - b.month)
+                                            .map((dishSale, idx) => (
+                                                <tr key={idx}>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center">
+                                                            <div className="text-sm font-medium text-gray-800">
+                                                                {getMonthName(
+                                                                    dishSale.year,
+                                                                    dishSale.month - 1
+                                                                ).toUpperCase()}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="text-sm text-gray-500">
-                                                        {dishSale.dishName}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-sm text-gray-500">
+                                                            {dishSale.dishName}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                     </tbody>
                                 </table>
                             </div>

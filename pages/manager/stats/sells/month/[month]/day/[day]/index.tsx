@@ -5,7 +5,7 @@ import { AiFillCaretDown } from 'react-icons/ai';
 import BackButton from '../../../../../../../../components/buttons/BackButton';
 import Navbar from '../../../../../../../../components/layout/Navbar';
 import ProtectedPage from '../../../../../../../../components/ProtectedPage';
-import { useGetDailySalesQuery } from '../../../../../../../../graphql/graphql';
+import { GetDailySalesQuery, useGetDailySalesQuery } from '../../../../../../../../graphql/graphql';
 import {
     getCustomDayNumberDate,
     getMonthName,
@@ -20,13 +20,30 @@ const DailySales = (props: Props) => {
     const { locale } = router;
     const { day, month } = router.query;
     const currentDate = new Date();
+    const newDay = Number(day) + 1;
     const { data } = useGetDailySalesQuery({
         variables: {
-            daySalesDay: Number(day) + 1,
+            daySalesDay: newDay,
             daySalesMonth: Number(month),
             daySalesYear: currentDate.getFullYear(),
+            daySalesTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
     });
+
+    console.log(newDay, month, Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+    let dataClone: GetDailySalesQuery | undefined;
+
+    if (data) {
+        dataClone = JSON.parse(JSON.stringify(data)) as GetDailySalesQuery;
+        dataClone.daySales.map((sale) =>
+            sale.sales?.sort((x, y) => {
+                const dateX = new Date(x.timestamp);
+                const dateY = new Date(y.timestamp);
+                return dateX.getTime() < dateY.getTime() ? 1 : -1;
+            })
+        );
+    }
 
     return (
         <ProtectedPage username="Manager" redirectTo="/">
@@ -77,6 +94,32 @@ const DailySales = (props: Props) => {
                                     </div>
                                 </Collapsible>
                             ))}
+                            {/* {dataClone?.daySales.map((daySale, i) => (
+                                <Collapsible
+                                    trigger={
+                                        <div className="flex items-center justify-between">
+                                            <span>{daySale.tableName}</span>
+                                            <AiFillCaretDown />
+                                        </div>
+                                    }
+                                    key={i}
+                                >
+                                    {daySale.sales?.map((sale) => (
+                                        <div key={sale.timestamp} className="flex justify-between">
+                                            <p> {getTime(sale.timestamp, 'en-US')} </p>
+                                            <p className="font-semibold">
+                                                {intlFormat(sale.total, locale!)}
+                                            </p>
+                                        </div>
+                                    ))}
+
+                                    <hr className="my-2" />
+                                    <div className="flex justify-between font-semibold">
+                                        <p>Total:</p>
+                                        <p> {intlFormat(daySale.totalSum, locale!)}</p>
+                                    </div>
+                                </Collapsible>
+                            ))} */}
                         </div>
                     </div>
                 </div>
