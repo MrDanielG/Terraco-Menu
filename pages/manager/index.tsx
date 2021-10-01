@@ -30,10 +30,11 @@ const Index = (props: Props) => {
     const topDishes = topDishSells(dishSales).sort((a, b) => b.month - a.month);
     const sortedSales = monthSales.slice().sort((a, b) => b.month - a.month);
     let profit = 0;
+    console.log(sortedSales);
     if (sortedSales.length > 1) {
         const currentMontSales = sortedSales[0].total.amount;
         const prevMonthSales = sortedSales[1].total.amount;
-        profit = (1 - prevMonthSales / currentMontSales) * 100;
+        profit = (currentMontSales / prevMonthSales - 1) * 100;
     }
 
     return (
