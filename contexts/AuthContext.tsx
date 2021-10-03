@@ -49,19 +49,20 @@ const AuthProvider = ({ children }: any) => {
             const user = decodeUserPayload(accessToken);
             setCurrentUser(user);
 
-            toast.success('Sesión Iniciada');
-
             switch (user.name) {
                 case 'Chef':
                     router.push('/chef');
+                    toast.success('Sesión Iniciada');
                     break;
 
                 case 'Manager':
                     router.push('/manager');
+                    toast.success('Sesión Iniciada');
                     break;
 
-                case 'Cashier':
+                case 'Cajero':
                     router.push('/cashier');
+                    toast.success('Sesión Iniciada');
                     break;
 
                 default:

@@ -23,3 +23,20 @@ export const ORDER_CHANGES = gql`
         }
     }
 `;
+
+export const TICKET_CHANGES = gql`
+    subscription TicketChanges {
+        ticketChanges {
+            _id
+            orderId
+            ticketNumber
+            timestamp
+            tableName
+            tableNumber
+            total
+            paymentMethod
+            vat
+            status
+        }
+    }
+`;

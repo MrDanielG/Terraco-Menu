@@ -12,7 +12,7 @@ const PaymentCard = ({ ticket }: Props) => {
     const { locale } = router;
 
     const confirmPayment = () => {
-        console.log('Confirmar Ticket');
+        console.log('Confirmar Ticket' + ticket.total);
     };
     const printTicket = () => {
         console.log('Imprimir Ticket');

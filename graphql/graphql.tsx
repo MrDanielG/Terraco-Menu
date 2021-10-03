@@ -776,6 +776,11 @@ export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>
 
 export type OrderChangesSubscription = { __typename?: 'Subscription', orderChanges: { __typename?: 'Order', _id: string, orderNumber: number, end_time?: Maybe<any>, start_time: any, table: { __typename?: 'Table', name?: Maybe<string>, tableNumber: number, _id: string }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> } };
 
+export type TicketChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TicketChangesSubscription = { __typename?: 'Subscription', ticketChanges: { __typename?: 'Ticket', _id: string, orderId: string, ticketNumber: number, timestamp: any, tableName: string, tableNumber: number, total: any, paymentMethod: string, vat: number, status: TicketStatus } };
+
 
 export const LoginDocument = gql`
     mutation Login($loginPassword: String!, $loginEmail: String!) {
@@ -1933,3 +1938,41 @@ export function useOrderChangesSubscription(baseOptions?: Apollo.SubscriptionHoo
       }
 export type OrderChangesSubscriptionHookResult = ReturnType<typeof useOrderChangesSubscription>;
 export type OrderChangesSubscriptionResult = Apollo.SubscriptionResult<OrderChangesSubscription>;
+export const TicketChangesDocument = gql`
+    subscription TicketChanges {
+  ticketChanges {
+    _id
+    orderId
+    ticketNumber
+    timestamp
+    tableName
+    tableNumber
+    total
+    paymentMethod
+    vat
+    status
+  }
+}
+    `;
+
+/**
+ * __useTicketChangesSubscription__
+ *
+ * To run a query within a React component, call `useTicketChangesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useTicketChangesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTicketChangesSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTicketChangesSubscription(baseOptions?: Apollo.SubscriptionHookOptions<TicketChangesSubscription, TicketChangesSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<TicketChangesSubscription, TicketChangesSubscriptionVariables>(TicketChangesDocument, options);
+      }
+export type TicketChangesSubscriptionHookResult = ReturnType<typeof useTicketChangesSubscription>;
+export type TicketChangesSubscriptionResult = Apollo.SubscriptionResult<TicketChangesSubscription>;
