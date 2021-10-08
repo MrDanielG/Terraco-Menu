@@ -1,6 +1,8 @@
 import { MXN } from '@dinero.js/currencies';
-import dynamic from 'next/dynamic';
+import ReactPDF, { Document, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
 import { dinero, multiply, subtract } from 'dinero.js';
+import html2canvas from 'html2canvas';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import BackButton from '../components/buttons/BackButton';
@@ -14,8 +16,6 @@ import {
 } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { intlFormat } from '../lib/utils';
-import html2canvas from 'html2canvas';
-import ReactPDF, { Page, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 
 const BlobProvider = dynamic<ReactPDF.BlobProviderProps>(
     () => import('@react-pdf/renderer').then((mod) => mod.BlobProvider),
@@ -66,7 +66,7 @@ const TicketDocument = ({ ticketImgUrl }: TicketDocumentProps) => {
 interface Props {}
 const TicketView = (props: Props) => {
     const router = useRouter();
-    const { tableId } = router.query;
+    const { tableId, paymentMethod } = router.query;
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [_currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
         tableId: '',
@@ -91,7 +91,7 @@ const TicketView = (props: Props) => {
             const ticket = await GenerateTicket({
                 variables: {
                     orderId: orderRes.data?.orderById._id || order?._id || '',
-                    paymentMethod: 'Efectivo',
+                    paymentMethod: paymentMethod?.toString(),
                     vat: 16,
                 },
             });
@@ -154,6 +154,7 @@ const TicketView = (props: Props) => {
                         <ul>
                             <li>Ticket No. {ticket.ticketNumber}</li>
                             <li>Fecha: {new Date(ticket.timestamp).toLocaleDateString('es-MX')}</li>
+                            <li>Tipo Pago: {paymentMethod}</li>
                         </ul>
                         <ul>
                             <li>Hora: {new Date(ticket.timestamp).toLocaleTimeString('es-MX')}</li>
