@@ -22,7 +22,7 @@ const CahsierHome = (props: Props) => {
             newTickets.push(ticket);
             setTickets(newTickets);
         }
-    }, [data, tickets]);
+    }, [data]);
 
     return (
         <ProtectedPage username="Cajero" redirectTo="/">
