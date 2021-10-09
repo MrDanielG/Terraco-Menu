@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Ticket } from '../../graphql/graphql';
-import { intlFormat } from '../../lib/utils';
+import toast from 'react-hot-toast';
+import { Ticket, TicketStatus, useSetTicketStatusMutation } from '../../graphql/graphql';
+import { getDayMonthTime, intlFormat } from '../../lib/utils';
 
 interface Props {
     ticket: Ticket;
@@ -11,8 +12,21 @@ const PaymentCard = ({ ticket }: Props) => {
     const router = useRouter();
     const { locale } = router;
 
-    const confirmPayment = () => {
-        console.log('Confirmar Ticket' + ticket.total);
+    const [setTicketStatusMutation, { loading }] = useSetTicketStatusMutation({
+        variables: {
+            setTicketStatusStatus: TicketStatus.Paid,
+            setTicketStatusTikcetId: ticket._id,
+        },
+    });
+
+    const confirmPayment = async () => {
+        try {
+            await setTicketStatusMutation();
+            toast.success('Pago Confirmado');
+        } catch (error) {
+            toast.error('Error al Confirmar Pago');
+            console.error(error);
+        }
     };
     const printTicket = () => {
         console.log('Imprimir Ticket');
@@ -23,11 +37,13 @@ const PaymentCard = ({ ticket }: Props) => {
             <div>
                 <div className="flex justify-between">
                     <p className="text-brown font-semibold">{ticket.tableName}</p>
-                    <p className="text-sm text-gray-500">{ticket.timestamp}</p>
+                    <p className="text-sm text-gray-500">
+                        {getDayMonthTime(ticket.timestamp, locale!)}
+                    </p>
                 </div>
-                <p className="text-sm text-gray-500">Pago Efectivo</p>
+                <p className="text-sm text-gray-500">Pago {ticket.paymentMethod}</p>
                 <p className="text-brown-light font-semibold">
-                    $ {intlFormat(ticket.total, locale!)}
+                    {intlFormat(ticket.total, locale!)}
                 </p>
             </div>
 
@@ -37,6 +53,7 @@ const PaymentCard = ({ ticket }: Props) => {
                 </button>
                 <button
                     onClick={confirmPayment}
+                    disabled={loading}
                     className="text-sm w-full text-mygreen border-2 border-mygreen border-solid py-3 px-6 rounded-xl disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     Confirmar Pago

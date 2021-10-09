@@ -220,3 +220,17 @@ export const GET_DAILY_SALES = gql`
         }
     }
 `;
+
+export const GET_TICKETS = gql`
+    query getTickets {
+        tickets {
+            _id
+            timestamp
+            status
+            paymentMethod
+            tableName
+            tableNumber
+            total
+        }
+    }
+`;

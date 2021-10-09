@@ -666,6 +666,14 @@ export type GenerateTicketMutationVariables = Exact<{
 
 export type GenerateTicketMutation = { __typename?: 'Mutation', generateTicket: { __typename?: 'Ticket', _id: string, orderId: string, ticketNumber: number, timestamp: any, tableName: string, total: any, paymentMethod: string, vat: number, items: Array<{ __typename?: 'TicketItem', _id: string, quantity: number, dishName: string, dishPrice: any, amount: any }> } };
 
+export type SetTicketStatusMutationVariables = Exact<{
+  setTicketStatusStatus: TicketStatus;
+  setTicketStatusTikcetId: Scalars['String'];
+}>;
+
+
+export type SetTicketStatusMutation = { __typename?: 'Mutation', setTicketStatus?: Maybe<{ __typename?: 'Ticket', _id: string, status: TicketStatus }> };
+
 export type RemoveDishFromMenuMutationVariables = Exact<{
   removeDishFromMenuIdDish: Scalars['String'];
   removeDishFromMenuIdMenu: Scalars['String'];
@@ -770,6 +778,11 @@ export type GetDailySalesQueryVariables = Exact<{
 
 
 export type GetDailySalesQuery = { __typename?: 'Query', daySales: Array<{ __typename?: 'DaySalesStats', year: number, tableNumber: number, tableName: string, totalSum: any, salesCount: number, sales?: Maybe<Array<{ __typename?: 'Ticket', total: any, timestamp: any }>> }> };
+
+export type GetTicketsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, total: any }> };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -1248,6 +1261,44 @@ export function useGenerateTicketMutation(baseOptions?: Apollo.MutationHookOptio
 export type GenerateTicketMutationHookResult = ReturnType<typeof useGenerateTicketMutation>;
 export type GenerateTicketMutationResult = Apollo.MutationResult<GenerateTicketMutation>;
 export type GenerateTicketMutationOptions = Apollo.BaseMutationOptions<GenerateTicketMutation, GenerateTicketMutationVariables>;
+export const SetTicketStatusDocument = gql`
+    mutation SetTicketStatus($setTicketStatusStatus: TicketStatus!, $setTicketStatusTikcetId: String!) {
+  setTicketStatus(
+    status: $setTicketStatusStatus
+    tikcetId: $setTicketStatusTikcetId
+  ) {
+    _id
+    status
+  }
+}
+    `;
+export type SetTicketStatusMutationFn = Apollo.MutationFunction<SetTicketStatusMutation, SetTicketStatusMutationVariables>;
+
+/**
+ * __useSetTicketStatusMutation__
+ *
+ * To run a mutation, you first call `useSetTicketStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTicketStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTicketStatusMutation, { data, loading, error }] = useSetTicketStatusMutation({
+ *   variables: {
+ *      setTicketStatusStatus: // value for 'setTicketStatusStatus'
+ *      setTicketStatusTikcetId: // value for 'setTicketStatusTikcetId'
+ *   },
+ * });
+ */
+export function useSetTicketStatusMutation(baseOptions?: Apollo.MutationHookOptions<SetTicketStatusMutation, SetTicketStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetTicketStatusMutation, SetTicketStatusMutationVariables>(SetTicketStatusDocument, options);
+      }
+export type SetTicketStatusMutationHookResult = ReturnType<typeof useSetTicketStatusMutation>;
+export type SetTicketStatusMutationResult = Apollo.MutationResult<SetTicketStatusMutation>;
+export type SetTicketStatusMutationOptions = Apollo.BaseMutationOptions<SetTicketStatusMutation, SetTicketStatusMutationVariables>;
 export const RemoveDishFromMenuDocument = gql`
     mutation RemoveDishFromMenu($removeDishFromMenuIdDish: String!, $removeDishFromMenuIdMenu: String!) {
   removeDishFromMenu(
@@ -1893,6 +1944,46 @@ export function useGetDailySalesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetDailySalesQueryHookResult = ReturnType<typeof useGetDailySalesQuery>;
 export type GetDailySalesLazyQueryHookResult = ReturnType<typeof useGetDailySalesLazyQuery>;
 export type GetDailySalesQueryResult = Apollo.QueryResult<GetDailySalesQuery, GetDailySalesQueryVariables>;
+export const GetTicketsDocument = gql`
+    query getTickets {
+  tickets {
+    _id
+    timestamp
+    status
+    paymentMethod
+    tableName
+    tableNumber
+    total
+  }
+}
+    `;
+
+/**
+ * __useGetTicketsQuery__
+ *
+ * To run a query within a React component, call `useGetTicketsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTicketsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTicketsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTicketsQuery(baseOptions?: Apollo.QueryHookOptions<GetTicketsQuery, GetTicketsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTicketsQuery, GetTicketsQueryVariables>(GetTicketsDocument, options);
+      }
+export function useGetTicketsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTicketsQuery, GetTicketsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTicketsQuery, GetTicketsQueryVariables>(GetTicketsDocument, options);
+        }
+export type GetTicketsQueryHookResult = ReturnType<typeof useGetTicketsQuery>;
+export type GetTicketsLazyQueryHookResult = ReturnType<typeof useGetTicketsLazyQuery>;
+export type GetTicketsQueryResult = Apollo.QueryResult<GetTicketsQuery, GetTicketsQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {

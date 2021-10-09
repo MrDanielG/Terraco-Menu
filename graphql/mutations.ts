@@ -186,6 +186,18 @@ export const GENERATE_TICKET = gql`
     }
 `;
 
+export const SET_TICKET_STATUS = gql`
+    mutation SetTicketStatus(
+        $setTicketStatusStatus: TicketStatus!
+        $setTicketStatusTikcetId: String!
+    ) {
+        setTicketStatus(status: $setTicketStatusStatus, tikcetId: $setTicketStatusTikcetId) {
+            _id
+            status
+        }
+    }
+`;
+
 export const REMOVE_DISH_FROM_MENU = gql`
     mutation RemoveDishFromMenu(
         $removeDishFromMenuIdDish: String!
