@@ -23,10 +23,16 @@ const CahsierHome = (props: Props) => {
     useEffect(() => {
         if (data?.ticketChanges) {
             const ticket = data.ticketChanges as Ticket;
+            const hasTicket = activeTickets.some((activeTicket) => activeTicket._id === ticket._id);
             const newTickets = [...activeTickets];
             if (ticket.status !== TicketStatus.Paid) {
                 newTickets.push(ticket);
                 setActiveTickets(newTickets);
+            } else if (hasTicket) {
+                const filteredTickets = newTickets.filter(
+                    (currentTicket) => currentTicket._id !== ticket._id
+                );
+                setActiveTickets(filteredTickets);
             }
         }
     }, [data]);

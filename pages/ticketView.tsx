@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import BounceLoader from 'react-spinners/BounceLoader';
-import BackButton from '../components/buttons/BackButton';
 import BigButton from '../components/buttons/BigButton';
 import {
     Dish,
@@ -153,7 +152,6 @@ const TicketView = (props: Props) => {
     }
     return (
         <div className="bg-gray-200 p-8 min-h-screen">
-            <BackButton text="Mi orden" pathNameOnBack="/newOrder" />
             {ticket && (
                 <div id="ticket">
                     {ticketById?.ticketById.status !== TicketStatus.Paid ? (
