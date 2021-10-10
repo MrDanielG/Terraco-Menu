@@ -234,3 +234,20 @@ export const GET_TICKETS = gql`
         }
     }
 `;
+
+export const GET_TICKET_BY_ID = gql`
+    query getTicketById($ticketByIdId: String!) {
+        ticketById(id: $ticketByIdId) {
+            _id
+            status
+            orderId
+            ticketNumber
+            timestamp
+            tableName
+            tableNumber
+            total
+            paymentMethod
+            vat
+        }
+    }
+`;

@@ -784,6 +784,13 @@ export type GetTicketsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, total: any }> };
 
+export type GetTicketByIdQueryVariables = Exact<{
+  ticketByIdId: Scalars['String'];
+}>;
+
+
+export type GetTicketByIdQuery = { __typename?: 'Query', ticketById: { __typename?: 'Ticket', _id: string, status: TicketStatus, orderId: string, ticketNumber: number, timestamp: any, tableName: string, tableNumber: number, total: any, paymentMethod: string, vat: number } };
+
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1984,6 +1991,50 @@ export function useGetTicketsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetTicketsQueryHookResult = ReturnType<typeof useGetTicketsQuery>;
 export type GetTicketsLazyQueryHookResult = ReturnType<typeof useGetTicketsLazyQuery>;
 export type GetTicketsQueryResult = Apollo.QueryResult<GetTicketsQuery, GetTicketsQueryVariables>;
+export const GetTicketByIdDocument = gql`
+    query getTicketById($ticketByIdId: String!) {
+  ticketById(id: $ticketByIdId) {
+    _id
+    status
+    orderId
+    ticketNumber
+    timestamp
+    tableName
+    tableNumber
+    total
+    paymentMethod
+    vat
+  }
+}
+    `;
+
+/**
+ * __useGetTicketByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTicketByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTicketByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTicketByIdQuery({
+ *   variables: {
+ *      ticketByIdId: // value for 'ticketByIdId'
+ *   },
+ * });
+ */
+export function useGetTicketByIdQuery(baseOptions: Apollo.QueryHookOptions<GetTicketByIdQuery, GetTicketByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTicketByIdQuery, GetTicketByIdQueryVariables>(GetTicketByIdDocument, options);
+      }
+export function useGetTicketByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTicketByIdQuery, GetTicketByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTicketByIdQuery, GetTicketByIdQueryVariables>(GetTicketByIdDocument, options);
+        }
+export type GetTicketByIdQueryHookResult = ReturnType<typeof useGetTicketByIdQuery>;
+export type GetTicketByIdLazyQueryHookResult = ReturnType<typeof useGetTicketByIdLazyQuery>;
+export type GetTicketByIdQueryResult = Apollo.QueryResult<GetTicketByIdQuery, GetTicketByIdQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {
