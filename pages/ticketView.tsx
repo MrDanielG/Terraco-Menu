@@ -256,7 +256,7 @@ const TicketView = (props: Props) => {
                         <div>
                             {ticketById?.ticketById.status === TicketStatus.Paid && (
                                 <BigButton
-                                    text="Descargar PDF"
+                                    text="Finalizar Orden"
                                     onClick={() => handlePDFDownload(url)}
                                 />
                             )}

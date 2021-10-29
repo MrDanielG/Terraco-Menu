@@ -10,7 +10,7 @@ import CategoryBar, { CategoryBarRef } from '../components/layout/CategoryBar';
 import Navbar from '../components/layout/Navbar';
 import SearchBar, { SearchBarRef } from '../components/layout/SearchBar';
 import Modal from '../components/modals/Modal';
-import { Dish, Order, Menu, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
+import { Dish, Menu, Order, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
@@ -165,9 +165,9 @@ export default function Home() {
         setMenus(filteredMenus);
     };
     return (
-        <div className="bg-gray-200 p-8 min-h-screen">
+        <div className="min-h-screen p-8 bg-gray-200">
             <Navbar itemsQty={numItems} onClick={handleNavbarClick} />
-            <h1 className="font-semibold text-3xl text-brown">Menú</h1>
+            <h1 className="text-3xl font-semibold text-brown">Menú</h1>
 
             <SearchBar
                 list={fullDishes}
@@ -176,62 +176,74 @@ export default function Home() {
                 ref={searchBarRef}
             />
 
-            <CategoryBar data={categoryData} onClick={handleCategoryFilter} ref={catBarRef} all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" />
+            <CategoryBar
+                data={categoryData}
+                onClick={handleCategoryFilter}
+                ref={catBarRef}
+                all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+            />
             <div>
                 {menus.length > 0 &&
                     menus.map(
                         (menu) =>
                             menu.dishes.length > 0 && (
-                                <div key={menu._id}>
-                                    <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
+                                <>
+                                    <h2 className="mt-10 mb-6 text-lg uppercase text-brown">
                                         {menu.title}
                                     </h2>
-                                    {menu.dishes.map((dish) => (
-                                        <ParentCard
-                                            url_img={dish.url_img?.toString()}
-                                            onClick={() =>
-                                                handleDishDetails(
-                                                    `/dish/${dish._id}?tableId=${tableId}`
-                                                )
-                                            }
-                                            key={dish._id}
-                                        >
-                                            <CardInfo
+                                    <div
+                                        key={menu._id}
+                                        className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5"
+                                    >
+                                        {menu.dishes.map((dish) => (
+                                            <ParentCard
+                                                url_img={dish.url_img?.toString()}
                                                 onClick={() =>
                                                     handleDishDetails(
                                                         `/dish/${dish._id}?tableId=${tableId}`
                                                     )
                                                 }
+                                                key={dish._id}
                                             >
-                                                <CardInfo.Title>
-                                                    <span>{dish.name}</span>
-                                                </CardInfo.Title>
-                                                <CardInfo.Footer>
-                                                    <span>{intlFormat(dish.price, 'es-MX')}</span>
-                                                </CardInfo.Footer>
-                                            </CardInfo>
-                                            <CardActions>
-                                                <CardActions.Bottom
-                                                    icon={<HiPlusSm />}
-                                                    onClick={(_e) => {
-                                                        handleAddDish(dish);
-                                                    }}
-                                                />
-                                            </CardActions>
-                                        </ParentCard>
-                                    ))}
-                                </div>
+                                                <CardInfo
+                                                    onClick={() =>
+                                                        handleDishDetails(
+                                                            `/dish/${dish._id}?tableId=${tableId}`
+                                                        )
+                                                    }
+                                                >
+                                                    <CardInfo.Title>
+                                                        <span>{dish.name}</span>
+                                                    </CardInfo.Title>
+                                                    <CardInfo.Footer>
+                                                        <span>
+                                                            {intlFormat(dish.price, 'es-MX')}
+                                                        </span>
+                                                    </CardInfo.Footer>
+                                                </CardInfo>
+                                                <CardActions>
+                                                    <CardActions.Bottom
+                                                        icon={<HiPlusSm />}
+                                                        onClick={(_e) => {
+                                                            handleAddDish(dish);
+                                                        }}
+                                                    />
+                                                </CardActions>
+                                            </ParentCard>
+                                        ))}
+                                    </div>
+                                </>
                             )
                     )}
             </div>
             <div>
                 {menus.length === 0 && (
-                    <h2 className="mt-10 mb-6 text-brown text-lg uppercase">
+                    <h2 className="mt-10 mb-6 text-lg uppercase text-brown">
                         Resultados de la búsqueda
                     </h2>
                 )}
                 {dishes.length > 0 && (
-                    <div>
+                    <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
                         {dishes.map((dish) => (
                             <ParentCard
                                 url_img={dish.url_img?.toString()}
