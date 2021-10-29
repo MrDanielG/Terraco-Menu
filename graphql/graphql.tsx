@@ -782,7 +782,7 @@ export type GetDailySalesQuery = { __typename?: 'Query', daySales: Array<{ __typ
 export type GetTicketsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, total: any }> };
+export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, total: any, items: Array<{ __typename?: 'TicketItem', quantity: number, dishName: string, dishPrice: any, amount: any, _id: string }> }> };
 
 export type GetTicketByIdQueryVariables = Exact<{
   ticketByIdId: Scalars['String'];
@@ -799,7 +799,7 @@ export type OrderChangesSubscription = { __typename?: 'Subscription', orderChang
 export type TicketChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TicketChangesSubscription = { __typename?: 'Subscription', ticketChanges: { __typename?: 'Ticket', _id: string, orderId: string, ticketNumber: number, timestamp: any, tableName: string, tableNumber: number, total: any, paymentMethod: string, vat: number, status: TicketStatus } };
+export type TicketChangesSubscription = { __typename?: 'Subscription', ticketChanges: { __typename?: 'Ticket', _id: string, orderId: string, ticketNumber: number, timestamp: any, tableName: string, tableNumber: number, total: any, paymentMethod: string, vat: number, status: TicketStatus, items: Array<{ __typename?: 'TicketItem', _id: string, quantity: number, dishName: string, dishPrice: any, amount: any }> } };
 
 
 export const LoginDocument = gql`
@@ -1961,6 +1961,13 @@ export const GetTicketsDocument = gql`
     tableName
     tableNumber
     total
+    items {
+      quantity
+      dishName
+      dishPrice
+      amount
+      _id
+    }
   }
 }
     `;
@@ -2093,6 +2100,13 @@ export const TicketChangesDocument = gql`
     paymentMethod
     vat
     status
+    items {
+      _id
+      quantity
+      dishName
+      dishPrice
+      amount
+    }
   }
 }
     `;

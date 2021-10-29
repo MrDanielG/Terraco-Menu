@@ -30,7 +30,6 @@ const DailySales = (props: Props) => {
         },
     });
 
-
     let dataClone: GetDailySalesQuery | undefined;
 
     if (data) {
@@ -46,9 +45,9 @@ const DailySales = (props: Props) => {
 
     return (
         <ProtectedPage username="Manager" redirectTo="/">
-            <div className="bg-gray-200 p-8 min-h-screen">
+            <div className="min-h-screen p-8 bg-gray-200">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown">
+                <h1 className="text-3xl font-semibold text-brown">
                     {getCustomDayNumberDate(
                         locale!,
                         currentDate.getFullYear(),
@@ -66,11 +65,11 @@ const DailySales = (props: Props) => {
 
                 <div className="flex flex-col mt-4">
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                             {data?.daySales.map((daySale, i) => (
                                 <Collapsible
                                     trigger={
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between p-4">
                                             <span>{daySale.tableName}</span>
                                             <AiFillCaretDown />
                                         </div>
@@ -78,7 +77,10 @@ const DailySales = (props: Props) => {
                                     key={i}
                                 >
                                     {daySale.sales?.map((sale) => (
-                                        <div key={sale.timestamp} className="flex justify-between">
+                                        <div
+                                            key={sale.timestamp}
+                                            className="flex justify-between p-4"
+                                        >
                                             <p> {getTime(sale.timestamp, 'en-US')} </p>
                                             <p className="font-semibold">
                                                 {intlFormat(sale.total, locale!)}
@@ -87,7 +89,7 @@ const DailySales = (props: Props) => {
                                     ))}
 
                                     <hr className="my-2" />
-                                    <div className="flex justify-between font-semibold">
+                                    <div className="flex justify-between p-4 font-semibold">
                                         <p>Total:</p>
                                         <p> {intlFormat(daySale.totalSum, locale!)}</p>
                                     </div>

@@ -231,6 +231,13 @@ export const GET_TICKETS = gql`
             tableName
             tableNumber
             total
+            items {
+                quantity
+                dishName
+                dishPrice
+                amount
+                _id
+            }
         }
     }
 `;

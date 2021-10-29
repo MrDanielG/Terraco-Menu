@@ -37,6 +37,13 @@ export const TICKET_CHANGES = gql`
             paymentMethod
             vat
             status
+            items {
+                _id
+                quantity
+                dishName
+                dishPrice
+                amount
+            }
         }
     }
 `;
