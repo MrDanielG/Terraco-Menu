@@ -1,21 +1,23 @@
 import { MXN } from '@dinero.js/currencies';
-import dynamic from 'next/dynamic';
+import ReactPDF, { Document, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
 import { dinero, multiply, subtract } from 'dinero.js';
+import html2canvas from 'html2canvas';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import BackButton from '../components/buttons/BackButton';
+import BounceLoader from 'react-spinners/BounceLoader';
 import BigButton from '../components/buttons/BigButton';
 import {
     Dish,
     Order,
     Ticket,
+    TicketStatus,
     useGenerateTicketMutation,
     useGetOrderByIdQuery,
+    useGetTicketByIdQuery,
 } from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { intlFormat } from '../lib/utils';
-import html2canvas from 'html2canvas';
-import ReactPDF, { Page, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 
 const BlobProvider = dynamic<ReactPDF.BlobProviderProps>(
     () => import('@react-pdf/renderer').then((mod) => mod.BlobProvider),
@@ -66,8 +68,19 @@ const TicketDocument = ({ ticketImgUrl }: TicketDocumentProps) => {
 interface Props {}
 const TicketView = (props: Props) => {
     const router = useRouter();
-    const { tableId } = router.query;
+    const { tableId, paymentMethod } = router.query;
     const [ticket, setTicket] = useState<Ticket | null>(null);
+    const { data: ticketById } = useGetTicketByIdQuery({
+        variables: {
+            ticketByIdId: ticket?._id || '',
+        },
+        pollInterval: 1000,
+    });
+
+    useEffect(() => {
+        console.log(ticketById?.ticketById);
+    }, [ticketById]);
+
     const [_currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
         tableId: '',
         items: [],
@@ -91,7 +104,7 @@ const TicketView = (props: Props) => {
             const ticket = await GenerateTicket({
                 variables: {
                     orderId: orderRes.data?.orderById._id || order?._id || '',
-                    paymentMethod: 'Efectivo',
+                    paymentMethod: paymentMethod?.toString(),
                     vat: 16,
                 },
             });
@@ -102,7 +115,7 @@ const TicketView = (props: Props) => {
     };
 
     const updateTicketURL = async () => {
-        const ticketDiv = document.getElementById('ticket') || new HTMLDivElement();
+        const ticketDiv = document.getElementById('ticket') || document.createElement('div');
         try {
             const canvas = await html2canvas(ticketDiv);
             setTicketURL(canvas.toDataURL('image/png'));
@@ -129,7 +142,7 @@ const TicketView = (props: Props) => {
         } else {
             updateTicketURL();
         }
-    }, [ticket]);
+    }, [ticket, ticketById]);
 
     let baseImp = dinero({ amount: 0, currency: MXN });
     let vatAmount = dinero({ amount: 0, currency: MXN });
@@ -138,75 +151,97 @@ const TicketView = (props: Props) => {
         baseImp = subtract(dinero(ticket.total), vatAmount);
     }
     return (
-        <div className="bg-gray-200 p-8 min-h-screen">
-            <BackButton text="Mi orden" pathNameOnBack="/newOrder" />
+        <div className="min-h-screen p-8 bg-gray-200" id="container">
             {ticket && (
-                <div id="ticket">
-                    <h1 className="text-center text-brown font-semibold text-lg mb-1">
-                        Restarurante Terraco
-                    </h1>
-                    <div className="text-sm text-center mb-6 text-gray-700">
-                        <p>Tel. 525 9263 939</p>
-                        <p>Calle X No. XX Colonia XX C.P. 67252</p>
-                    </div>
+                <>
+                    {ticketById?.ticketById.status !== TicketStatus.Paid ? (
+                        <>
+                            <p className="mt-8 text-lg text-center">
+                                Tu solicitud de pago está siendo atendida. En un momento un mesero
+                                solicitará el dinero
+                            </p>
+                            <div className="flex justify-center mt-8">
+                                <BounceLoader color="#3ABB2E" size={150} />
+                            </div>
+                        </>
+                    ) : (
+                        <div id="ticket">
+                            <h1 className="mb-1 text-lg font-semibold text-center text-brown">
+                                Restarurante Terraco
+                            </h1>
+                            <div className="mb-6 text-sm text-center text-gray-700">
+                                <p>Tel. 525 9263 939</p>
+                                <p>Calle X No. XX Colonia XX C.P. 67252</p>
+                            </div>
 
-                    <div className="flex flex-row space-x-10 mb-6 text-sm text-gray-700">
-                        <ul>
-                            <li>Ticket No. {ticket.ticketNumber}</li>
-                            <li>Fecha: {new Date(ticket.timestamp).toLocaleDateString('es-MX')}</li>
-                        </ul>
-                        <ul>
-                            <li>Hora: {new Date(ticket.timestamp).toLocaleTimeString('es-MX')}</li>
-                            <li>{ticket.tableName}</li>
-                        </ul>
-                    </div>
+                            <div className="flex flex-row mb-6 space-x-10 text-sm text-gray-700">
+                                <ul>
+                                    <li>Ticket No. {ticket?.ticketNumber}</li>
+                                    <li>
+                                        Fecha:{' '}
+                                        {new Date(ticket?.timestamp).toLocaleDateString('es-MX')}
+                                    </li>
+                                    <li>Tipo Pago: {paymentMethod}</li>
+                                </ul>
+                                <ul>
+                                    <li>
+                                        Hora:{' '}
+                                        {new Date(ticket?.timestamp).toLocaleTimeString('es-MX')}
+                                    </li>
+                                    <li>{ticket?.tableName}</li>
+                                </ul>
+                            </div>
 
-                    <table className="mb-6">
-                        <thead>
-                            <tr className="text-brown">
-                                <th className="font-semibold">Cant.</th>
-                                <th className="font-semibold">Desc.</th>
-                                <th className="font-semibold">Precio</th>
-                                <th className="font-semibold">Importe</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {ticket.items.map((item, idx) => (
-                                <tr key={idx} className="text-sm text-center text-gray-700">
-                                    <td className="text-brown font-semibold">{item.quantity}</td>
-                                    <td className="text-left">{item.dishName}</td>
-                                    <td>{intlFormat(item.dishPrice, 'es-MX')}</td>
-                                    <td>{intlFormat(item.amount, 'es-MX')}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            <table className="mb-6">
+                                <thead>
+                                    <tr className="text-brown">
+                                        <th className="font-semibold">Cant.</th>
+                                        <th className="font-semibold">Desc.</th>
+                                        <th className="font-semibold">Precio</th>
+                                        <th className="font-semibold">Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ticket?.items.map((item, idx) => (
+                                        <tr key={idx} className="text-sm text-center text-gray-700">
+                                            <td className="font-semibold text-brown">
+                                                {item.quantity}
+                                            </td>
+                                            <td className="text-left">{item.dishName}</td>
+                                            <td>{intlFormat(item.dishPrice, 'es-MX')}</td>
+                                            <td>{intlFormat(item.amount, 'es-MX')}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
 
-                    <div className="flex flex-row-reverse">
-                        <table className="mb-6 mr-2">
-                            <tbody className="font-semibold text-brown">
-                                <tr>
-                                    <td>Base Imp. </td>
-                                    <td>{intlFormat(baseImp.toJSON(), 'es-MX')}</td>
-                                </tr>
-                                <tr>
-                                    <td>IVA {ticket.vat}%</td>
-                                    <td>{intlFormat(vatAmount.toJSON(), 'es-MX')}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <div className="flex flex-row-reverse">
+                                <table className="mb-6 mr-2">
+                                    <tbody className="font-semibold text-brown">
+                                        <tr>
+                                            <td>Base Imp. </td>
+                                            <td>{intlFormat(baseImp.toJSON(), 'es-MX')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>IVA {ticket?.vat}%</td>
+                                            <td>{intlFormat(vatAmount.toJSON(), 'es-MX')}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-                    <div className="text-brown text-xl font-semibold flex justify-between mx-2">
-                        <span className="text-brown font-semibold">Total: </span>
-                        <span>{intlFormat(ticket.total, 'es-MX')}</span>
-                    </div>
+                            <div className="flex justify-between mx-2 text-xl font-semibold text-brown">
+                                <span className="font-semibold text-brown">Total: </span>
+                                <span>{intlFormat(ticket?.total, 'es-MX')}</span>
+                            </div>
 
-                    <p className="text-center text-gray-600 text-xs pt-8">IVA Incluido</p>
-                    <p className="text-center text-gray-700 text-xs pb-2">
-                        Gracias por su prefencia
-                    </p>
-                </div>
+                            <p className="pt-8 text-xs text-center text-gray-600">IVA Incluido</p>
+                            <p className="pb-2 text-xs text-center text-gray-700">
+                                Gracias por su prefencia
+                            </p>
+                        </div>
+                    )}
+                </>
             )}
             <BlobProvider document={<TicketDocument ticketImgUrl={ticketURL} />}>
                 {({ loading, url, error }) => {
@@ -218,7 +253,14 @@ const TicketView = (props: Props) => {
                     return loading ? (
                         <p className="text-center">Generando PDF...</p>
                     ) : (
-                        <BigButton text="Descargar PDF" onClick={() => handlePDFDownload(url)} />
+                        <div>
+                            {ticketById?.ticketById.status === TicketStatus.Paid && (
+                                <BigButton
+                                    text="Descargar PDF"
+                                    onClick={() => handlePDFDownload(url)}
+                                />
+                            )}
+                        </div>
                     );
                 }}
             </BlobProvider>

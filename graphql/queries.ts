@@ -220,3 +220,41 @@ export const GET_DAILY_SALES = gql`
         }
     }
 `;
+
+export const GET_TICKETS = gql`
+    query getTickets {
+        tickets {
+            _id
+            timestamp
+            status
+            paymentMethod
+            tableName
+            tableNumber
+            total
+            items {
+                quantity
+                dishName
+                dishPrice
+                amount
+                _id
+            }
+        }
+    }
+`;
+
+export const GET_TICKET_BY_ID = gql`
+    query getTicketById($ticketByIdId: String!) {
+        ticketById(id: $ticketByIdId) {
+            _id
+            status
+            orderId
+            ticketNumber
+            timestamp
+            tableName
+            tableNumber
+            total
+            paymentMethod
+            vat
+        }
+    }
+`;

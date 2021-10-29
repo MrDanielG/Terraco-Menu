@@ -40,18 +40,28 @@ export function getTime(timestamp: any, locale: string) {
     return date.toLocaleTimeString(locale, { hour12: true, hour: '2-digit', minute: '2-digit' });
 }
 
+export function getDayMonthTime(timestamp: any, locale: string) {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString(locale, {
+        month: 'long',
+        day: 'numeric',
+        hour12: true,
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
 export function getCustomDayNumberDate(
     locale: string,
     year: number,
     month: number,
     dayOfMonth: number
 ) {
-
-  const date = new Date();
-  date.setDate(dayOfMonth);
-  date.setMonth(month);
-  date.setFullYear(year);
-  return date.toLocaleString(locale, { weekday: 'long', day: 'numeric', });
+    const date = new Date();
+    date.setDate(dayOfMonth);
+    date.setMonth(month);
+    date.setFullYear(year);
+    return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
 }
 
 export function topDishSells(dishSales: DishSalesStats[]): DishSalesStats[] {

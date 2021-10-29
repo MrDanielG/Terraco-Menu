@@ -12,6 +12,7 @@ import CardInfo from '../components/cards/parent-card/CardInfo';
 import ParentCard from '../components/cards/parent-card/ParentCard';
 import Navbar from '../components/layout/Navbar';
 import DangerModal from '../components/modals/DangerModal';
+import PaymentModal from '../components/modals/PaymentModal';
 import {
     Dish,
     Order,
@@ -34,7 +35,8 @@ const NewOrder = (props: Props) => {
     });
     const [order, setOrder] = useLocalStorage<Order | null>('myOrder', null);
     const [_change, setChange] = useState(-21);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isDangerOpen, setIsDangerOpen] = useState(false);
+    const [isPaymentOpen, setIsPaymentOpen] = useState(false);
     const [message, setMessage] = useState('');
 
     const { items, tableId } = currentOrder;
@@ -74,7 +76,8 @@ const NewOrder = (props: Props) => {
     const handlePayement = async () => {
         if (currentOrder.items.length > 0) {
             setMessage('Aún quedan ordenes por hacer. ¿Deseas continuar con el pago?');
-            setIsOpen(true);
+            if (!isDangerOpen) setIsPaymentOpen(true);
+            setIsDangerOpen(true);
         } else {
             const {
                 data: {
@@ -90,9 +93,9 @@ const NewOrder = (props: Props) => {
 
             if (!areServed) {
                 setMessage('Aún faltan platos por servir. ¿Deseas continuar con el pago?');
-                setIsOpen(true);
+                setIsDangerOpen(true);
             } else {
-                router.push(`/ticketView?tableId=${tableId}`);
+                setIsPaymentOpen(true);
             }
         }
     };
@@ -168,10 +171,6 @@ const NewOrder = (props: Props) => {
                     </h1>
                 )}
 
-                <p className="text-xs text-gray-500 mt-4 text-center">
-                    Desliza a la izquierda para eliminar un platillo
-                </p>
-
                 {springs.map(({ x }, i) => (
                     <animated.div
                         key={i}
@@ -222,6 +221,10 @@ const NewOrder = (props: Props) => {
                     </h1>
                 )}
 
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                    Desliza a la izquierda para eliminar un platillo
+                </p>
+
                 {order &&
                     order.items.map((item, idx) => (
                         <ParentCard url_img={item.dish?.url_img?.toString()} key={idx + 1}>
@@ -255,10 +258,19 @@ const NewOrder = (props: Props) => {
                 <DangerModal
                     title="Advertencia"
                     description={message}
-                    isOpen={isOpen}
+                    isOpen={isDangerOpen}
                     dangerBtnTitle="Continuar"
-                    onCloseModal={() => setIsOpen(false)}
-                    onClickDangerBtn={() => router.push(`/ticketView?tableId=${tableId}`)}
+                    onCloseModal={() => setIsDangerOpen(false)}
+                    onClickDangerBtn={() => {
+                        setIsDangerOpen(false);
+                        setIsPaymentOpen(true);
+                    }}
+                />
+
+                <PaymentModal
+                    isOpen={isPaymentOpen}
+                    tableId={tableId}
+                    onCloseModal={() => setIsPaymentOpen(false)}
                 />
 
                 <div>
@@ -273,7 +285,7 @@ const NewOrder = (props: Props) => {
                         <BigButton
                             isFloat={false}
                             onClick={() => handlePayement()}
-                            text={'Pagar: ' + intlFormat(total.toJSON(), 'es-MX')}
+                            text={'Solicitar Cobro: ' + intlFormat(total.toJSON(), 'es-MX')}
                         />
                     )}
                 </div>

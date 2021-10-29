@@ -141,6 +141,23 @@ const Navbar = (props: Props) => {
                                                             </li>
                                                         </>
                                                     )}
+                                                    {currentUser?.name === 'Cajero' && (
+                                                        <>
+                                                            <li className="my-8">
+                                                                <Link href="/">
+                                                                    <a>Inicio</a>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="my-8">
+                                                                <a
+                                                                    className="cursor-pointer"
+                                                                    onClick={logOut}
+                                                                >
+                                                                    Cerrar Sesión
+                                                                </a>
+                                                            </li>
+                                                        </>
+                                                    )}
                                                     {currentUser?.name === 'Chef' && (
                                                         <>
                                                             <li className="my-8">
