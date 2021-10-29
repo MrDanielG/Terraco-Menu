@@ -115,7 +115,7 @@ const TicketView = (props: Props) => {
     };
 
     const updateTicketURL = async () => {
-        const ticketDiv = document.getElementById('ticket') || new HTMLDivElement();
+        const ticketDiv = document.getElementById('ticket') || document.createElement('div');
         try {
             const canvas = await html2canvas(ticketDiv);
             setTicketURL(canvas.toDataURL('image/png'));
@@ -142,7 +142,7 @@ const TicketView = (props: Props) => {
         } else {
             updateTicketURL();
         }
-    }, [ticket]);
+    }, [ticket, ticketById]);
 
     let baseImp = dinero({ amount: 0, currency: MXN });
     let vatAmount = dinero({ amount: 0, currency: MXN });
@@ -151,7 +151,7 @@ const TicketView = (props: Props) => {
         baseImp = subtract(dinero(ticket.total), vatAmount);
     }
     return (
-        <div className="min-h-screen p-8 bg-gray-200">
+        <div className="min-h-screen p-8 bg-gray-200" id="container">
             {ticket && (
                 <>
                     {ticketById?.ticketById.status !== TicketStatus.Paid ? (
