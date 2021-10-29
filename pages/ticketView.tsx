@@ -151,12 +151,12 @@ const TicketView = (props: Props) => {
         baseImp = subtract(dinero(ticket.total), vatAmount);
     }
     return (
-        <div className="bg-gray-200 p-8 min-h-screen">
+        <div className="min-h-screen p-8 bg-gray-200">
             {ticket && (
-                <div id="ticket">
+                <>
                     {ticketById?.ticketById.status !== TicketStatus.Paid ? (
                         <>
-                            <p className="text-center text-lg mt-8">
+                            <p className="mt-8 text-lg text-center">
                                 Tu solicitud de pago está siendo atendida. En un momento un mesero
                                 solicitará el dinero
                             </p>
@@ -165,16 +165,16 @@ const TicketView = (props: Props) => {
                             </div>
                         </>
                     ) : (
-                        <>
-                            <h1 className="text-center text-brown font-semibold text-lg mb-1">
+                        <div id="ticket">
+                            <h1 className="mb-1 text-lg font-semibold text-center text-brown">
                                 Restarurante Terraco
                             </h1>
-                            <div className="text-sm text-center mb-6 text-gray-700">
+                            <div className="mb-6 text-sm text-center text-gray-700">
                                 <p>Tel. 525 9263 939</p>
                                 <p>Calle X No. XX Colonia XX C.P. 67252</p>
                             </div>
 
-                            <div className="flex flex-row space-x-10 mb-6 text-sm text-gray-700">
+                            <div className="flex flex-row mb-6 space-x-10 text-sm text-gray-700">
                                 <ul>
                                     <li>Ticket No. {ticket?.ticketNumber}</li>
                                     <li>
@@ -204,7 +204,7 @@ const TicketView = (props: Props) => {
                                 <tbody>
                                     {ticket?.items.map((item, idx) => (
                                         <tr key={idx} className="text-sm text-center text-gray-700">
-                                            <td className="text-brown font-semibold">
+                                            <td className="font-semibold text-brown">
                                                 {item.quantity}
                                             </td>
                                             <td className="text-left">{item.dishName}</td>
@@ -230,18 +230,18 @@ const TicketView = (props: Props) => {
                                 </table>
                             </div>
 
-                            <div className="text-brown text-xl font-semibold flex justify-between mx-2">
-                                <span className="text-brown font-semibold">Total: </span>
+                            <div className="flex justify-between mx-2 text-xl font-semibold text-brown">
+                                <span className="font-semibold text-brown">Total: </span>
                                 <span>{intlFormat(ticket?.total, 'es-MX')}</span>
                             </div>
 
-                            <p className="text-center text-gray-600 text-xs pt-8">IVA Incluido</p>
-                            <p className="text-center text-gray-700 text-xs pb-2">
+                            <p className="pt-8 text-xs text-center text-gray-600">IVA Incluido</p>
+                            <p className="pb-2 text-xs text-center text-gray-700">
                                 Gracias por su prefencia
                             </p>
-                        </>
+                        </div>
                     )}
-                </div>
+                </>
             )}
             <BlobProvider document={<TicketDocument ticketImgUrl={ticketURL} />}>
                 {({ loading, url, error }) => {
