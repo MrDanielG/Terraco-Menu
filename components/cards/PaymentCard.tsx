@@ -120,7 +120,7 @@ const PaymentCard = ({ ticket }: Props) => {
     const TicketView = () => (
         <Collapsible
             trigger={
-                <div className="flex items-center justify-between text-sm text-gray-500">
+                <div className="flex items-center justify-between text-sm text-gray-500 cursor-pointer">
                     <span>Visualizar Ticket</span>
                     <AiFillCaretDown />
                 </div>
@@ -128,11 +128,11 @@ const PaymentCard = ({ ticket }: Props) => {
         >
             <div id="ticket">
                 <h1 className="mb-1 text-lg font-semibold text-center text-brown">
-                    Restarurante Terraco
+                    Terraco Restaurant
                 </h1>
                 <div className="mb-6 text-sm text-center text-gray-700">
-                    <p>Tel. 525 9263 939</p>
-                    <p>Calle X No. XX Colonia XX C.P. 67252</p>
+                    <p>Tel. +52 492 140 3408</p>
+                    <p>Cerro de la bufa, 98000 Zac.</p>
                 </div>
 
                 <div className="flex flex-row mb-6 space-x-10 text-sm text-gray-700">
@@ -195,22 +195,18 @@ const PaymentCard = ({ ticket }: Props) => {
     );
 
     return (
-        <div className="flex flex-col justify-between p-8 bg-white rounded-3xl">
+        <div className="flex flex-col justify-between px-8 pt-4 pb-8 transition-shadow duration-300 ease-in-out bg-white rounded-3xl hover:shadow-xl">
             <TicketView />
-            <div>
-                <div className="flex justify-between">
-                    <p className="font-semibold text-brown">{ticket.tableName}</p>
-                    <p className="text-sm text-gray-500">
-                        {getDayMonthTime(ticket.timestamp, locale!)}
-                    </p>
-                </div>
-                <p className="text-sm text-gray-500">Pago {ticket.paymentMethod}</p>
-                <p className="font-semibold text-brown-light">
-                    {intlFormat(ticket.total, locale!)}
+            <div className="flex items-center justify-between mb-2 sm:flex-col sm:items-start">
+                <p className="font-semibold text-brown">{ticket.tableName}</p>
+                <p className="text-sm text-gray-500 ">
+                    {getDayMonthTime(ticket.timestamp, locale!)}
                 </p>
             </div>
+            <p className="text-sm text-gray-500">Pago {ticket.paymentMethod}</p>
+            <p className="font-semibold text-brown-light">{intlFormat(ticket.total, locale!)}</p>
 
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:gap-2">
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:gap-2">
                 <BlobProvider document={<TicketDocument ticketImgUrl={ticketURL} />}>
                     {({ loading, url, error }) => {
                         if (error) {
@@ -224,7 +220,7 @@ const PaymentCard = ({ ticket }: Props) => {
                             <div>
                                 <button
                                     onClick={() => printTicket(url)}
-                                    className="w-full text-sm text-gray-500 "
+                                    className="w-full text-sm text-gray-500"
                                 >
                                     Imprimir Ticket
                                 </button>
