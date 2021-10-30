@@ -167,11 +167,11 @@ const TicketView = (props: Props) => {
                     ) : (
                         <div id="ticket">
                             <h1 className="mb-1 text-lg font-semibold text-center text-brown">
-                                Restarurante Terraco
+                                Terraco Restaurant
                             </h1>
                             <div className="mb-6 text-sm text-center text-gray-700">
-                                <p>Tel. 525 9263 939</p>
-                                <p>Calle X No. XX Colonia XX C.P. 67252</p>
+                                <p>Tel. +52 492 140 3408</p>
+                                <p>Cerro de la bufa, 98000 Zac.</p>
                             </div>
 
                             <div className="flex flex-row mb-6 space-x-10 text-sm text-gray-700">
