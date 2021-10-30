@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import AddButton from '../../../components/buttons/AddButton';
 import InfoTable from '../../../components/InfoTable';
@@ -15,8 +16,12 @@ const Tables = (props: Props) => {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [tableId, setTableId] = useState('');
-    const { data } = useGetTablesQuery();
-
+    const { data, refetch } = useGetTablesQuery();
+    
+    useEffect(() => {
+        refetch();
+    }, []);
+    
     return (
         <ProtectedPage username="Manager" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
