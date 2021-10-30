@@ -39,26 +39,32 @@ const Index = (props: Props) => {
 
     return (
         <ProtectedPage username="Manager" redirectTo="/">
-            <div className="bg-gray-200 p-8 h-screen">
+            <div className="min-h-screen p-8 bg-gray-200">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown">Estadísticas</h1>
+                <h1 className="font-semibold text-3xl text-brown">
+                    Estadísticas del mes de{' '}
+                    {getMonthName(currentDate.getFullYear(), currentDate.getMonth())}
+                </h1>
 
-                <h2 className="mt-10 mb-6 text-brown text-lg">Platillo del Mes:</h2>
-                <h2 className="mt-10 mb-6 text-grey text-sm">
-                    {getMonthName(currentDate.getFullYear(), currentDate.getMonth()).toUpperCase()}
-                </h2>
-                {topDishes.length > 0 && (
-                    <ParentCard>
-                        <CardInfo>
-                            <CardInfo.Title>
-                                <span>{topDishes[0].dishName}</span>
-                            </CardInfo.Title>
-                        </CardInfo>
-                    </ParentCard>
-                )}
+                <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
+                    <div>
+                        <h2 className="mt-10 mb-6 text-brown text-lg">Platillo del Mes</h2>
 
-                <h2 className="mt-10 mb-6 text-brown text-lg">Ventas Mensuales</h2>
-                <StatsCard profit={profit} />
+                        {topDishes.length > 0 && (
+                            <ParentCard>
+                                <CardInfo>
+                                    <CardInfo.Title>
+                                        <span>{topDishes[0].dishName}</span>
+                                    </CardInfo.Title>
+                                </CardInfo>
+                            </ParentCard>
+                        )}
+                    </div>
+                    <div>
+                        <h2 className="mt-10 mb-6 text-brown text-lg">Ventas Mensuales</h2>
+                        <StatsCard profit={profit} />
+                    </div>
+                </div>
             </div>
         </ProtectedPage>
     );
