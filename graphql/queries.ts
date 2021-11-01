@@ -231,6 +231,7 @@ export const GET_TICKETS = gql`
             tableName
             tableNumber
             total
+            vat
             items {
                 quantity
                 dishName

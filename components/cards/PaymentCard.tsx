@@ -1,6 +1,6 @@
 import { MXN } from '@dinero.js/currencies';
 import ReactPDF, { Document, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
-import { dinero } from 'dinero.js';
+import { dinero, multiply, subtract } from 'dinero.js';
 import html2canvas from 'html2canvas';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -52,13 +52,15 @@ const PaymentCard = ({ ticket }: Props) => {
     useEffect(() => {
         updateTicketURL();
     }, []);
-
-    let baseImp = dinero({ amount: 0, currency: MXN });
-    let vatAmount = dinero({ amount: 0, currency: MXN });
-    // if (ticket) {
-    //     vatAmount = multiply(dinero(ticket.total), { amount: ticket.vat, scale: 2 });
-    //     baseImp = subtract(dinero(ticket.total), vatAmount);
-    // }
+    console.log(ticket);
+    const vatAmount = multiply(dinero(ticket.total), { amount: ticket.vat, scale: 2});
+    const baseImp = subtract(dinero(ticket.total), vatAmount);
+    /* let baseImp = dinero({ amount: 0, currency: MXN });
+     * let vatAmount = dinero({ amount: 0, currency: MXN });
+     * if (ticket) {
+     *     vatAmount = multiply(dinero(ticket.total), { amount: ticket.vat, scale: 2 });
+     *     baseImp = subtract(dinero(ticket.total), vatAmount);
+     * } */
 
     const styles = StyleSheet.create({
         page: {
@@ -105,7 +107,7 @@ const PaymentCard = ({ ticket }: Props) => {
     const updateTicketURL = async () => {
         const ticketDiv = document.getElementById('ticket') || new HTMLDivElement();
         try {
-            const canvas = await html2canvas(ticketDiv);
+            const canvas = await html2canvas(ticketDiv, {scale: 4});
             setTicketURL(canvas.toDataURL('image/png'));
         } catch (err) {
             console.error('Cannot convert html to canvas');
@@ -142,13 +144,13 @@ const PaymentCard = ({ ticket }: Props) => {
 
                 <div className="flex flex-row mb-6 space-x-1 text-xs text-black">
                     <ul>
-                        <li>Ticket No. {ticket?.ticketNumber}</li>
-                        <li>Fecha: {new Date(ticket?.timestamp).toLocaleDateString('es-MX')}</li>
+                        <li>Ticket No. {ticket.tableNumber}</li>
+                        <li>Fecha: {new Date(ticket.timestamp).toLocaleDateString('es-MX')}</li>
                         <li>Tipo Pago: {ticket.paymentMethod}</li>
                     </ul>
                     <ul>
-                        <li>Hora: {new Date(ticket?.timestamp).toLocaleTimeString('es-MX')}</li>
-                        <li>{ticket?.tableName}</li>
+                        <li>Hora: {new Date(ticket.timestamp).toLocaleTimeString('es-MX')}</li>
+                        <li>{ticket.tableName}</li>
                     </ul>
                 </div>
 
@@ -162,7 +164,7 @@ const PaymentCard = ({ ticket }: Props) => {
                         </tr>
                     </thead>
                     <tbody className="text-xs">
-                        {ticket?.items.map((item, idx) => (
+                        {ticket.items.map((item, idx) => (
                             <tr key={idx} className="text-xs text-black">
                                 <td className="text-xs font-semibold text-black">
                                     {item.quantity}
@@ -187,7 +189,7 @@ const PaymentCard = ({ ticket }: Props) => {
                                 <td>{intlFormat(baseImp.toJSON(), 'es-MX')}</td>
                             </tr>
                             <tr>
-                                <td>IVA {ticket?.vat}%</td>
+                                <td>IVA {ticket.vat}%</td>
                                 <td>{intlFormat(vatAmount.toJSON(), 'es-MX')}</td>
                             </tr>
                         </tbody>
@@ -196,7 +198,7 @@ const PaymentCard = ({ ticket }: Props) => {
 
                 <div className="flex justify-between mx-2 text-xl font-semibold text-black">
                     <span className="font-semibold text-black">Total: </span>
-                    <span>{intlFormat(ticket?.total, 'es-MX')}</span>
+                    <span>{intlFormat(ticket.total, 'es-MX')}</span>
                 </div>
 
                 <p className="pt-8 text-xs text-center text-black">IVA Incluido</p>
