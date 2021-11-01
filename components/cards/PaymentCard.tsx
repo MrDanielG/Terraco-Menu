@@ -23,8 +23,6 @@ interface Props {
 const PaymentCard = ({ ticket }: Props) => {
     const router = useRouter();
     const { locale } = router;
-    let baseImp = dinero({ amount: 0, currency: MXN });
-    let vatAmount = dinero({ amount: 0, currency: MXN });
 
     const [ticketURL, setTicketURL] = useState(
         'https://res.cloudinary.com/brosimgstorage/image/upload/v1629850963/noimage_ycfq5j.png'
@@ -55,22 +53,29 @@ const PaymentCard = ({ ticket }: Props) => {
         updateTicketURL();
     }, []);
 
+    let baseImp = dinero({ amount: 0, currency: MXN });
+    let vatAmount = dinero({ amount: 0, currency: MXN });
+    // if (ticket) {
+    //     vatAmount = multiply(dinero(ticket.total), { amount: ticket.vat, scale: 2 });
+    //     baseImp = subtract(dinero(ticket.total), vatAmount);
+    // }
+
     const styles = StyleSheet.create({
         page: {
             flexDirection: 'row',
         },
         section: {
             flex: 1,
-            margin: 'auto',
-            padding: 40,
+            margin: 0,
+            padding: 0,
             justifyContent: 'center',
             alignItems: 'center',
         },
         image: {
-            width: '5cm',
+            width: '48mm',
         },
         text: {
-            padding: 10,
+            padding: 0,
             fontSize: '24pt',
             color: '#401D0A',
         },
@@ -88,7 +93,7 @@ const PaymentCard = ({ ticket }: Props) => {
     const TicketDocument = ({ ticketImgUrl }: TicketDocumentProps) => {
         return (
             <Document>
-                <Page size={{ width: '7cm' }} style={styles.page}>
+                <Page size={{ width: '50mm' }} style={styles.page}>
                     <View style={styles.section} wrap={true}>
                         <Image src={ticketImgUrl} style={styles.image} />
                     </View>
@@ -127,15 +132,15 @@ const PaymentCard = ({ ticket }: Props) => {
             }
         >
             <div id="ticket">
-                <h1 className="mb-1 text-lg font-semibold text-center text-brown">
+                <h1 className="mb-1 text-lg font-semibold text-center text-black">
                     Terraco Restaurant
                 </h1>
-                <div className="mb-6 text-sm text-center text-gray-700">
+                <div className="mb-6 text-sm text-center text-black">
                     <p>Tel. +52 492 140 3408</p>
                     <p>Cerro de la bufa, 98000 Zac.</p>
                 </div>
 
-                <div className="flex flex-row mb-6 space-x-10 text-sm text-gray-700">
+                <div className="flex flex-row mb-6 space-x-1 text-xs text-black">
                     <ul>
                         <li>Ticket No. {ticket?.ticketNumber}</li>
                         <li>Fecha: {new Date(ticket?.timestamp).toLocaleDateString('es-MX')}</li>
@@ -147,22 +152,28 @@ const PaymentCard = ({ ticket }: Props) => {
                     </ul>
                 </div>
 
-                <table className="mb-6">
+                <table className="mb-6 text-sm">
                     <thead>
-                        <tr className="text-brown">
+                        <tr className="text-left text-black">
                             <th className="font-semibold">Cant.</th>
                             <th className="font-semibold">Desc.</th>
                             <th className="font-semibold">Precio</th>
                             <th className="font-semibold">Importe</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="text-xs">
                         {ticket?.items.map((item, idx) => (
-                            <tr key={idx} className="text-sm text-center text-gray-700">
-                                <td className="font-semibold text-brown">{item.quantity}</td>
-                                <td className="text-left">{item.dishName}</td>
-                                <td>{intlFormat(item.dishPrice, 'es-MX')}</td>
-                                <td>{intlFormat(item.amount, 'es-MX')}</td>
+                            <tr key={idx} className="text-xs text-black">
+                                <td className="text-xs font-semibold text-black">
+                                    {item.quantity}
+                                </td>
+                                <td className="text-xs text-left">{item.dishName}</td>
+                                <td className="text-xs font-semibold">
+                                    {intlFormat(item.dishPrice, 'es-MX')}
+                                </td>
+                                <td className="text-xs font-semibold">
+                                    {intlFormat(item.amount, 'es-MX')}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -170,7 +181,7 @@ const PaymentCard = ({ ticket }: Props) => {
 
                 <div className="flex flex-row-reverse">
                     <table className="mb-6 mr-2">
-                        <tbody className="font-semibold text-brown">
+                        <tbody className="font-semibold text-black">
                             <tr>
                                 <td>Base Imp. </td>
                                 <td>{intlFormat(baseImp.toJSON(), 'es-MX')}</td>
@@ -183,19 +194,19 @@ const PaymentCard = ({ ticket }: Props) => {
                     </table>
                 </div>
 
-                <div className="flex justify-between mx-2 text-xl font-semibold text-brown">
-                    <span className="font-semibold text-brown">Total: </span>
+                <div className="flex justify-between mx-2 text-xl font-semibold text-black">
+                    <span className="font-semibold text-black">Total: </span>
                     <span>{intlFormat(ticket?.total, 'es-MX')}</span>
                 </div>
 
-                <p className="pt-8 text-xs text-center text-gray-600">IVA Incluido</p>
-                <p className="pb-2 text-xs text-center text-gray-700">Gracias por su prefencia</p>
+                <p className="pt-8 text-xs text-center text-black">IVA Incluido</p>
+                <p className="pb-2 text-xs text-center text-black">Gracias por su prefencia</p>
             </div>
         </Collapsible>
     );
 
     return (
-        <div className="flex flex-col justify-between px-8 pt-4 pb-8 transition-shadow duration-300 ease-in-out bg-white rounded-3xl hover:shadow-xl">
+        <div className="flex flex-col justify-between px-8 pt-4 pb-8 transition-shadow duration-300 ease-in-out bg-white sm:w-72 rounded-3xl hover:shadow-xl">
             <TicketView />
             <div className="flex items-center justify-between mb-2 sm:flex-col sm:items-start">
                 <p className="font-semibold text-brown">{ticket.tableName}</p>

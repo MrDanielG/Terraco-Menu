@@ -5,9 +5,9 @@ import { animated } from 'react-spring';
 import AddButton from '../../components/buttons/AddButton';
 import CardInfo from '../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../components/cards/parent-card/ParentCard';
-import CategoryBar,{CategoryBarRef} from '../../components/layout/CategoryBar';
-import SearchBar, {SearchBarRef} from '../../components/layout/SearchBar';
+import CategoryBar, { CategoryBarRef } from '../../components/layout/CategoryBar';
 import Navbar from '../../components/layout/Navbar';
+import SearchBar, { SearchBarRef } from '../../components/layout/SearchBar';
 import DangerModal from '../../components/modals/DangerModal';
 import ProtectedPage from '../../components/ProtectedPage';
 import { Dish, useDelDishByIdMutation, useGetDishesQuery } from '../../graphql/graphql';
@@ -67,7 +67,7 @@ const Platillos = (props: Props) => {
     };
 
     const handleSearch = (results: Dish[], pattern: string) => {
-        catBarRef.current?.reset();        
+        catBarRef.current?.reset();
         if (pattern !== '' || results.length > 0) {
             setDishes(results);
         } else {
@@ -78,8 +78,8 @@ const Platillos = (props: Props) => {
         searchRef.current?.clear();
         const name = category.name;
         let filtered = allDishes;
-        if(name !== '') {
-            filtered = filtered.filter(dish => dish.categories.includes(name));
+        if (name !== '') {
+            filtered = filtered.filter((dish) => dish.categories.includes(name));
         }
         setDishes(filtered);
     };
@@ -88,9 +88,9 @@ const Platillos = (props: Props) => {
 
     return (
         <ProtectedPage username="Chef" redirectTo="/">
-            <div className="bg-gray-200 p-8 min-h-screen">
+            <div className="min-h-screen p-8 bg-gray-200">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown">Platillos</h1>
+                <h1 className="text-3xl font-semibold text-brown">Platillos</h1>
 
                 <SearchBar
                     list={allDishes}
@@ -106,30 +106,32 @@ const Platillos = (props: Props) => {
                     all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
                 />
 
-                <h2 className="mt-10 mb-6 text-brown text-lg">Entrantes</h2>
+                <h2 className="mt-10 mb-6 text-lg text-brown">Entrantes</h2>
 
-                <p className="text-xs text-gray-500 mt-4 text-center">
+                <p className="mt-4 text-xs text-center text-gray-500">
                     Desliza a la izquierda para eliminar un platillo
                 </p>
 
-                {springs.map(({ x }, i) => (
-                    <animated.div
-                        key={i}
-                        {...bind(i, dishes[i]._id)}
-                        style={{ x, touchAction: 'pan-y' }}
-                    >
-                        <ParentCard url_img={dishes[i].url_img?.toString()}>
-                            <CardInfo>
-                                <CardInfo.Title>
-                                    <span>{dishes[i].name}</span>
-                                </CardInfo.Title>
-                                <CardInfo.Footer>
-                                    <span>{intlFormat(dishes[i]?.price, 'es-MX')}</span>
-                                </CardInfo.Footer>
-                            </CardInfo>
-                        </ParentCard>
-                    </animated.div>
-                ))}
+                <div className='className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5"'>
+                    {springs.map(({ x }, i) => (
+                        <animated.div
+                            key={i}
+                            {...bind(i, dishes[i]._id)}
+                            style={{ x, touchAction: 'pan-y' }}
+                        >
+                            <ParentCard url_img={dishes[i].url_img?.toString()}>
+                                <CardInfo>
+                                    <CardInfo.Title>
+                                        <span>{dishes[i].name}</span>
+                                    </CardInfo.Title>
+                                    <CardInfo.Footer>
+                                        <span>{intlFormat(dishes[i]?.price, 'es-MX')}</span>
+                                    </CardInfo.Footer>
+                                </CardInfo>
+                            </ParentCard>
+                        </animated.div>
+                    ))}
+                </div>
 
                 <ParentCard />
 

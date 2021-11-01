@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { HiPencil } from 'react-icons/hi';
 import AddButton from '../../components/buttons/AddButton';
 import CardActions from '../../components/cards/parent-card/CardActions';
@@ -9,7 +9,7 @@ import CategoryBar, { CategoryBarRef } from '../../components/layout/CategoryBar
 import Navbar from '../../components/layout/Navbar';
 import SearchBar, { SearchBarRef } from '../../components/layout/SearchBar';
 import ProtectedPage from '../../components/ProtectedPage';
-import { useGetMenusQuery, Menu } from '../../graphql/graphql';
+import { Menu, useGetMenusQuery } from '../../graphql/graphql';
 import useRedirect from '../../hooks/useRedirect';
 
 const categoryData = [
@@ -61,9 +61,9 @@ const ChefHome = (props: Props) => {
     };
     return (
         <ProtectedPage username="Chef" redirectTo="/">
-            <div className="bg-gray-200 p-8 min-h-screen">
+            <div className="min-h-screen p-8 bg-gray-200">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown">Menús</h1>
+                <h1 className="text-3xl font-semibold text-brown">Menús</h1>
                 <SearchBar
                     list={allMenus}
                     keys={['title', 'description']}
@@ -76,11 +76,11 @@ const ChefHome = (props: Props) => {
                     onClick={handleCategoryFilter}
                     ref={(ref) => handleCatRef(ref)}
                 />
-                <div>
+                <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
                     {menus.map((menu, idx) => (
                         <ParentCard
                             url_img="https://images.unsplash.com/photo-1529270296466-b09d5f5c2bab?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1490&q=80"
-                            key={idx}                           
+                            key={idx}
                         >
                             <CardInfo>
                                 <CardInfo.Title>
