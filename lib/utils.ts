@@ -32,7 +32,7 @@ export function getMonthName(year: number, month: number) {
 
 export function getDayNumberDate(locale: string) {
     const date = new Date();
-    return date.toLocaleString(locale, { weekday: 'long', day: 'numeric' });
+  return date.toLocaleString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 export function getTime(timestamp: any, locale: string) {

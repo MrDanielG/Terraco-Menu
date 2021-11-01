@@ -144,7 +144,7 @@ const PaymentCard = ({ ticket }: Props) => {
 
                 <div className="flex flex-row mb-6 space-x-1 text-xs text-black">
                     <ul>
-                        <li>Ticket No. {ticket.tableNumber}</li>
+                        <li>Ticket No. {ticket.ticketNumber}</li>
                         <li>Fecha: {new Date(ticket.timestamp).toLocaleDateString('es-MX')}</li>
                         <li>Tipo Pago: {ticket.paymentMethod}</li>
                     </ul>

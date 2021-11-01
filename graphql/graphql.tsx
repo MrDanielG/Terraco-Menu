@@ -780,7 +780,7 @@ export type GetDailySalesQuery = { __typename?: 'Query', daySales: Array<{ __typ
 export type GetTicketsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, total: any, vat: number, items: Array<{ __typename?: 'TicketItem', quantity: number, dishName: string, dishPrice: any, amount: any, _id: string }> }> };
+export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, ticketNumber: number, total: any, vat: number, items: Array<{ __typename?: 'TicketItem', quantity: number, dishName: string, dishPrice: any, amount: any, _id: string }> }> };
 
 export type GetTicketByIdQueryVariables = Exact<{
   ticketByIdId: Scalars['String'];
@@ -1958,6 +1958,7 @@ export const GetTicketsDocument = gql`
     paymentMethod
     tableName
     tableNumber
+    ticketNumber
     total
     vat
     items {
