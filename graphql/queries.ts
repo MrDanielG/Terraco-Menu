@@ -230,7 +230,9 @@ export const GET_TICKETS = gql`
             paymentMethod
             tableName
             tableNumber
+            ticketNumber
             total
+            vat
             items {
                 quantity
                 dishName

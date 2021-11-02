@@ -23,61 +23,59 @@ export type CreateOrderItemsInput = {
   quantity: Scalars['Float'];
 };
 
-
 export type DaySalesStats = {
   __typename?: 'DaySalesStats';
-  year: Scalars['Int'];
-  month: Scalars['Int'];
   dayOfMonth: Scalars['Int'];
   dayOfWeek: Scalars['Int'];
-  tableNumber: Scalars['Int'];
-  tableName: Scalars['String'];
-  totalSum: Scalars['Dinero'];
-  salesCount: Scalars['Int'];
+  month: Scalars['Int'];
   sales?: Maybe<Array<Ticket>>;
+  salesCount: Scalars['Int'];
+  tableName: Scalars['String'];
+  tableNumber: Scalars['Int'];
+  totalSum: Scalars['Dinero'];
+  year: Scalars['Int'];
 };
-
 
 /** A dish describing an option for consumers. */
 export type Dish = {
   __typename?: 'Dish';
   _id: Scalars['String'];
-  /** The name shown to costumers . */
-  name: Scalars['String'];
+  /** List of dish categories as simple strings, i.e. "drinks", "salads", etc. */
+  categories: Array<Scalars['String']>;
   /** A short description about this dish. */
   description: Scalars['String'];
-  /** An optional image URL to represent this dish. */
-  url_img?: Maybe<Scalars['String']>;
+  /** The name shown to costumers . */
+  name: Scalars['String'];
+  preparation_time?: Maybe<Scalars['DateTime']>;
   /** The final price to the consumer. */
   price: Scalars['Dinero'];
   /** The average rating of the dish. */
   score?: Maybe<Scalars['Float']>;
-  /** List of dish categories as simple strings, i.e. "drinks", "salads", etc. */
-  categories: Array<Scalars['String']>;
-  preparation_time?: Maybe<Scalars['DateTime']>;
+  /** An optional image URL to represent this dish. */
+  url_img?: Maybe<Scalars['String']>;
 };
 
 /** Partial dish data used as query or mutation input. */
 export type DishDataInput = {
-  /** The name shown to costumers . */
-  name: Scalars['String'];
-  /** A short description about this dish. */
-  description: Scalars['String'];
-  /** An optional image URL to represent this dish. */
-  url_img?: Maybe<Scalars['String']>;
-  /** The final price to the consumer. */
-  price: Scalars['Dinero'];
   /** List of dish categories as simple strings, i.e. "drinks", "salads", etc. */
   categories: Array<Scalars['String']>;
+  /** A short description about this dish. */
+  description: Scalars['String'];
+  /** The name shown to costumers . */
+  name: Scalars['String'];
+  /** The final price to the consumer. */
+  price: Scalars['Dinero'];
+  /** An optional image URL to represent this dish. */
+  url_img?: Maybe<Scalars['String']>;
 };
 
 export type DishSalesStats = {
   __typename?: 'DishSalesStats';
-  month: Scalars['Int'];
-  year: Scalars['Int'];
   dishName: Scalars['String'];
-  totalUnits: Scalars['Int'];
+  month: Scalars['Int'];
   totalSales: Scalars['Dinero'];
+  totalUnits: Scalars['Int'];
+  year: Scalars['Int'];
 };
 
 export type LoginResponse = {
@@ -89,122 +87,74 @@ export type LoginResponse = {
 export type Menu = {
   __typename?: 'Menu';
   _id: Scalars['String'];
-  /** The title of this menu. */
-  title: Scalars['String'];
   /** A short description about this menu. */
   description: Scalars['String'];
-  /** An optional image URL to represent this menu. */
-  url_img?: Maybe<Scalars['String']>;
-  /** Weather the menu is active or not. Could be used to show or hide it */
-  isActive: Scalars['Boolean'];
   /** List of dishes associated with this menu. */
   dishes: Array<Dish>;
+  /** Weather the menu is active or not. Could be used to show or hide it */
+  isActive: Scalars['Boolean'];
+  /** The title of this menu. */
+  title: Scalars['String'];
+  /** An optional image URL to represent this menu. */
+  url_img?: Maybe<Scalars['String']>;
 };
 
 /** Partial menu data used as query or mutation input. */
 export type MenuDataInput = {
-  title: Scalars['String'];
   /** A short description about this menu. */
   description?: Maybe<Scalars['String']>;
   isActive: Scalars['Boolean'];
+  title: Scalars['String'];
   url_img?: Maybe<Scalars['String']>;
 };
 
 export type MonthSalesStats = {
   __typename?: 'MonthSalesStats';
-  year: Scalars['Int'];
-  month: Scalars['Int'];
   dayOfMonth: Scalars['Int'];
   dayOfWeek: Scalars['Int'];
+  month: Scalars['Int'];
   total: Scalars['Dinero'];
+  year: Scalars['Int'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addUser: User;
-  updateUser: User;
-  delUserById: Scalars['Int'];
-  delUserByEmail: Scalars['Int'];
-  login: LoginResponse;
-  addRole: Role;
-  updateRole: Role;
-  delRoleById: Scalars['Boolean'];
-  delRoleByName: Scalars['Boolean'];
-  addMenu: Menu;
-  addDishToMenu: Menu;
-  removeDishFromMenu: Menu;
-  updateMenu: Menu;
-  delMenuById: Scalars['Int'];
   addDish: Dish;
-  updateDish: Dish;
-  delDishById: Scalars['Int'];
-  generateTable: Table;
-  setTableName: Table;
-  delTableById: Scalars['Int'];
-  updateTable: Table;
-  createOrder: Order;
+  addDishToMenu: Menu;
   addItemsToOrder: Order;
+  addMenu: Menu;
+  addRole: Role;
+  addUser: User;
   changeOrderItemsStatus: Order;
-  delItemsFromOrder: Order;
+  createOrder: Order;
   createOrderItem: OrderItem;
   createOrderItems: Array<OrderItem>;
-  sumToOrderItem: OrderItem;
+  delDishById: Scalars['Int'];
+  delItemsFromOrder: Order;
+  delMenuById: Scalars['Int'];
   delOrderItemById: Scalars['Int'];
-  setTicketStatus?: Maybe<Ticket>;
+  delRoleById: Scalars['Boolean'];
+  delRoleByName: Scalars['Boolean'];
+  delTableById: Scalars['Int'];
+  delUserByEmail: Scalars['Int'];
+  delUserById: Scalars['Int'];
+  generateTable: Table;
   generateTicket: Ticket;
+  login: LoginResponse;
+  removeDishFromMenu: Menu;
+  setTableName: Table;
+  setTicketStatus?: Maybe<Ticket>;
+  sumToOrderItem: OrderItem;
+  updateDish: Dish;
+  updateMenu: Menu;
+  updateRole: Role;
+  updateTable: Table;
+  updateUser: User;
 };
 
 
-export type MutationAddUserArgs = {
-  data: UserDataInput;
-};
-
-
-export type MutationUpdateUserArgs = {
-  data: UserDataInput;
-  id: Scalars['String'];
-};
-
-
-export type MutationDelUserByIdArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDelUserByEmailArgs = {
-  email: Scalars['String'];
-};
-
-
-export type MutationLoginArgs = {
-  password: Scalars['String'];
-  email: Scalars['String'];
-};
-
-
-export type MutationAddRoleArgs = {
-  data: RoleDataInput;
-};
-
-
-export type MutationUpdateRoleArgs = {
-  data: RoleDataInput;
-  id: Scalars['String'];
-};
-
-
-export type MutationDelRoleByIdArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDelRoleByNameArgs = {
-  name: Scalars['String'];
-};
-
-
-export type MutationAddMenuArgs = {
-  data: MenuDataInput;
+export type MutationAddDishArgs = {
+  data: DishDataInput;
 };
 
 
@@ -214,82 +164,36 @@ export type MutationAddDishToMenuArgs = {
 };
 
 
-export type MutationRemoveDishFromMenuArgs = {
-  idDish: Scalars['String'];
-  idMenu: Scalars['String'];
+export type MutationAddItemsToOrderArgs = {
+  itemsIds: Array<Scalars['String']>;
+  orderId: Scalars['String'];
 };
 
 
-export type MutationUpdateMenuArgs = {
+export type MutationAddMenuArgs = {
   data: MenuDataInput;
-  id: Scalars['String'];
 };
 
 
-export type MutationDelMenuByIdArgs = {
-  id: Scalars['String'];
+export type MutationAddRoleArgs = {
+  data: RoleDataInput;
 };
 
 
-export type MutationAddDishArgs = {
-  data: DishDataInput;
+export type MutationAddUserArgs = {
+  data: UserDataInput;
 };
 
 
-export type MutationUpdateDishArgs = {
-  data: DishDataInput;
-  id: Scalars['String'];
-};
-
-
-export type MutationDelDishByIdArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationGenerateTableArgs = {
-  name: Scalars['String'];
-};
-
-
-export type MutationSetTableNameArgs = {
-  name: Scalars['String'];
-  id: Scalars['String'];
-};
-
-
-export type MutationDelTableByIdArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationUpdateTableArgs = {
-  data: TableInputData;
-  id: Scalars['String'];
+export type MutationChangeOrderItemsStatusArgs = {
+  orderId: Scalars['String'];
+  status: Status;
 };
 
 
 export type MutationCreateOrderArgs = {
   itemsIds: Array<Scalars['String']>;
   tableId: Scalars['String'];
-};
-
-
-export type MutationAddItemsToOrderArgs = {
-  orderId: Scalars['String'];
-  itemsIds: Array<Scalars['String']>;
-};
-
-
-export type MutationChangeOrderItemsStatusArgs = {
-  status: Status;
-  orderId: Scalars['String'];
-};
-
-
-export type MutationDelItemsFromOrderArgs = {
-  orderId: Scalars['String'];
-  itemsIds: Array<Scalars['String']>;
 };
 
 
@@ -304,14 +208,79 @@ export type MutationCreateOrderItemsArgs = {
 };
 
 
-export type MutationSumToOrderItemArgs = {
-  idOrderItem: Scalars['String'];
-  value?: Maybe<Scalars['Int']>;
+export type MutationDelDishByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDelItemsFromOrderArgs = {
+  itemsIds: Array<Scalars['String']>;
+  orderId: Scalars['String'];
+};
+
+
+export type MutationDelMenuByIdArgs = {
+  id: Scalars['String'];
 };
 
 
 export type MutationDelOrderItemByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationDelRoleByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDelRoleByNameArgs = {
+  name: Scalars['String'];
+};
+
+
+export type MutationDelTableByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDelUserByEmailArgs = {
+  email: Scalars['String'];
+};
+
+
+export type MutationDelUserByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationGenerateTableArgs = {
+  name: Scalars['String'];
+};
+
+
+export type MutationGenerateTicketArgs = {
+  orderId: Scalars['String'];
+  paymentMethod?: Maybe<Scalars['String']>;
+  vat?: Maybe<Scalars['Float']>;
+};
+
+
+export type MutationLoginArgs = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type MutationRemoveDishFromMenuArgs = {
+  idDish: Scalars['String'];
+  idMenu: Scalars['String'];
+};
+
+
+export type MutationSetTableNameArgs = {
+  id: Scalars['String'];
+  name: Scalars['String'];
 };
 
 
@@ -321,21 +290,50 @@ export type MutationSetTicketStatusArgs = {
 };
 
 
-export type MutationGenerateTicketArgs = {
-  vat?: Maybe<Scalars['Float']>;
-  paymentMethod?: Maybe<Scalars['String']>;
-  orderId: Scalars['String'];
+export type MutationSumToOrderItemArgs = {
+  idOrderItem: Scalars['String'];
+  value?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpdateDishArgs = {
+  data: DishDataInput;
+  id: Scalars['String'];
+};
+
+
+export type MutationUpdateMenuArgs = {
+  data: MenuDataInput;
+  id: Scalars['String'];
+};
+
+
+export type MutationUpdateRoleArgs = {
+  data: RoleDataInput;
+  id: Scalars['String'];
+};
+
+
+export type MutationUpdateTableArgs = {
+  data: TableInputData;
+  id: Scalars['String'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  data: UserDataInput;
+  id: Scalars['String'];
 };
 
 /** A restaurant order. */
 export type Order = {
   __typename?: 'Order';
   _id: Scalars['String'];
-  orderNumber: Scalars['Int'];
-  table: Table;
-  items: Array<OrderItem>;
-  start_time: Scalars['DateTime'];
   end_time?: Maybe<Scalars['DateTime']>;
+  items: Array<OrderItem>;
+  orderNumber: Scalars['Int'];
+  start_time: Scalars['DateTime'];
+  table: Table;
 };
 
 /** An order's entry item. */
@@ -352,43 +350,49 @@ export type OrderItem = {
 
 export type Query = {
   __typename?: 'Query';
-  users: Array<User>;
-  userById?: Maybe<User>;
-  userByEmail?: Maybe<User>;
-  roles: Array<Role>;
-  roleByName: Role;
-  menus: Array<Menu>;
-  menuById?: Maybe<Menu>;
-  dishes: Array<Dish>;
+  daySales: Array<DaySalesStats>;
   dishById?: Maybe<Dish>;
-  serchDishes?: Maybe<Array<Dish>>;
-  tables: Array<Table>;
-  tableById?: Maybe<Table>;
-  tableByIdNumber?: Maybe<Table>;
-  orders: Array<Order>;
+  dishSales: Array<DishSalesStats>;
+  dishes: Array<Dish>;
+  menuById?: Maybe<Menu>;
+  menus: Array<Menu>;
+  monthSales: Array<MonthSalesStats>;
   orderById: Order;
   orderItems: Array<OrderItem>;
-  tickets: Array<Ticket>;
+  orders: Array<Order>;
+  roleByName: Role;
+  roles: Array<Role>;
+  serchDishes?: Maybe<Array<Dish>>;
+  tableById?: Maybe<Table>;
+  tableByIdNumber?: Maybe<Table>;
+  tables: Array<Table>;
   ticketById: Ticket;
+  tickets: Array<Ticket>;
+  userByEmail?: Maybe<User>;
+  userById?: Maybe<User>;
+  users: Array<User>;
   yearSales: Array<YearSalesStats>;
-  dishSales: Array<DishSalesStats>;
-  monthSales: Array<MonthSalesStats>;
-  daySales: Array<DaySalesStats>;
 };
 
 
-export type QueryUserByIdArgs = {
+export type QueryDaySalesArgs = {
+  day: Scalars['Float'];
+  month: Scalars['Float'];
+  status?: Maybe<TicketStatus>;
+  timezone: Scalars['String'];
+  year: Scalars['Float'];
+};
+
+
+export type QueryDishByIdArgs = {
   id: Scalars['String'];
 };
 
 
-export type QueryUserByEmailArgs = {
-  email: Scalars['String'];
-};
-
-
-export type QueryRoleByNameArgs = {
-  name: Scalars['String'];
+export type QueryDishSalesArgs = {
+  status?: Maybe<TicketStatus>;
+  timezone: Scalars['String'];
+  year: Scalars['Float'];
 };
 
 
@@ -397,8 +401,21 @@ export type QueryMenuByIdArgs = {
 };
 
 
-export type QueryDishByIdArgs = {
+export type QueryMonthSalesArgs = {
+  month: Scalars['Float'];
+  status?: Maybe<TicketStatus>;
+  timezone: Scalars['String'];
+  year: Scalars['Float'];
+};
+
+
+export type QueryOrderByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryRoleByNameArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -417,12 +434,17 @@ export type QueryTableByIdNumberArgs = {
 };
 
 
-export type QueryOrderByIdArgs = {
+export type QueryTicketByIdArgs = {
   id: Scalars['String'];
 };
 
 
-export type QueryTicketByIdArgs = {
+export type QueryUserByEmailArgs = {
+  email: Scalars['String'];
+};
+
+
+export type QueryUserByIdArgs = {
   id: Scalars['String'];
 };
 
@@ -430,30 +452,6 @@ export type QueryTicketByIdArgs = {
 export type QueryYearSalesArgs = {
   status?: Maybe<TicketStatus>;
   timezone: Scalars['String'];
-  year: Scalars['Float'];
-};
-
-
-export type QueryDishSalesArgs = {
-  status?: Maybe<TicketStatus>;
-  timezone: Scalars['String'];
-  year: Scalars['Float'];
-};
-
-
-export type QueryMonthSalesArgs = {
-  status?: Maybe<TicketStatus>;
-  timezone: Scalars['String'];
-  month: Scalars['Float'];
-  year: Scalars['Float'];
-};
-
-
-export type QueryDaySalesArgs = {
-  status?: Maybe<TicketStatus>;
-  timezone: Scalars['String'];
-  day: Scalars['Float'];
-  month: Scalars['Float'];
   year: Scalars['Float'];
 };
 
@@ -475,11 +473,11 @@ export type RoleDataInput = {
 
 /** Order and order item status */
 export enum Status {
-  Pending = 'PENDING',
-  Cooking = 'COOKING',
-  Served = 'SERVED',
   Beingpaid = 'BEINGPAID',
-  Paid = 'PAID'
+  Cooking = 'COOKING',
+  Paid = 'PAID',
+  Pending = 'PENDING',
+  Served = 'SERVED'
 }
 
 export type Subscription = {
@@ -491,85 +489,85 @@ export type Subscription = {
 export type Table = {
   __typename?: 'Table';
   _id: Scalars['String'];
-  /** The unique table number identificator. */
-  tableNumber: Scalars['Int'];
-  /** A descriptive name for this table. */
-  name?: Maybe<Scalars['String']>;
-  /** Stored token to build an obfuscated URL. */
-  token: Scalars['String'];
   /** Wheather the table is enabled or not. */
   enabled: Scalars['Boolean'];
+  /** A descriptive name for this table. */
+  name?: Maybe<Scalars['String']>;
+  /** The unique table number identificator. */
+  tableNumber: Scalars['Int'];
+  /** Stored token to build an obfuscated URL. */
+  token: Scalars['String'];
 };
 
 export type TableInputData = {
-  /** The unique table number identificator. */
-  tableNumber?: Maybe<Scalars['Int']>;
-  /** A descriptive name for this table. */
-  name?: Maybe<Scalars['String']>;
-  /** Stored token to build an obfuscated URL. */
-  token?: Maybe<Scalars['String']>;
   /** Wheather the table is enabled or not. */
   enabled?: Maybe<Scalars['Boolean']>;
+  /** A descriptive name for this table. */
+  name?: Maybe<Scalars['String']>;
+  /** The unique table number identificator. */
+  tableNumber?: Maybe<Scalars['Int']>;
+  /** Stored token to build an obfuscated URL. */
+  token?: Maybe<Scalars['String']>;
 };
 
 /** Generated Ticked from an order */
 export type Ticket = {
   __typename?: 'Ticket';
   _id: Scalars['String'];
+  items: Array<TicketItem>;
   orderId: Scalars['String'];
-  /** Unique number for this selling transaction. */
-  ticketNumber: Scalars['Int'];
-  /** When the ticket was generated. */
-  timestamp: Scalars['DateTime'];
+  /** The payment method used by the customer. */
+  paymentMethod: Scalars['String'];
+  /** Wether if the ticket is being paid, was paid or canceled */
+  status: TicketStatus;
   /** Registered table name or identifier. */
   tableName: Scalars['String'];
   /** Registered table number. */
   tableNumber: Scalars['Int'];
+  /** Unique number for this selling transaction. */
+  ticketNumber: Scalars['Int'];
+  /** When the ticket was generated. */
+  timestamp: Scalars['DateTime'];
   total: Scalars['Dinero'];
-  /** The payment method used by the customer. */
-  paymentMethod: Scalars['String'];
   /** Value Added Tax */
   vat: Scalars['Float'];
-  items: Array<TicketItem>;
-  /** Wether if the ticket is being paid, was paid or canceled */
-  status: TicketStatus;
 };
 
 /** A ticket entry item to register costumer consume. */
 export type TicketItem = {
   __typename?: 'TicketItem';
   _id: Scalars['String'];
-  /** Units sold to customer */
-  quantity: Scalars['Float'];
+  /** The result of dishPrice times quantity. */
+  amount: Scalars['Dinero'];
   /** The dish name at selling time. */
   dishName: Scalars['String'];
   /** The dish price at selling time. */
   dishPrice: Scalars['Dinero'];
-  /** The result of dishPrice times quantity. */
-  amount: Scalars['Dinero'];
+  /** Units sold to customer */
+  quantity: Scalars['Float'];
 };
 
 /** Ticket status */
 export enum TicketStatus {
   Beingpaid = 'BEINGPAID',
-  Paid = 'PAID',
-  Canceled = 'CANCELED'
+  Canceled = 'CANCELED',
+  Paid = 'PAID'
 }
 
 /** User profile data. */
 export type User = {
   __typename?: 'User';
   _id: Scalars['String'];
-  name: Scalars['String'];
   email: Scalars['String'];
+  name: Scalars['String'];
   password: Scalars['String'];
   roles: Array<Role>;
 };
 
 /** Partial user data used as query or mutation input. */
 export type UserDataInput = {
-  name: Scalars['String'];
   email: Scalars['String'];
+  name: Scalars['String'];
   password: Scalars['String'];
   roles: Array<Scalars['String']>;
 };
@@ -577,8 +575,8 @@ export type UserDataInput = {
 export type YearSalesStats = {
   __typename?: 'YearSalesStats';
   month: Scalars['Int'];
-  year: Scalars['Int'];
   total: Scalars['Dinero'];
+  year: Scalars['Int'];
 };
 
 export type LoginMutationVariables = Exact<{
@@ -594,14 +592,14 @@ export type AddMenuMutationVariables = Exact<{
 }>;
 
 
-export type AddMenuMutation = { __typename?: 'Mutation', addMenu: { __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean } };
+export type AddMenuMutation = { __typename?: 'Mutation', addMenu: { __typename?: 'Menu', _id: string, title: string, description: string, url_img?: string | null | undefined, isActive: boolean } };
 
 export type AddDishMutationVariables = Exact<{
   addDishData: DishDataInput;
 }>;
 
 
-export type AddDishMutation = { __typename?: 'Mutation', addDish: { __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, preparation_time?: Maybe<any>, categories: Array<string> } };
+export type AddDishMutation = { __typename?: 'Mutation', addDish: { __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, preparation_time?: any | null | undefined, categories: Array<string> } };
 
 export type AddDishToMenuMutationVariables = Exact<{
   addDishToMenuIdDish: Scalars['String'];
@@ -609,14 +607,14 @@ export type AddDishToMenuMutationVariables = Exact<{
 }>;
 
 
-export type AddDishToMenuMutation = { __typename?: 'Mutation', addDishToMenu: { __typename?: 'Menu', _id: string, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, price: any, url_img?: Maybe<string> }> } };
+export type AddDishToMenuMutation = { __typename?: 'Mutation', addDishToMenu: { __typename?: 'Menu', _id: string, title: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, price: any, url_img?: string | null | undefined }> } };
 
 export type GenerateTableMutationVariables = Exact<{
   generateTableName: Scalars['String'];
 }>;
 
 
-export type GenerateTableMutation = { __typename?: 'Mutation', generateTable: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
+export type GenerateTableMutation = { __typename?: 'Mutation', generateTable: { __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, token: string, enabled: boolean } };
 
 export type UpdateTableMutationVariables = Exact<{
   updateTableData: TableInputData;
@@ -624,7 +622,7 @@ export type UpdateTableMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTableMutation = { __typename?: 'Mutation', updateTable: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean } };
+export type UpdateTableMutation = { __typename?: 'Mutation', updateTable: { __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, token: string, enabled: boolean } };
 
 export type CreateOrderMutationVariables = Exact<{
   createOrderItemsIds: Array<Scalars['String']> | Scalars['String'];
@@ -632,14 +630,14 @@ export type CreateOrderMutationVariables = Exact<{
 }>;
 
 
-export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> } };
+export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: string | null | undefined, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: string | null | undefined } }> } };
 
 export type CreateOrderItemsMutationVariables = Exact<{
   createOrderItemsItems: Array<CreateOrderItemsInput> | CreateOrderItemsInput;
 }>;
 
 
-export type CreateOrderItemsMutation = { __typename?: 'Mutation', createOrderItems: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> };
+export type CreateOrderItemsMutation = { __typename?: 'Mutation', createOrderItems: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: string | null | undefined } }> };
 
 export type AddItemsToOrderMutationVariables = Exact<{
   addItemsToOrderOrderId: Scalars['String'];
@@ -647,7 +645,7 @@ export type AddItemsToOrderMutationVariables = Exact<{
 }>;
 
 
-export type AddItemsToOrderMutation = { __typename?: 'Mutation', addItemsToOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: Maybe<string> } }> } };
+export type AddItemsToOrderMutation = { __typename?: 'Mutation', addItemsToOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: string | null | undefined, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: string | null | undefined } }> } };
 
 export type ChangeOrderItemsStatusMutationVariables = Exact<{
   changeOrderItemsStatusStatus: Status;
@@ -672,7 +670,7 @@ export type SetTicketStatusMutationVariables = Exact<{
 }>;
 
 
-export type SetTicketStatusMutation = { __typename?: 'Mutation', setTicketStatus?: Maybe<{ __typename?: 'Ticket', _id: string, status: TicketStatus }> };
+export type SetTicketStatusMutation = { __typename?: 'Mutation', setTicketStatus?: { __typename?: 'Ticket', _id: string, status: TicketStatus } | null | undefined };
 
 export type RemoveDishFromMenuMutationVariables = Exact<{
   removeDishFromMenuIdDish: Scalars['String'];
@@ -694,55 +692,55 @@ export type GetUserByEmailQueryVariables = Exact<{
 }>;
 
 
-export type GetUserByEmailQuery = { __typename?: 'Query', userByEmail?: Maybe<{ __typename?: 'User', _id: string, email: string, name: string, roles: Array<{ __typename?: 'Role', name: string, _id: string }> }> };
+export type GetUserByEmailQuery = { __typename?: 'Query', userByEmail?: { __typename?: 'User', _id: string, email: string, name: string, roles: Array<{ __typename?: 'Role', name: string, _id: string }> } | null | undefined };
 
 export type GetMenusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: Maybe<string>, title: string, description: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> }> };
+export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: string | null | undefined, title: string, description: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, categories: Array<string>, preparation_time?: any | null | undefined }> }> };
 
 export type GetDishesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDishesQuery = { __typename?: 'Query', dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> };
+export type GetDishesQuery = { __typename?: 'Query', dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, categories: Array<string>, preparation_time?: any | null | undefined }> };
 
 export type GetTablesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTablesQuery = { __typename?: 'Query', tables: Array<{ __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, enabled: boolean, token: string }> };
+export type GetTablesQuery = { __typename?: 'Query', tables: Array<{ __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, enabled: boolean, token: string }> };
 
 export type GetTableByIdQueryVariables = Exact<{
   tableByIdId: Scalars['String'];
 }>;
 
 
-export type GetTableByIdQuery = { __typename?: 'Query', tableById?: Maybe<{ __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }> };
+export type GetTableByIdQuery = { __typename?: 'Query', tableById?: { __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, token: string, enabled: boolean } | null | undefined };
 
 export type GetDishByIdQueryVariables = Exact<{
   dishByIdId: Scalars['String'];
 }>;
 
 
-export type GetDishByIdQuery = { __typename?: 'Query', dishById?: Maybe<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: Maybe<string>, price: any, score?: Maybe<number>, categories: Array<string>, preparation_time?: Maybe<any> }> };
+export type GetDishByIdQuery = { __typename?: 'Query', dishById?: { __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, categories: Array<string>, preparation_time?: any | null | undefined } | null | undefined };
 
 export type GetMenuByIdQueryVariables = Exact<{
   menuByIdId: Scalars['String'];
 }>;
 
 
-export type GetMenuByIdQuery = { __typename?: 'Query', menuById?: Maybe<{ __typename?: 'Menu', _id: string, title: string, description: string, url_img?: Maybe<string>, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: Maybe<string>, price: any }> }> };
+export type GetMenuByIdQuery = { __typename?: 'Query', menuById?: { __typename?: 'Menu', _id: string, title: string, description: string, url_img?: string | null | undefined, isActive: boolean, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, url_img?: string | null | undefined, price: any }> } | null | undefined };
 
 export type GetOrdersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'Order', _id: string, orderNumber: number, start_time: any, end_time?: Maybe<any>, table: { __typename?: 'Table', name?: Maybe<string>, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> }> };
+export type GetOrdersQuery = { __typename?: 'Query', orders: Array<{ __typename?: 'Order', _id: string, orderNumber: number, start_time: any, end_time?: any | null | undefined, table: { __typename?: 'Table', name?: string | null | undefined, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> }> };
 
 export type GetOrderByIdQueryVariables = Exact<{
   orderByIdId: Scalars['String'];
 }>;
 
 
-export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: Maybe<string>, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
+export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
 
 export type GetDishSalesQueryVariables = Exact<{
   dishSalesTimezone: Scalars['String'];
@@ -777,12 +775,12 @@ export type GetDailySalesQueryVariables = Exact<{
 }>;
 
 
-export type GetDailySalesQuery = { __typename?: 'Query', daySales: Array<{ __typename?: 'DaySalesStats', year: number, tableNumber: number, tableName: string, totalSum: any, salesCount: number, sales?: Maybe<Array<{ __typename?: 'Ticket', total: any, timestamp: any }>> }> };
+export type GetDailySalesQuery = { __typename?: 'Query', daySales: Array<{ __typename?: 'DaySalesStats', year: number, tableNumber: number, tableName: string, totalSum: any, salesCount: number, sales?: Array<{ __typename?: 'Ticket', total: any, timestamp: any }> | null | undefined }> };
 
 export type GetTicketsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, total: any, items: Array<{ __typename?: 'TicketItem', quantity: number, dishName: string, dishPrice: any, amount: any, _id: string }> }> };
+export type GetTicketsQuery = { __typename?: 'Query', tickets: Array<{ __typename?: 'Ticket', _id: string, timestamp: any, status: TicketStatus, paymentMethod: string, tableName: string, tableNumber: number, ticketNumber: number, total: any, vat: number, items: Array<{ __typename?: 'TicketItem', quantity: number, dishName: string, dishPrice: any, amount: any, _id: string }> }> };
 
 export type GetTicketByIdQueryVariables = Exact<{
   ticketByIdId: Scalars['String'];
@@ -794,7 +792,7 @@ export type GetTicketByIdQuery = { __typename?: 'Query', ticketById: { __typenam
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OrderChangesSubscription = { __typename?: 'Subscription', orderChanges: { __typename?: 'Order', _id: string, orderNumber: number, end_time?: Maybe<any>, start_time: any, table: { __typename?: 'Table', name?: Maybe<string>, tableNumber: number, _id: string }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> } };
+export type OrderChangesSubscription = { __typename?: 'Subscription', orderChanges: { __typename?: 'Order', _id: string, orderNumber: number, end_time?: any | null | undefined, start_time: any, table: { __typename?: 'Table', name?: string | null | undefined, tableNumber: number, _id: string }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', name: string } }> } };
 
 export type TicketChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -1960,7 +1958,9 @@ export const GetTicketsDocument = gql`
     paymentMethod
     tableName
     tableNumber
+    ticketNumber
     total
+    vat
     items {
       quantity
       dishName
