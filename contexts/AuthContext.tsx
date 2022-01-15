@@ -65,6 +65,11 @@ const AuthProvider = ({ children }: any) => {
                     toast.success('Sesión Iniciada');
                     break;
 
+                case 'Mesero':
+                    router.push('/waiter');
+                    toast.success('Sesión Iniciada');
+                    break;
+
                 default:
                     toast.error('Tipo de Usuario Desconocido');
                     break;

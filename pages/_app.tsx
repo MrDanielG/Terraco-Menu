@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import AuthProvider from '../contexts/AuthContext';
 import { useApollo } from '../lib/ApolloClient';
 import '../styles/globals.css';
+import 'react-tiny-fab/dist/styles.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
     const apolloClient = useApollo(pageProps.initialApolloState);
