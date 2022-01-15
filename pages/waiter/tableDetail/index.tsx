@@ -2,10 +2,10 @@ import { useRouter } from 'next/router';
 import { FaUtensils } from 'react-icons/fa';
 import { HiBan, HiClipboardCheck, HiCurrencyDollar, HiPlus } from 'react-icons/hi';
 import { Action, Fab } from 'react-tiny-fab';
-import BackButton from '../../components/buttons/BackButton';
-import Navbar from '../../components/layout/Navbar';
-import ProtectedPage from '../../components/ProtectedPage';
-import { useGetTableByIdQuery } from '../../graphql/graphql';
+import BackButton from '../../../components/buttons/BackButton';
+import Navbar from '../../../components/layout/Navbar';
+import ProtectedPage from '../../../components/ProtectedPage';
+import { useGetTableByIdQuery } from '../../../graphql/graphql';
 
 const TableDetail = () => {
     const router = useRouter();
@@ -27,7 +27,11 @@ const TableDetail = () => {
                     alwaysShowTitle={true}
                     mainButtonStyles={{ background: '#3ABB2E' }}
                 >
-                    <Action text="Menu" style={{ background: '#3ABB2E' }}>
+                    <Action
+                        text="Menu"
+                        style={{ background: '#3ABB2E' }}
+                        onClick={() => router.push(`/waiter/tableDetail/menu?tableId=${tableId}`)}
+                    >
                         <FaUtensils />
                     </Action>
 
@@ -44,7 +48,7 @@ const TableDetail = () => {
                     </Action>
                 </Fab>
 
-                <div className="flex justify-center w-full mt-8">
+                <div className="flex justify-center w-full mt-32 opacity-70">
                     <div className="flex flex-col items-center gap-4 text-sm text-gray-500">
                         <span>Aún no hay ningún platillo</span>
                         <FaUtensils className="text-xl" />
