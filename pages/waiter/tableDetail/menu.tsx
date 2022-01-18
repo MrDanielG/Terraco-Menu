@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { HiPlusSm } from 'react-icons/hi';
 import BackButton from '../../../components/buttons/BackButton';
 import CardActions from '../../../components/cards/parent-card/CardActions';
@@ -8,6 +9,7 @@ import ParentCard from '../../../components/cards/parent-card/ParentCard';
 import Navbar from '../../../components/layout/Navbar';
 import ProtectedPage from '../../../components/ProtectedPage';
 import { Dish, Menu, useGetMenusQuery, useGetTableByIdQuery } from '../../../graphql/graphql';
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { intlFormat } from '../../../lib/utils';
 
 interface Props {}
@@ -33,9 +35,28 @@ const TableMenu = (props: Props) => {
         setMenus(fullMenus);
     }, [data]);
 
-    const handleAddDish = (dish: Dish) => {};
+    const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', [
+        { tableId: tableId?.toString() || '', items: [] },
+        { tableId: 'asdf', items: [] },
+    ]);
 
-    const handleDishDetails = (value: string) => {};
+    const handleAddDish = (dish: Dish) => {
+        const tableOrder = currentOrders.find((order) => order.tableId === tableId);
+        if (!tableOrder) return;
+
+        const idx = tableOrder.items.findIndex((value) => value.dish._id === dish._id);
+
+        if (idx > -1) {
+            tableOrder.items[idx].qty++;
+        } else {
+            tableOrder?.items.push({ qty: 1, dish });
+        }
+        const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
+        const newOrders = [...currentOrders];
+        newOrders[tableIdx] = tableOrder;
+        setCurrentOrders(newOrders);
+        toast.success('Se agrego 1 ' + dish.name);
+    };
 
     return (
         <ProtectedPage username="Mesero" redirectTo="/">
@@ -62,7 +83,7 @@ const TableMenu = (props: Props) => {
                                             <ParentCard
                                                 url_img={dish.url_img?.toString()}
                                                 onClick={() =>
-                                                    handleDishDetails(
+                                                    router.push(
                                                         `/dish/${dish._id}?tableId=${tableId}`
                                                     )
                                                 }
@@ -70,7 +91,7 @@ const TableMenu = (props: Props) => {
                                             >
                                                 <CardInfo
                                                     onClick={() =>
-                                                        handleDishDetails(
+                                                        router.push(
                                                             `/dish/${dish._id}?tableId=${tableId}`
                                                         )
                                                     }
