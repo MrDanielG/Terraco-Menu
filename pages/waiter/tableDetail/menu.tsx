@@ -37,11 +37,12 @@ const TableMenu = (props: Props) => {
 
     const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', [
         { tableId: tableId?.toString() || '', items: [] },
-        { tableId: 'asdf', items: [] },
     ]);
 
+    const tableOrder = currentOrders.find((order) => order.tableId === tableId);
+
     const handleAddDish = (dish: Dish) => {
-        const tableOrder = currentOrders.find((order) => order.tableId === tableId);
+        // const tableOrder = currentOrders.find((order) => order.tableId === tableId);
         if (!tableOrder) return;
 
         const idx = tableOrder.items.findIndex((value) => value.dish._id === dish._id);
@@ -58,10 +59,15 @@ const TableMenu = (props: Props) => {
         toast.success('Se agrego 1 ' + dish.name);
     };
 
+    const handleNavbarClick = () => router.push(`/waiter/tableDetail?tableId=${tableId}`);
+
+    const numItems = () =>
+        tableOrder?.items.reduce((prevValue, currentValue) => prevValue + currentValue.qty, 0);
+
     return (
         <ProtectedPage username="Mesero" redirectTo="/">
             <div className="min-h-screen p-8 bg-gray-200">
-                <Navbar />
+                <Navbar itemsQty={numItems()?.toString()} onClick={handleNavbarClick} />
                 <BackButton
                     text="Regresar"
                     pathNameOnBack={`/waiter/tableDetail?tableId=${tableId}`}

@@ -17,11 +17,6 @@ const Navbar = (props: Props) => {
     const { currentUser, logOut } = useAuth();
     const [open, setOpen] = useState(false);
 
-    /* const [currentOrder, setCurrentOrder] = useLocalStorage<CurrentOrder<Dish>>('currentOrder', {
-     *     tableId: "",
-     *     items: [],
-     * });
-     * const items = currentOrder.items; */
     const handleMyOrderClick = () => {
         if (props.itemsQty !== null && props.canRedirect) {
             router.push('/newOrder');
@@ -67,7 +62,7 @@ const Navbar = (props: Props) => {
                     </figure>
                 )} */}
 
-                {currentUser === null && (
+                {currentUser?.name === 'Mesero' && (
                     <div
                         className="flex max-w-sm gap-2 px-2 py-1 rounded-lg cursor-pointer bg-orange"
                         onClick={props.onClick || handleMyOrderClick}
