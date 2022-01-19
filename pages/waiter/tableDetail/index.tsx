@@ -1,5 +1,6 @@
 import { dinero, multiply } from 'dinero.js';
 import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 import { FaUtensils } from 'react-icons/fa';
 import {
     HiBan,
@@ -16,24 +17,74 @@ import CardInfo from '../../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../../components/cards/parent-card/ParentCard';
 import Navbar from '../../../components/layout/Navbar';
 import ProtectedPage from '../../../components/ProtectedPage';
-import { Dish, useGetTableByIdQuery } from '../../../graphql/graphql';
+import {
+    Dish,
+    useCreateOrderItemsMutation,
+    useCreateOrderMutation,
+    useGetTableByIdQuery,
+} from '../../../graphql/graphql';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { intlFormat } from '../../../lib/utils';
 
 const TableDetail = () => {
     const router = useRouter();
     const { tableId } = router.query;
+    const [CreateOrderMutation] = useCreateOrderMutation();
+    const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
+    const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', []);
+    const tableOrder = currentOrders.find((order) => order.tableId === tableId);
+    const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
     const { data } = useGetTableByIdQuery({
         variables: {
             tableByIdId: String(tableId),
         },
     });
-    const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', []);
-    const tableOrder = currentOrders.find((order) => order.tableId === tableId);
-    console.log(tableOrder);
 
-    const handleQuantityChange = (i: number, arg1: number): void => {
-        throw new Error('Function not implemented.');
+    const handleQuantityChange = (idx: number, value: number): void => {
+        if (!tableOrder) return;
+        const { qty } = tableOrder.items[idx]!;
+        const sum = qty + value;
+        if (sum > 0) {
+            tableOrder.items[idx].qty = sum;
+        } else {
+            const newItems = tableOrder.items.filter((_order, i) => i !== idx);
+            const newCurrentOrders = [...currentOrders];
+            newCurrentOrders[tableIdx] = tableOrder;
+            newCurrentOrders[tableIdx].items = newItems;
+            setCurrentOrders(newCurrentOrders);
+            toast('Platillo Eliminado', {
+                icon: '👏',
+            });
+        }
+
+        const newOrders = [...currentOrders];
+        newOrders[tableIdx] = tableOrder;
+        setCurrentOrders(newOrders);
+    };
+
+    const handleCreateOrder = async () => {
+        if (!tableId || !tableOrder) return;
+
+        const items = tableOrder.items.map((item) => {
+            return { dishId: item.dish._id, quantity: item.qty };
+        });
+
+        try {
+            const { data, errors } = await CreateOrderItemsMutation({
+                variables: {
+                    createOrderItemsItems: items,
+                },
+            });
+
+            if (errors !== undefined) throw new Error('Order items could not be created');
+
+            const itemsIds = data?.createOrderItems.map((item) => item._id);
+
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al mandara  cocina');
+        }
     };
 
     return (
@@ -55,7 +106,11 @@ const TableDetail = () => {
                         <FaUtensils />
                     </Action>
 
-                    <Action text="Mandar a Cocina" style={{ background: '#3ABB2E' }}>
+                    <Action
+                        text="Mandar a Cocina"
+                        style={{ background: '#3ABB2E' }}
+                        onClick={handleCreateOrder}
+                    >
                         <HiClipboardCheck className="text-xl" />
                     </Action>
 

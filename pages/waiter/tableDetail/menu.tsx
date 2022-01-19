@@ -38,25 +38,35 @@ const TableMenu = (props: Props) => {
     const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', [
         { tableId: tableId?.toString() || '', items: [] },
     ]);
+    console.log('currentOrders', currentOrders);
 
     const tableOrder = currentOrders.find((order) => order.tableId === tableId);
 
     const handleAddDish = (dish: Dish) => {
-        // const tableOrder = currentOrders.find((order) => order.tableId === tableId);
-        if (!tableOrder) return;
+        if (tableOrder) {
+            const dishIdx = tableOrder.items.findIndex((value) => value.dish._id === dish._id);
 
-        const idx = tableOrder.items.findIndex((value) => value.dish._id === dish._id);
+            if (dishIdx > -1) tableOrder.items[dishIdx].qty++;
+            else tableOrder?.items.push({ qty: 1, dish });
 
-        if (idx > -1) {
-            tableOrder.items[idx].qty++;
+            const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
+            const newOrders = [...currentOrders];
+            newOrders[tableIdx] = tableOrder;
+            setCurrentOrders(newOrders);
+            toast.success('Se agrego: ' + dish.name);
         } else {
-            tableOrder?.items.push({ qty: 1, dish });
+            const newOrders = [...currentOrders];
+            newOrders.push({ tableId: tableId?.toString() || '', items: [] });
+
+            const newTableOrder = newOrders.find((order) => order.tableId === tableId);
+
+            if (!newTableOrder) return;
+            newTableOrder.items.push({ qty: 1, dish });
+
+            newOrders[newOrders.length - 1] = newTableOrder;
+            setCurrentOrders(newOrders);
+            toast.success('Se agrego: ' + dish.name);
         }
-        const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
-        const newOrders = [...currentOrders];
-        newOrders[tableIdx] = tableOrder;
-        setCurrentOrders(newOrders);
-        toast.success('Se agrego 1 ' + dish.name);
     };
 
     const handleNavbarClick = () => router.push(`/waiter/tableDetail?tableId=${tableId}`);
@@ -114,9 +124,7 @@ const TableMenu = (props: Props) => {
                                                 <CardActions>
                                                     <CardActions.Bottom
                                                         icon={<HiPlusSm />}
-                                                        onClick={(_e) => {
-                                                            handleAddDish(dish);
-                                                        }}
+                                                        onClick={(_e) => handleAddDish(dish)}
                                                     />
                                                 </CardActions>
                                             </ParentCard>
