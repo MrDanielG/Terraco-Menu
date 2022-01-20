@@ -1,5 +1,6 @@
 import { dinero, multiply } from 'dinero.js';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { FaUtensils } from 'react-icons/fa';
 import {
@@ -16,12 +17,16 @@ import CardActions from '../../../components/cards/parent-card/CardActions';
 import CardInfo from '../../../components/cards/parent-card/CardInfo';
 import ParentCard from '../../../components/cards/parent-card/ParentCard';
 import Navbar from '../../../components/layout/Navbar';
+import DangerModal from '../../../components/modals/DangerModal';
+import Modal from '../../../components/modals/Modal';
 import ProtectedPage from '../../../components/ProtectedPage';
 import {
     Dish,
+    Status,
     useAddItemsToOrderMutation,
     useCreateOrderItemsMutation,
     useCreateOrderMutation,
+    useGenerateTicketMutation,
     useGetOrderByIdQuery,
     useGetTableByIdQuery,
 } from '../../../graphql/graphql';
@@ -31,12 +36,19 @@ import { intlFormat } from '../../../lib/utils';
 const TableDetail = () => {
     const router = useRouter();
     const { tableId } = router.query;
+    const [message, setMessage] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+    const [isDangerOpen, setIsDangerOpen] = useState(false);
+
     const [CreateOrderMutation] = useCreateOrderMutation();
     const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
     const [AddItemsToOrderMutation] = useAddItemsToOrderMutation();
+    const [GenerateTicket] = useGenerateTicketMutation();
+
     const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', []);
     const tableOrder = currentOrders.find((order) => order.tableId === tableId);
     const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
+
     const { data: dataTable } = useGetTableByIdQuery({
         variables: {
             tableByIdId: String(tableId),
@@ -123,6 +135,60 @@ const TableDetail = () => {
         }
     };
 
+    const closeTableOrder = async () => {
+        if (!tableOrder?.orderId) return;
+        try {
+            const { data } = await GenerateTicket({
+                variables: {
+                    orderId: tableOrder.orderId,
+                },
+            });
+            console.log(data);
+            const newOrders = currentOrders.filter((order) => order.tableId !== tableId);
+            console.log(newOrders);
+            setCurrentOrders(newOrders);
+
+            setIsDangerOpen(false);
+            setIsOpen(false);
+
+            toast.success('Cuenta Terminada');
+            router.push('/waiter');
+        } catch (error) {
+            console.error(error);
+            toast.error('Error al cerrar la Cuenta');
+        }
+    };
+
+    const handlePayment = async () => {
+        if (tableOrder?.items.length! > 0) {
+            setMessage('Aún quedan ordenes por hacer. ¿Deseas continuar con el pago?');
+            setIsOpen(false);
+            setIsDangerOpen(true);
+        } else {
+            try {
+                const {
+                    data: {
+                        orderById: { items },
+                    },
+                } = await orderRefetch({
+                    orderByIdId: tableOrder?.orderId,
+                });
+                let areServed = true;
+                items.forEach((item) => (areServed = areServed && item.status === Status.Served));
+
+                if (!areServed) {
+                    setMessage('Aún faltan platos por servir. ¿Deseas continuar con el pago?');
+                    setIsOpen(false);
+                    setIsDangerOpen(true);
+                } else {
+                    closeTableOrder();
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
+
     return (
         <ProtectedPage username="Mesero" redirectTo="/">
             <div className="min-h-screen p-8 bg-gray-200">
@@ -150,7 +216,15 @@ const TableDetail = () => {
                         <HiClipboardCheck className="text-xl" />
                     </Action>
 
-                    <Action text="Cobrar" style={{ background: '#3ABB2E' }}>
+                    <Action
+                        text="Cobrar"
+                        style={{ background: '#3ABB2E' }}
+                        onClick={() => {
+                            tableOrder === undefined || !tableOrder.orderId
+                                ? toast.error('No has creado una Orden')
+                                : setIsOpen(true);
+                        }}
+                    >
                         <HiCurrencyDollar className="text-xl" />
                     </Action>
 
@@ -159,9 +233,9 @@ const TableDetail = () => {
                     </Action>
                 </Fab>
 
+                <h2 className="mt-4 text-brown">Platillos por Pedir:</h2>
                 {(tableOrder === undefined || tableOrder.items.length <= 0) && (
                     <>
-                        <h2 className="mt-4 text-brown">Nuevos Platillos:</h2>
                         <div className="flex justify-center w-full my-10 opacity-70">
                             <div className="flex flex-col items-center gap-4 text-sm text-gray-500">
                                 <span>Ooops! Olvidaste ordenar?</span>
@@ -207,27 +281,67 @@ const TableDetail = () => {
 
                 {tableOrder?.orderId && <h2 className="mt-4 text-brown">Platillos Pedidos:</h2>}
 
-                {dataOrder?.orderById.items.map((item) => (
-                    <ParentCard url_img={item.dish.url_img?.toString()} key={item._id}>
-                        <CardInfo>
-                            <CardInfo.Title>
-                                <span>{item.dish.name}</span>
-                            </CardInfo.Title>
-                            <CardInfo.Body>
-                                <span>
-                                    Importe:{' '}
-                                    {intlFormat(
-                                        multiply(dinero(item.dish.price), item.quantity).toJSON(),
-                                        'es-MX'
-                                    )}
-                                </span>
-                            </CardInfo.Body>
-                            <CardInfo.Footer>
-                                <span> Cant: {item.quantity} </span>
-                            </CardInfo.Footer>
-                        </CardInfo>
-                    </ParentCard>
-                ))}
+                <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
+                    {dataOrder?.orderById.items.map((item) => (
+                        <ParentCard url_img={item.dish.url_img?.toString()} key={item._id}>
+                            <CardInfo>
+                                <CardInfo.Title>
+                                    <span>{item.dish.name}</span>
+                                </CardInfo.Title>
+                                <CardInfo.Body>
+                                    <span>
+                                        Importe:{' '}
+                                        {intlFormat(
+                                            multiply(
+                                                dinero(item.dish.price),
+                                                item.quantity
+                                            ).toJSON(),
+                                            'es-MX'
+                                        )}
+                                    </span>
+                                </CardInfo.Body>
+                                <CardInfo.Footer>
+                                    <span> Cant: {item.quantity} </span>
+                                </CardInfo.Footer>
+                            </CardInfo>
+                        </ParentCard>
+                    ))}
+                </div>
+
+                <Modal
+                    isOpen={isOpen}
+                    title="¿Desea solicitar ticket y cerrar la cuenta?"
+                    closeModal={() => setIsOpen(false)}
+                    onCloseModal={() => setIsOpen(false)}
+                >
+                    <p className="mt-4 text-gray-600">
+                        Una vez solicitado el ticket ya no se pueden agregar mas platillos a la
+                        cuenta
+                    </p>
+                    <div className="flex flex-col sm:flex-row sm:gap-2">
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="flex-1 px-6 py-3 mt-4 text-sm text-red-500 border-2 border-red-500 border-solid rounded-xl disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            CANCELAR
+                        </button>
+                        <button
+                            onClick={handlePayment}
+                            className="flex-1 px-6 py-3 mt-4 text-sm border-2 border-solid text-mygreen border-mygreen rounded-xl disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            CERRAR CUENTA
+                        </button>
+                    </div>
+                </Modal>
+
+                <DangerModal
+                    title="Advertencia"
+                    description={message}
+                    isOpen={isDangerOpen}
+                    dangerBtnTitle="Continuar"
+                    onCloseModal={() => setIsDangerOpen(false)}
+                    onClickDangerBtn={closeTableOrder}
+                />
             </div>
         </ProtectedPage>
     );

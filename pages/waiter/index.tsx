@@ -8,7 +8,7 @@ interface Props {}
 
 const Waiter = (props: Props) => {
     const router = useRouter();
-    const { data, refetch } = useGetTablesQuery();
+    const { data } = useGetTablesQuery();
 
     return (
         <ProtectedPage username="Mesero" redirectTo="/">
