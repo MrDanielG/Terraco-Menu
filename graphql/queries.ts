@@ -148,6 +148,7 @@ export const GET_ORDER_BY_ID = gql`
                     name
                     price
                     _id
+                    url_img
                 }
                 quantity
                 status

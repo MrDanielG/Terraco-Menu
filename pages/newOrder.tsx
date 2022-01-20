@@ -162,11 +162,11 @@ const NewOrder = (props: Props) => {
 
     return (
         <>
-            <div className="bg-gray-200 p-8 h-auto min-h-screen">
+            <div className="h-auto min-h-screen p-8 bg-gray-200">
                 <Navbar itemsQty={nItems} />
                 <BackButton text="Menú" pathNameOnBack={`/?tableId=${tableId}`} />
                 {items && items.length > 0 && (
-                    <h1 className="font-semibold text-3xl text-brown">
+                    <h1 className="text-3xl font-semibold text-brown">
                         {items?.length} Platillos por pedir
                     </h1>
                 )}
@@ -216,12 +216,12 @@ const NewOrder = (props: Props) => {
                 ))}
 
                 {order && (
-                    <h1 className="font-semibold text-3xl text-brown">
+                    <h1 className="text-3xl font-semibold text-brown">
                         {order.items?.length} Platillos pedidos
                     </h1>
                 )}
 
-                <p className="text-xs text-gray-500 mt-4 text-center">
+                <p className="mt-4 text-xs text-center text-gray-500">
                     Desliza a la izquierda para eliminar un platillo
                 </p>
 
@@ -251,7 +251,7 @@ const NewOrder = (props: Props) => {
                         </ParentCard>
                     ))}
                 {order && items.length > 0 && (
-                    <p className="uppercase mt-2 tracking-wide text-sm text-gray-600 text-center mb-5">
+                    <p className="mt-2 mb-5 text-sm tracking-wide text-center text-gray-600 uppercase">
                         Tu consumo hasta ahora: <span>{intlFormat(total.toJSON(), 'es-MX')}</span>
                     </p>
                 )}
