@@ -85,6 +85,8 @@ const TableDetail = () => {
             return { dishId: item.dish._id, quantity: item.qty };
         });
 
+        if (items.length <= 0) return toast.error('No hay platillos para enviar');
+
         try {
             const { data, errors } = await CreateOrderItemsMutation({
                 variables: {
@@ -95,35 +97,31 @@ const TableDetail = () => {
             if (errors !== undefined) throw new Error('Order items could not be created');
 
             const itemsIds = data?.createOrderItems.map((item) => item._id);
-            let orderRes;
 
             if (tableOrder.orderId) {
-                orderRes = await AddItemsToOrderMutation({
+                await AddItemsToOrderMutation({
                     variables: {
-                        addItemsToOrderOrderId: '',
+                        addItemsToOrderOrderId: tableOrder.orderId,
                         addItemsToOrderItemsIds: itemsIds || [],
                     },
                 });
                 updateCurrentOrder([]);
             } else {
-                orderRes = await CreateOrderMutation({
+                const { data } = await CreateOrderMutation({
                     variables: {
                         createOrderTableId: tableId.toString(),
                         createOrderItemsIds: itemsIds || [],
                     },
                 });
-                updateCurrentOrder([], orderRes.data?.createOrder._id);
+                updateCurrentOrder([], data?.createOrder._id);
                 orderRefetch();
             }
             toast.success('Pedido enviado a Cocina');
-            console.log(data);
         } catch (error) {
             console.error(error);
             toast.error('Error al mandara  cocina');
         }
     };
-
-    console.log(tableOrder);
 
     return (
         <ProtectedPage username="Mesero" redirectTo="/">
