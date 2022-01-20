@@ -55,23 +55,39 @@ const DishDetail = (props: Props) => {
 
     const waiterAddToOrder = (dish: Dish | null) => {
         const tableOrder = currentOrders.find((order) => order.tableId === tableId);
-        const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
+        if (tableOrder) {
+            const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
 
-        if (!tableOrder || !dish) return;
-        const dishIdx = tableOrder.items.findIndex((item) => item.dish._id === dish._id);
+            if (!tableOrder || !dish) return;
+            const dishIdx = tableOrder.items.findIndex((item) => item.dish._id === dish._id);
 
-        if (dishIdx > -1) {
-            tableOrder.items[dishIdx].qty += quantity;
+            if (dishIdx > -1) {
+                tableOrder.items[dishIdx].qty += quantity;
+            } else {
+                tableOrder?.items.push({ qty: quantity, dish });
+            }
+
+            const newCurrentOrders = [...currentOrders];
+            newCurrentOrders[tableIdx] = tableOrder;
+            setCurrentOrders(newCurrentOrders);
+
+            toast.success(`Se agregó ${quantity} ${dish.name} a tu orden`);
+            router.push(`/waiter/tableDetail?tableId=${tableId}`);
         } else {
-            tableOrder?.items.push({ qty: quantity, dish });
+            const newOrders = [...currentOrders];
+            newOrders.push({ tableId: tableId?.toString() || '', items: [] });
+
+            const newTableOrder = newOrders.find((order) => order.tableId === tableId);
+
+            if (!newTableOrder || !dish) return;
+            newTableOrder.items.push({ qty: quantity, dish });
+
+            newOrders[newOrders.length - 1] = newTableOrder;
+            setCurrentOrders(newOrders);
+
+            toast.success(`Se agregó ${quantity} ${dish.name} a tu orden`);
+            router.push(`/waiter/tableDetail?tableId=${tableId}`);
         }
-
-        const newCurrentOrders = [...currentOrders];
-        newCurrentOrders[tableIdx] = tableOrder;
-        setCurrentOrders(newCurrentOrders);
-
-        toast.success(`Se agregó ${quantity} ${dish.name} a tu orden`);
-        router.push(`/waiter/tableDetail?tableId=${tableId}`);
     };
 
     return (
@@ -95,7 +111,7 @@ const DishDetail = (props: Props) => {
                         </div>
                         <div
                             className="flex h-8 max-w-sm gap-2 px-2 py-1 cursor-pointer"
-                            onClick={() => router.push('/newOrder')}
+                            onClick={() => router.push(`/waiter/tableDetail?tableId=${tableId}`)}
                         >
                             <HiOutlineBookOpen className="text-2xl text-white" />
                             <p className="text-white">{nItems}</p>

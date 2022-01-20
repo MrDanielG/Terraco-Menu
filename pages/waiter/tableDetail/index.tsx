@@ -91,7 +91,8 @@ const TableDetail = () => {
     };
 
     const handleCreateOrder = async () => {
-        if (!tableId || !tableOrder) return;
+        if (!tableId) return;
+        if (!tableOrder) return toast.error('Oops!! Nada que mandar');
 
         const items = tableOrder.items.map((item) => {
             return { dishId: item.dish._id, quantity: item.qty };
