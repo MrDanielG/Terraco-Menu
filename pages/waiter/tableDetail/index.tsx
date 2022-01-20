@@ -19,8 +19,10 @@ import Navbar from '../../../components/layout/Navbar';
 import ProtectedPage from '../../../components/ProtectedPage';
 import {
     Dish,
+    useAddItemsToOrderMutation,
     useCreateOrderItemsMutation,
     useCreateOrderMutation,
+    useGetOrderByIdQuery,
     useGetTableByIdQuery,
 } from '../../../graphql/graphql';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
@@ -31,14 +33,31 @@ const TableDetail = () => {
     const { tableId } = router.query;
     const [CreateOrderMutation] = useCreateOrderMutation();
     const [CreateOrderItemsMutation] = useCreateOrderItemsMutation();
+    const [AddItemsToOrderMutation] = useAddItemsToOrderMutation();
     const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', []);
     const tableOrder = currentOrders.find((order) => order.tableId === tableId);
     const tableIdx = currentOrders.findIndex((order) => order.tableId === tableId);
-    const { data } = useGetTableByIdQuery({
+    const { data: dataTable } = useGetTableByIdQuery({
         variables: {
             tableByIdId: String(tableId),
         },
     });
+    const { data: dataOrder, refetch: orderRefetch } = useGetOrderByIdQuery({
+        variables: {
+            orderByIdId: tableOrder?.orderId || '',
+        },
+    });
+
+    const updateCurrentOrder = (items: CurrentOrderItem<Dish>[], orderId?: string) => {
+        if (!tableOrder) return;
+
+        const newCurrentOrders = [...currentOrders];
+        newCurrentOrders[tableIdx] = tableOrder;
+        newCurrentOrders[tableIdx].items = items;
+
+        if (orderId) newCurrentOrders[tableIdx].orderId = orderId;
+        setCurrentOrders(newCurrentOrders);
+    };
 
     const handleQuantityChange = (idx: number, value: number): void => {
         if (!tableOrder) return;
@@ -48,10 +67,7 @@ const TableDetail = () => {
             tableOrder.items[idx].qty = sum;
         } else {
             const newItems = tableOrder.items.filter((_order, i) => i !== idx);
-            const newCurrentOrders = [...currentOrders];
-            newCurrentOrders[tableIdx] = tableOrder;
-            newCurrentOrders[tableIdx].items = newItems;
-            setCurrentOrders(newCurrentOrders);
+            updateCurrentOrder(newItems);
             toast('Platillo Eliminado', {
                 icon: '👏',
             });
@@ -79,7 +95,27 @@ const TableDetail = () => {
             if (errors !== undefined) throw new Error('Order items could not be created');
 
             const itemsIds = data?.createOrderItems.map((item) => item._id);
+            let orderRes;
 
+            if (tableOrder.orderId) {
+                orderRes = await AddItemsToOrderMutation({
+                    variables: {
+                        addItemsToOrderOrderId: '',
+                        addItemsToOrderItemsIds: itemsIds || [],
+                    },
+                });
+                updateCurrentOrder([]);
+            } else {
+                orderRes = await CreateOrderMutation({
+                    variables: {
+                        createOrderTableId: tableId.toString(),
+                        createOrderItemsIds: itemsIds || [],
+                    },
+                });
+                updateCurrentOrder([], orderRes.data?.createOrder._id);
+                orderRefetch();
+            }
+            toast.success('Pedido enviado a Cocina');
             console.log(data);
         } catch (error) {
             console.error(error);
@@ -87,12 +123,14 @@ const TableDetail = () => {
         }
     };
 
+    console.log(tableOrder);
+
     return (
         <ProtectedPage username="Mesero" redirectTo="/">
             <div className="min-h-screen p-8 bg-gray-200">
                 <Navbar />
                 <BackButton text="Regresar" pathNameOnBack="/waiter" />
-                <h1 className="text-3xl font-semibold text-brown">{data?.tableById?.name}</h1>
+                <h1 className="text-3xl font-semibold text-brown">{dataTable?.tableById?.name}</h1>
                 <Fab
                     icon={<HiPlus className="text-3xl" />}
                     alwaysShowTitle={true}
@@ -122,6 +160,18 @@ const TableDetail = () => {
                         <HiBan className="text-xl" />
                     </Action>
                 </Fab>
+
+                {(tableOrder === undefined || tableOrder.items.length <= 0) && (
+                    <>
+                        <h2 className="mt-4 text-brown">Nuevos Platillos:</h2>
+                        <div className="flex justify-center w-full my-10 opacity-70">
+                            <div className="flex flex-col items-center gap-4 text-sm text-gray-500">
+                                <span>Ooops! Olvidaste ordenar?</span>
+                                <FaUtensils className="text-xl" />
+                            </div>
+                        </div>
+                    </>
+                )}
 
                 <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
                     {tableOrder?.items.map((order, i) => (
@@ -157,14 +207,29 @@ const TableDetail = () => {
                     ))}
                 </div>
 
-                {tableOrder?.items.length === undefined && (
-                    <div className="flex justify-center w-full mt-32 opacity-70">
-                        <div className="flex flex-col items-center gap-4 text-sm text-gray-500">
-                            <span>Aún no hay ningún platillo</span>
-                            <FaUtensils className="text-xl" />
-                        </div>
-                    </div>
-                )}
+                {tableOrder?.orderId && <h2 className="mt-4 text-brown">Platillos Pedidos:</h2>}
+
+                {dataOrder?.orderById.items.map((item) => (
+                    <ParentCard url_img={item.dish.url_img?.toString()} key={item._id}>
+                        <CardInfo>
+                            <CardInfo.Title>
+                                <span>{item.dish.name}</span>
+                            </CardInfo.Title>
+                            <CardInfo.Body>
+                                <span>
+                                    Importe:{' '}
+                                    {intlFormat(
+                                        multiply(dinero(item.dish.price), item.quantity).toJSON(),
+                                        'es-MX'
+                                    )}
+                                </span>
+                            </CardInfo.Body>
+                            <CardInfo.Footer>
+                                <span> Cant: {item.quantity} </span>
+                            </CardInfo.Footer>
+                        </CardInfo>
+                    </ParentCard>
+                ))}
             </div>
         </ProtectedPage>
     );
