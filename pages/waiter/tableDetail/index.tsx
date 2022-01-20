@@ -143,9 +143,7 @@ const TableDetail = () => {
                     orderId: tableOrder.orderId,
                 },
             });
-            console.log(data);
             const newOrders = currentOrders.filter((order) => order.tableId !== tableId);
-            console.log(newOrders);
             setCurrentOrders(newOrders);
 
             setIsDangerOpen(false);
