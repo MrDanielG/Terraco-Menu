@@ -38,7 +38,6 @@ const TableMenu = (props: Props) => {
     const [currentOrders, setCurrentOrders] = useLocalStorage<CurrentOrder<Dish>[]>('orders', [
         { tableId: tableId?.toString() || '', items: [] },
     ]);
-    console.log('currentOrders', currentOrders);
 
     const tableOrder = currentOrders.find((order) => order.tableId === tableId);
 

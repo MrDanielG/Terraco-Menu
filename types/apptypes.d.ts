@@ -11,4 +11,5 @@ interface CurrentOrderItem<Tdish = unknown> {
 interface CurrentOrder<Tdish = unknown> {
     tableId: string;
     items: CurrentOrderItem<Tdish>[];
+    orderId?: string;
 }

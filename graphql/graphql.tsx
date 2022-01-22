@@ -825,7 +825,7 @@ export type GetOrderByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string } }> } };
+export type GetOrderByIdQuery = { __typename?: 'Query', orderById: { __typename?: 'Order', _id: string, orderNumber: number, start_time: any, table: { __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, token: string, enabled: boolean }, items: Array<{ __typename?: 'OrderItem', _id: string, quantity: number, status: Status, dish: { __typename?: 'Dish', description: string, name: string, price: any, _id: string, url_img?: string | null | undefined } }> } };
 
 export type GetDishSalesQueryVariables = Exact<{
   dishSalesTimezone: Scalars['String'];
@@ -1877,6 +1877,7 @@ export const GetOrderByIdDocument = gql`
         name
         price
         _id
+        url_img
       }
       quantity
       status
