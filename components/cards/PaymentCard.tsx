@@ -38,7 +38,7 @@ const PaymentCard = ({ ticket }: Props) => {
             setTicketStatusTikcetId: ticket._id,
         },
     });
-    const [setPaymentMethodMutation, { loading: payLoading }] = useSetPaymentMethodMutation({
+    const [setPaymentMethodMutation] = useSetPaymentMethodMutation({
         variables: {
             ticketId: ticket._id,
             paymentMethod: paymentMethod,
@@ -46,7 +46,7 @@ const PaymentCard = ({ ticket }: Props) => {
     });
     const acceptPaymentMethod = async () => {
         try {
-            const res = await setPaymentMethodMutation({
+            await setPaymentMethodMutation({
                 variables: {
                     ticketId: ticket._id,
                     paymentMethod: paymentMethod,
@@ -63,19 +63,6 @@ const PaymentCard = ({ ticket }: Props) => {
         } catch (error) {
             toast.error('Error al Confirmar Pago');
             console.error(error);
-        }
-    };
-    const printTicket = (url: string | null) => {
-        console.log('Imprimir Ticket');
-        handlePDFDownload(url);
-    };
-
-    const handlePDFDownload = (url: string | null) => {
-        if (url && window) {
-            const anchor = document.createElement('a');
-            anchor.href = url;
-            anchor.download = 'Terraco-ticket.pdf';
-            anchor.click();
         }
     };
     const getDineroPaymentMethodMaybe = (method: PayMethod) => {

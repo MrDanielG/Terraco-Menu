@@ -170,10 +170,8 @@ export const CHANGE_ORDER_ITEM_STATUS = gql`
 export const GENERATE_TICKET = gql`
     mutation GenerateTicket(
         $orderId: String!
-        $paymentMethod: [PaymentMethodDataInput!]!
-        $vat: Float
     ) {
-        generateTicket(orderId: $orderId, paymentMethod: $paymentMethod, vat: $vat) {
+        generateTicket(orderId: $orderId) {
             _id
             orderId
             ticketNumber

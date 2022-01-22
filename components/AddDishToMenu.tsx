@@ -46,7 +46,7 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
                 variables: { addDishToMenuIdDish: dishId, addDishToMenuIdMenu: menuId },
             });
             const newCurrentDishes = data?.addDishToMenu.dishes.map((dish) => dish._id);
-            const newAvailableDishes = getAvailableDishes(dataDishes?.dishes!, newCurrentDishes!);
+          const newAvailableDishes = getAvailableDishes(dataDishes?.dishes || [], newCurrentDishes!);
             allAvailableDishes.current = newAvailableDishes;
             setAvailableDishes(newAvailableDishes);
             toast.success('Platillo Agregado a Menú');
@@ -56,7 +56,7 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
         }
     };
 
-    const getAvailableDishes = (allDishes: Dish[], dishesIdToFilter: string[]): Dish[] => {
+  const getAvailableDishes = (allDishes: Dish[], dishesIdToFilter: string[]): Dish[] => {
         const availableDishes = allDishes.filter((dish) => {
             return !dishesIdToFilter.includes(dish._id);
         });
@@ -76,7 +76,7 @@ const AddDishToMenu = ({ currentDishesId, menuId }: Props) => {
         const name = category.name;
         let filtered = allAvailableDishes.current;
         if (name !== '') {
-            filtered = filtered.filter((dish) => dish.categories.includes(name));
+          filtered = filtered.filter((dish) => dish.categories.some( cat => cat.name === name));
         }
         setAvailableDishes(filtered);
     };

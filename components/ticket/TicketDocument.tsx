@@ -1,7 +1,5 @@
 import { Document, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
-// import html2canvas from 'html2canvas';
-import React, { useState, useEffect } from 'react';
-import { Ticket } from '../../graphql/graphql';
+import React from 'react';
 
 interface Props {
     ticketImgURL: string;

@@ -30,6 +30,7 @@ export const GET_MENUS = gql`
                 price
                 score
                 categories {
+                    _id
                     name
                     url_img
                 }
@@ -48,6 +49,7 @@ export const GET_DISHES = gql`
             price
             score
             categories {
+                _id
                 name
                 url_img
             }
@@ -89,6 +91,7 @@ export const GET_DISH_BY_ID = gql`
             price
             score
             categories {
+                _id
                 name
                 url_img
             }

@@ -11,7 +11,7 @@ import BigButton from '../components/buttons/BigButton';
 
 interface Props {}
 
-const DishDetail = (props: Props) => {
+const DishDetail = (_props: Props) => {
     const router = useRouter();
     const [quantity, setQuantity] = useState(1);
     const addToOrder = () => {

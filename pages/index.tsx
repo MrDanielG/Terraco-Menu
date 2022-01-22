@@ -158,7 +158,9 @@ export default function Home() {
         let filteredMenus = fullMenus;
         if (name !== '') {
             filteredMenus = fullMenus.map((menu) => {
-                const dishes = menu.dishes.filter((dish) => dish.categories.includes(name));
+                const dishes = menu.dishes.filter((dish) =>
+                    dish.categories.some((cat) => cat.name === name)
+                );
                 return { ...menu, dishes };
             });
         }

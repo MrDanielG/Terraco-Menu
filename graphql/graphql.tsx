@@ -734,8 +734,6 @@ export type ChangeOrderItemsStatusMutation = { __typename?: 'Mutation', changeOr
 
 export type GenerateTicketMutationVariables = Exact<{
   orderId: Scalars['String'];
-  paymentMethod: Array<PaymentMethodDataInput> | PaymentMethodDataInput;
-  vat?: Maybe<Scalars['Float']>;
 }>;
 
 
@@ -782,12 +780,12 @@ export type GetUserByEmailQuery = { __typename?: 'Query', userByEmail?: { __type
 export type GetMenusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: string | null | undefined, title: string, description: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, preparation_time?: any | null | undefined, categories: Array<{ __typename?: 'Category', name: string, url_img?: string | null | undefined }> }> }> };
+export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: string | null | undefined, title: string, description: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, preparation_time?: any | null | undefined, categories: Array<{ __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined }> }> }> };
 
 export type GetDishesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDishesQuery = { __typename?: 'Query', dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, preparation_time?: any | null | undefined, categories: Array<{ __typename?: 'Category', name: string, url_img?: string | null | undefined }> }> };
+export type GetDishesQuery = { __typename?: 'Query', dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, preparation_time?: any | null | undefined, categories: Array<{ __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined }> }> };
 
 export type GetTablesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -806,7 +804,7 @@ export type GetDishByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetDishByIdQuery = { __typename?: 'Query', dishById?: { __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, preparation_time?: any | null | undefined, categories: Array<{ __typename?: 'Category', name: string, url_img?: string | null | undefined }> } | null | undefined };
+export type GetDishByIdQuery = { __typename?: 'Query', dishById?: { __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, preparation_time?: any | null | undefined, categories: Array<{ __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined }> } | null | undefined };
 
 export type GetMenuByIdQueryVariables = Exact<{
   menuByIdId: Scalars['String'];
@@ -1306,8 +1304,8 @@ export type ChangeOrderItemsStatusMutationHookResult = ReturnType<typeof useChan
 export type ChangeOrderItemsStatusMutationResult = Apollo.MutationResult<ChangeOrderItemsStatusMutation>;
 export type ChangeOrderItemsStatusMutationOptions = Apollo.BaseMutationOptions<ChangeOrderItemsStatusMutation, ChangeOrderItemsStatusMutationVariables>;
 export const GenerateTicketDocument = gql`
-    mutation GenerateTicket($orderId: String!, $paymentMethod: [PaymentMethodDataInput!]!, $vat: Float) {
-  generateTicket(orderId: $orderId, paymentMethod: $paymentMethod, vat: $vat) {
+    mutation GenerateTicket($orderId: String!) {
+  generateTicket(orderId: $orderId) {
     _id
     orderId
     ticketNumber
@@ -1345,8 +1343,6 @@ export type GenerateTicketMutationFn = Apollo.MutationFunction<GenerateTicketMut
  * const [generateTicketMutation, { data, loading, error }] = useGenerateTicketMutation({
  *   variables: {
  *      orderId: // value for 'orderId'
- *      paymentMethod: // value for 'paymentMethod'
- *      vat: // value for 'vat'
  *   },
  * });
  */
@@ -1563,6 +1559,7 @@ export const GetMenusDocument = gql`
       price
       score
       categories {
+        _id
         name
         url_img
       }
@@ -1608,6 +1605,7 @@ export const GetDishesDocument = gql`
     price
     score
     categories {
+      _id
       name
       url_img
     }
@@ -1729,6 +1727,7 @@ export const GetDishByIdDocument = gql`
     price
     score
     categories {
+      _id
       name
       url_img
     }
