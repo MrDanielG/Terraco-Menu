@@ -1,6 +1,6 @@
 import { dinero, DineroOptions, toFormat } from 'dinero.js';
 import Fuse from 'fuse.js';
-import { DishSalesStats } from '../graphql/graphql';
+import { DishSalesStats, PaymentMethod, PayMethod } from '../graphql/graphql';
 
 const deftransformer = ({ amount }: DineroOptions<number>) => `\$ ${amount}`;
 
@@ -32,7 +32,7 @@ export function getMonthName(year: number, month: number) {
 
 export function getDayNumberDate(locale: string) {
     const date = new Date();
-  return date.toLocaleString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+    return date.toLocaleString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 export function getTime(timestamp: any, locale: string) {
@@ -82,4 +82,28 @@ export function topDishSells(dishSales: DishSalesStats[]): DishSalesStats[] {
 export function search<T>(pattern: string, list: T[], keys: Fuse.FuseOptionKey[]) {
     const fuse = new Fuse(list, { isCaseSensitive: false, keys: keys, threshold: 0.2 });
     return fuse.search(pattern);
+}
+
+export const PayMappings = new Map<PayMethod, string>([
+    [PayMethod.Cash, 'Efectivo'],
+    [PayMethod.Tc, 'Tarjeta'],
+]);
+
+export function paymentMethodsToString(paymentMethods: PaymentMethod[]) {
+    if (paymentMethods.length === 0) return 'No definido';
+
+    if (paymentMethods.length === 1)
+        return PayMappings.get(paymentMethods[0].method) || 'Desconocido';
+
+    if (paymentMethods.length > 1) {
+        let method = 'Mixto';
+        if (paymentMethods[0].paymentAmount.amount === 0) {
+            method = PayMappings.get(paymentMethods[1].method) || method;
+        }
+
+        if (paymentMethods[1].paymentAmount.amount === 0) {
+            method = PayMappings.get(paymentMethods[0].method) || method;
+        }
+        return method;
+    }
 }

@@ -29,7 +29,10 @@ export const GET_MENUS = gql`
                 url_img
                 price
                 score
-                categories
+                categories {
+                    name
+                    url_img
+                }
                 preparation_time
             }
         }
@@ -44,7 +47,10 @@ export const GET_DISHES = gql`
             url_img
             price
             score
-            categories
+            categories {
+                name
+                url_img
+            }
             preparation_time
         }
     }
@@ -82,7 +88,10 @@ export const GET_DISH_BY_ID = gql`
             url_img
             price
             score
-            categories
+            categories {
+                name
+                url_img
+            }
             preparation_time
         }
     }
@@ -227,7 +236,10 @@ export const GET_TICKETS = gql`
             _id
             timestamp
             status
-            paymentMethod
+            paymentMethod {
+                method
+                paymentAmount
+            }
             tableName
             tableNumber
             ticketNumber
@@ -255,7 +267,10 @@ export const GET_TICKET_BY_ID = gql`
             tableName
             tableNumber
             total
-            paymentMethod
+            paymentMethod {
+                method
+                paymentAmount
+            }
             vat
         }
     }

@@ -161,7 +161,7 @@ const PaymentModal = (props: Props) => {
                                             pathname: '/ticketView',
                                             query: {
                                                 tableId: props.tableId,
-                                                paymentMethod: selected.type,
+                                                paymentMethod: [],
                                             },
                                         })
                                     }

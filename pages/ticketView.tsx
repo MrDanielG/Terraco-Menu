@@ -104,7 +104,7 @@ const TicketView = (props: Props) => {
             const ticket = await GenerateTicket({
                 variables: {
                     orderId: orderRes.data?.orderById._id || order?._id || '',
-                    paymentMethod: paymentMethod?.toString(),
+                    paymentMethod: [],
                     vat: 16,
                 },
             });

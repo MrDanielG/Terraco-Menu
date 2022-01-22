@@ -34,7 +34,10 @@ export const TICKET_CHANGES = gql`
             tableName
             tableNumber
             total
-            paymentMethod
+            paymentMethod {
+                method
+                paymentAmount
+            }
             vat
             status
             items {
