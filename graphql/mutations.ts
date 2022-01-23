@@ -29,7 +29,10 @@ export const ADD_DISH = gql`
             url_img
             price
             preparation_time
-            categories
+            categories {
+                name
+                url_img
+            }
         }
     }
 `;
@@ -165,15 +168,20 @@ export const CHANGE_ORDER_ITEM_STATUS = gql`
 `;
 
 export const GENERATE_TICKET = gql`
-    mutation GenerateTicket($orderId: String!, $paymentMethod: String, $vat: Float) {
-        generateTicket(orderId: $orderId, paymentMethod: $paymentMethod, vat: $vat) {
+    mutation GenerateTicket(
+        $orderId: String!
+    ) {
+        generateTicket(orderId: $orderId) {
             _id
             orderId
             ticketNumber
             timestamp
             tableName
             total
-            paymentMethod
+            paymentMethod {
+                method
+                paymentAmount
+            }
             vat
             items {
                 _id
@@ -197,7 +205,17 @@ export const SET_TICKET_STATUS = gql`
         }
     }
 `;
-
+export const SET_PAYMENT_METHOD = gql`
+    mutation SetPaymentMethod($paymentMethod: [PaymentMethodDataInput!]!, $ticketId: String!) {
+        setPaymentMethod(paymentMethod: $paymentMethod, ticketId: $ticketId) {
+            _id
+            paymentMethod {
+                paymentAmount
+                method
+            }
+        }
+    }
+`;
 export const REMOVE_DISH_FROM_MENU = gql`
     mutation RemoveDishFromMenu(
         $removeDishFromMenuIdDish: String!

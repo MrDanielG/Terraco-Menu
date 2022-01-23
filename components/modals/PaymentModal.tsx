@@ -110,7 +110,7 @@ const PaymentModal = (props: Props) => {
                                                         } relative rounded-lg shadow-md px-5 py-4 cursor-pointer flex focus:outline-none`
                                                     }
                                                 >
-                                                    {({ active, checked }) => (
+                                                    {({ checked }) => (
                                                         <>
                                                             <div className="flex items-center justify-between w-full">
                                                                 <div className="flex items-center">
@@ -161,7 +161,7 @@ const PaymentModal = (props: Props) => {
                                             pathname: '/ticketView',
                                             query: {
                                                 tableId: props.tableId,
-                                                paymentMethod: selected.type,
+                                                paymentMethod: [],
                                             },
                                         })
                                     }

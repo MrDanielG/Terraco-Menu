@@ -79,7 +79,7 @@ const Platillos = (props: Props) => {
         const name = category.name;
         let filtered = allDishes;
         if (name !== '') {
-            filtered = filtered.filter((dish) => dish.categories.includes(name));
+            filtered = filtered.filter((dish) => dish.categories.some((cat) => cat.name === name));
         }
         setDishes(filtered);
     };
