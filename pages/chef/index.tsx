@@ -9,7 +9,7 @@ import CategoryBar, { CategoryBarRef } from '../../components/layout/CategoryBar
 import Navbar from '../../components/layout/Navbar';
 import SearchBar, { SearchBarRef } from '../../components/layout/SearchBar';
 import ProtectedPage from '../../components/ProtectedPage';
-import { Menu, useGetMenusQuery } from '../../graphql/graphql';
+import { Menu, useGetMenusNoDishesQuery } from '../../graphql/graphql';
 import useRedirect from '../../hooks/useRedirect';
 
 const categoryData = [
@@ -28,13 +28,13 @@ interface Props {}
 const ChefHome = (props: Props) => {
     useRedirect();
     const router = useRouter();
-    const { data } = useGetMenusQuery();
+    const { data } = useGetMenusNoDishesQuery();
     const catBarRef = useRef<CategoryBarRef | null>(null);
     const searchBarRef = useRef<SearchBarRef | null>(null);
-    const [menus, setMenus] = useState<Menu[]>([]);
+    const [menus, setMenus] = useState<Partial<Menu>[]>([]);
     const [loading, setLoading] = useState(true);
     const allMenus = data?.menus || [];
-
+    console.log('allMenus: ', data);
     const handleCategoryFilter = (category: ICategoryData) => {
         if (searchBarRef.current) {
             searchBarRef.current.setInput('');
@@ -43,7 +43,7 @@ const ChefHome = (props: Props) => {
         setMenus(allMenus.filter((menu) => menu.isActive === isActive));
     };
 
-    const handleSearch = (results: Menu[], pattern: string) => {
+    const handleSearch = (results: Partial<Menu>[], pattern: string) => {
         catBarRef.current?.reset();
         if (pattern !== '' || results.length > 0) {
             setMenus(results);

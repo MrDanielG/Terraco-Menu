@@ -85,7 +85,7 @@ const Platillos = (props: Props) => {
     };
 
     const [springs, bind] = useSwipe(dishes.length || 0, handleDeleteDish);
-
+    console.log('springs: ', springs);
     return (
         <ProtectedPage username="Chef" redirectTo="/">
             <div className="min-h-screen p-8 bg-gray-200">
@@ -132,9 +132,6 @@ const Platillos = (props: Props) => {
                         </animated.div>
                     ))}
                 </div>
-
-                <ParentCard />
-
                 <AddButton onClick={() => router.push('/chef/addDish')} />
             </div>
 

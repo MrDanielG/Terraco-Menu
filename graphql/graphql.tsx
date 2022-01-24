@@ -770,6 +770,14 @@ export type DelDishByIdMutationVariables = Exact<{
 
 export type DelDishByIdMutation = { __typename?: 'Mutation', delDishById: number };
 
+export type AddCategoryMutationVariables = Exact<{
+  urlImg: Scalars['String'];
+  name: Scalars['String'];
+}>;
+
+
+export type AddCategoryMutation = { __typename?: 'Mutation', addCategory: { __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined } };
+
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
 }>;
@@ -781,6 +789,11 @@ export type GetMenusQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetMenusQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: string | null | undefined, title: string, description: string, dishes: Array<{ __typename?: 'Dish', _id: string, name: string, description: string, url_img?: string | null | undefined, price: any, score?: number | null | undefined, preparation_time?: any | null | undefined, categories: Array<{ __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined }> }> }> };
+
+export type GetMenusNoDishesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMenusNoDishesQuery = { __typename?: 'Query', menus: Array<{ __typename?: 'Menu', _id: string, isActive: boolean, url_img?: string | null | undefined, title: string, description: string }> };
 
 export type GetDishesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -871,6 +884,18 @@ export type GetTicketByIdQueryVariables = Exact<{
 
 
 export type GetTicketByIdQuery = { __typename?: 'Query', ticketById: { __typename?: 'Ticket', _id: string, status: TicketStatus, orderId: string, ticketNumber: number, timestamp: any, tableName: string, tableNumber: number, total: any, vat: number, paymentMethod: Array<{ __typename?: 'PaymentMethod', method: PayMethod, paymentAmount: any }> } };
+
+export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined }> };
+
+export type GetCategoryByIdQueryVariables = Exact<{
+  categoryId: Scalars['String'];
+}>;
+
+
+export type GetCategoryByIdQuery = { __typename?: 'Query', categoryById: { __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined } };
 
 export type OrderChangesSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -1502,6 +1527,42 @@ export function useDelDishByIdMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DelDishByIdMutationHookResult = ReturnType<typeof useDelDishByIdMutation>;
 export type DelDishByIdMutationResult = Apollo.MutationResult<DelDishByIdMutation>;
 export type DelDishByIdMutationOptions = Apollo.BaseMutationOptions<DelDishByIdMutation, DelDishByIdMutationVariables>;
+export const AddCategoryDocument = gql`
+    mutation AddCategory($urlImg: String!, $name: String!) {
+  addCategory(url_img: $urlImg, name: $name) {
+    _id
+    name
+    url_img
+  }
+}
+    `;
+export type AddCategoryMutationFn = Apollo.MutationFunction<AddCategoryMutation, AddCategoryMutationVariables>;
+
+/**
+ * __useAddCategoryMutation__
+ *
+ * To run a mutation, you first call `useAddCategoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCategoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCategoryMutation, { data, loading, error }] = useAddCategoryMutation({
+ *   variables: {
+ *      urlImg: // value for 'urlImg'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useAddCategoryMutation(baseOptions?: Apollo.MutationHookOptions<AddCategoryMutation, AddCategoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCategoryMutation, AddCategoryMutationVariables>(AddCategoryDocument, options);
+      }
+export type AddCategoryMutationHookResult = ReturnType<typeof useAddCategoryMutation>;
+export type AddCategoryMutationResult = Apollo.MutationResult<AddCategoryMutation>;
+export type AddCategoryMutationOptions = Apollo.BaseMutationOptions<AddCategoryMutation, AddCategoryMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {
@@ -1595,6 +1656,44 @@ export function useGetMenusLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetMenusQueryHookResult = ReturnType<typeof useGetMenusQuery>;
 export type GetMenusLazyQueryHookResult = ReturnType<typeof useGetMenusLazyQuery>;
 export type GetMenusQueryResult = Apollo.QueryResult<GetMenusQuery, GetMenusQueryVariables>;
+export const GetMenusNoDishesDocument = gql`
+    query GetMenusNoDishes {
+  menus {
+    _id
+    isActive
+    url_img
+    title
+    description
+  }
+}
+    `;
+
+/**
+ * __useGetMenusNoDishesQuery__
+ *
+ * To run a query within a React component, call `useGetMenusNoDishesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenusNoDishesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMenusNoDishesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMenusNoDishesQuery(baseOptions?: Apollo.QueryHookOptions<GetMenusNoDishesQuery, GetMenusNoDishesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMenusNoDishesQuery, GetMenusNoDishesQueryVariables>(GetMenusNoDishesDocument, options);
+      }
+export function useGetMenusNoDishesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMenusNoDishesQuery, GetMenusNoDishesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMenusNoDishesQuery, GetMenusNoDishesQueryVariables>(GetMenusNoDishesDocument, options);
+        }
+export type GetMenusNoDishesQueryHookResult = ReturnType<typeof useGetMenusNoDishesQuery>;
+export type GetMenusNoDishesLazyQueryHookResult = ReturnType<typeof useGetMenusNoDishesLazyQuery>;
+export type GetMenusNoDishesQueryResult = Apollo.QueryResult<GetMenusNoDishesQuery, GetMenusNoDishesQueryVariables>;
 export const GetDishesDocument = gql`
     query GetDishes {
   dishes {
@@ -2186,6 +2285,79 @@ export function useGetTicketByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetTicketByIdQueryHookResult = ReturnType<typeof useGetTicketByIdQuery>;
 export type GetTicketByIdLazyQueryHookResult = ReturnType<typeof useGetTicketByIdLazyQuery>;
 export type GetTicketByIdQueryResult = Apollo.QueryResult<GetTicketByIdQuery, GetTicketByIdQueryVariables>;
+export const GetCategoriesDocument = gql`
+    query GetCategories {
+  categories {
+    _id
+    name
+    url_img
+  }
+}
+    `;
+
+/**
+ * __useGetCategoriesQuery__
+ *
+ * To run a query within a React component, call `useGetCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<GetCategoriesQuery, GetCategoriesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCategoriesQuery, GetCategoriesQueryVariables>(GetCategoriesDocument, options);
+      }
+export function useGetCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCategoriesQuery, GetCategoriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCategoriesQuery, GetCategoriesQueryVariables>(GetCategoriesDocument, options);
+        }
+export type GetCategoriesQueryHookResult = ReturnType<typeof useGetCategoriesQuery>;
+export type GetCategoriesLazyQueryHookResult = ReturnType<typeof useGetCategoriesLazyQuery>;
+export type GetCategoriesQueryResult = Apollo.QueryResult<GetCategoriesQuery, GetCategoriesQueryVariables>;
+export const GetCategoryByIdDocument = gql`
+    query GetCategoryById($categoryId: String!) {
+  categoryById(categoryId: $categoryId) {
+    _id
+    name
+    url_img
+  }
+}
+    `;
+
+/**
+ * __useGetCategoryByIdQuery__
+ *
+ * To run a query within a React component, call `useGetCategoryByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCategoryByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCategoryByIdQuery({
+ *   variables: {
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function useGetCategoryByIdQuery(baseOptions: Apollo.QueryHookOptions<GetCategoryByIdQuery, GetCategoryByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCategoryByIdQuery, GetCategoryByIdQueryVariables>(GetCategoryByIdDocument, options);
+      }
+export function useGetCategoryByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCategoryByIdQuery, GetCategoryByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCategoryByIdQuery, GetCategoryByIdQueryVariables>(GetCategoryByIdDocument, options);
+        }
+export type GetCategoryByIdQueryHookResult = ReturnType<typeof useGetCategoryByIdQuery>;
+export type GetCategoryByIdLazyQueryHookResult = ReturnType<typeof useGetCategoryByIdLazyQuery>;
+export type GetCategoryByIdQueryResult = Apollo.QueryResult<GetCategoryByIdQuery, GetCategoryByIdQueryVariables>;
 export const OrderChangesDocument = gql`
     subscription OrderChanges {
   orderChanges {
