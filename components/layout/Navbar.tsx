@@ -182,6 +182,11 @@ const Navbar = (props: Props) => {
                                                                 </Link>
                                                             </li>
                                                             <li className="my-8">
+                                                                <Link href="/chef/categorias">
+                                                                    <a>Categorías</a>
+                                                                </Link>
+                                                            </li>
+                                                            <li className="my-8">
                                                                 <a
                                                                     className="cursor-pointer"
                                                                     onClick={logOut}

@@ -19,6 +19,7 @@ import {
 import { useSwipe } from '../../hooks/useSwipe';
 import { intlFormat } from '../../lib/utils';
 
+
 interface Props {}
 
 const Platillos = (props: Props) => {
@@ -76,7 +77,7 @@ const Platillos = (props: Props) => {
     };
 
     const [springs, bind] = useSwipe(dishes.length || 0, handleDeleteDish);
-    console.log('springs: ', springs);
+
     return (
         <ProtectedPage username="Chef" redirectTo="/">
             <div className="min-h-screen p-8 bg-gray-200">
@@ -96,8 +97,6 @@ const Platillos = (props: Props) => {
                     ref={catBarRef}
                     all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
                 />
-
-                <h2 className="mt-10 mb-6 text-lg text-brown">Entrantes</h2>
 
                 <p className="mt-4 text-xs text-center text-gray-500">
                     Desliza a la izquierda para eliminar un platillo
