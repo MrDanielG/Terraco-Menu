@@ -245,3 +245,19 @@ export const ADD_CATEGORY = gql`
         }
     }
 `;
+
+export const DELETE_CATEGORY_BY_ID = gql`
+    mutation DelCategoryById($categoryId: String!) {
+        delCategoryById(categoryId: $categoryId)
+    }
+`;
+
+export const UPDATE_CATEGORY = gql`
+    mutation UpdateCategory($urlImg: String!, $name: String!, $categoryId: String!) {
+        updateCategory(url_img: $urlImg, name: $name, categoryId: $categoryId) {
+            _id
+            name
+            url_img
+        }
+    }
+`;

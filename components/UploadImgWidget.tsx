@@ -4,6 +4,7 @@ import { HiPhotograph } from 'react-icons/hi';
 
 interface Props {
     onChange?: (file: File | null) => void;
+    initURL?: string | null | undefined;
 }
 
 export const uploadImage = async (image: File) => {
@@ -22,16 +23,16 @@ export const uploadImage = async (image: File) => {
     return url;
 };
 
-const UploadImgWidget = (props: Props) => {
+const UploadImgWidget: React.FC<Props> = ({ onChange, initURL }) => {
     const [image, setImage] = useState<File | null>(null);
     const [url, setUrl] = useState<string | null>(null);
 
     useEffect(() => {
-        if (props.onChange && image) {
-            props.onChange(image);
+        if (onChange && image) {
+            onChange(image);
         }
         return () => setImage(null);
-    }, [image, props]);
+    }, [image, onChange]);
 
     const onImageChange = (event: React.FormEvent) => {
         const files = (event.target as HTMLInputElement).files;
@@ -49,11 +50,22 @@ const UploadImgWidget = (props: Props) => {
         <div className="w-40 h-40 flex justify-center items-center text-sm text-white text-center bg-brown rounded-full">
             <label htmlFor="file-upload" className="cursor-pointer">
                 {/* <span>Upload a file</span> */}
-                {url === null && <HiPhotograph className="w-20 h-20" />}
-                {url && (
+                {!!!url && !!!initURL && <HiPhotograph className="w-20 h-20" />}
+                {!!url && (
                     <figure className="relative w-40 h-40 rounded-full overflow-hidden">
                         <Image
                             src={url}
+                            loader={customImgLoader}
+                            alt="Dish img"
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                    </figure>
+                )}
+                {!!initURL && !!!url && (
+                    <figure className="relative w-40 h-40 rounded-full overflow-hidden">
+                        <Image
+                            src={initURL}
                             loader={customImgLoader}
                             alt="Dish img"
                             layout="fill"

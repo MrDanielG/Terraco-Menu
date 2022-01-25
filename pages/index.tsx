@@ -180,9 +180,9 @@ export default function Home() {
             <div>
                 {menus.length > 0 &&
                     menus.map(
-                        (menu) =>
+                        (menu, i) =>
                             menu.dishes.length > 0 && (
-                                <>
+                                <div key={i}>
                                     <h2 className="mt-10 mb-6 text-lg uppercase text-brown">
                                         {menu.title}
                                     </h2>
@@ -227,7 +227,7 @@ export default function Home() {
                                             </ParentCard>
                                         ))}
                                     </div>
-                                </>
+                                </div>
                             )
                     )}
             </div>

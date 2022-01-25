@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -6,38 +6,51 @@ import BackButton from '../../components/buttons/BackButton';
 import BigButton from '../../components/buttons/BigButton';
 import Navbar from '../../components/layout/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
-import { useAddCategoryMutation } from '../../graphql/graphql';
+import { useGetCategoryByIdQuery, useUpdateCategoryMutation } from '../../graphql/graphql';
 import UploadImgWidget, { uploadImage } from '../../components/UploadImgWidget';
 
 interface Props {}
 interface CategoryData {
     name: string;
 }
-const AddCategory: React.FC<Props> = ({ children }) => {
+const UpdateCategory: React.FC<Props> = ({ children }) => {
     const router = useRouter();
+    const { id } = router.query;
+    const categoryId = id?.toString() || '';
+    const { data } = useGetCategoryByIdQuery({
+        variables: { categoryId },
+    });
     const [imgFile, setImgFile] = useState<File | null>(null);
+    const [imgURL, setImgURL] = useState(data?.categoryById.url_img);
+    useEffect(() => {
+        setImgURL(data?.categoryById.url_img);
+        setValue('name', data?.categoryById.name || '');
+        console.log('data update');
+    }, [data]);
     const {
         register,
         handleSubmit,
         formState: { errors, isValid },
-    } = useForm<CategoryData>({ mode: 'onChange' });
+        setValue,
+    } = useForm<CategoryData>({ mode: 'onChange', defaultValues: { name: 'hola' } });
     const [loading, setLoading] = useState(false);
-    const [addCategory] = useAddCategoryMutation();
+    const [updateCategory] = useUpdateCategoryMutation();
 
     const onSubmit: SubmitHandler<CategoryData> = async ({ name }, e) => {
         try {
-            if (!!!imgFile) {
-                return;
-            }
             setLoading(true);
-            const urlImg = await uploadImage(imgFile);
-            await addCategory({
+            let urlImg = imgURL || '';
+            if (!!imgFile) {
+                urlImg = await uploadImage(imgFile);
+            }
+            await updateCategory({
                 variables: {
+                    categoryId,
                     name,
                     urlImg,
                 },
             });
-            toast.success('Categría Creada');
+            toast.success('Categría Actualizada');
             e?.target.reset();
             router.push('/chef/categorias');
         } catch (err) {
@@ -46,21 +59,20 @@ const AddCategory: React.FC<Props> = ({ children }) => {
             setLoading(false);
         }
     };
-
     return (
         <ProtectedPage username="Chef" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown mb-8">Crear Categoría</h1>
+                <h1 className="font-semibold text-3xl text-brown mb-8">Editar Categoría</h1>
 
                 <BackButton text="Regresar" pathNameOnBack="/chef/categorias" />
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex justify-center items-center flex-col">
                         <div className="my-3">
-                            <UploadImgWidget onChange={setImgFile} />
+                            <UploadImgWidget onChange={setImgFile} initURL={imgURL} />
                         </div>
-                        {!imgFile && (
+                        {!!!imgURL && (
                             <span className="text-sm my-2 text-red-600 text-center">
                                 Imagen requerida
                             </span>
@@ -88,8 +100,8 @@ const AddCategory: React.FC<Props> = ({ children }) => {
                     </div>
 
                     <BigButton
-                        text="Añadir Categoría"
-                        isDisabled={!isValid || loading || !!!imgFile}
+                        text="Actualizar Categoría"
+                        isDisabled={!isValid || loading || !!!imgURL}
                     />
                 </form>
                 {children}
@@ -98,4 +110,4 @@ const AddCategory: React.FC<Props> = ({ children }) => {
     );
 };
 
-export default AddCategory;
+export default UpdateCategory;

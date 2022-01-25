@@ -154,6 +154,7 @@ export type Mutation = {
   createOrder: Order;
   createOrderItem: OrderItem;
   createOrderItems: Array<OrderItem>;
+  delCategoryById: Scalars['Int'];
   delDishById: Scalars['Int'];
   delItemsFromOrder: Order;
   delMenuById: Scalars['Int'];
@@ -238,6 +239,11 @@ export type MutationCreateOrderItemArgs = {
 
 export type MutationCreateOrderItemsArgs = {
   items: Array<CreateOrderItemsInput>;
+};
+
+
+export type MutationDelCategoryByIdArgs = {
+  categoryId: Scalars['String'];
 };
 
 
@@ -338,6 +344,7 @@ export type MutationSumToOrderItemArgs = {
 export type MutationUpdateCategoryArgs = {
   categoryId: Scalars['String'];
   name: Scalars['String'];
+  url_img: Scalars['String'];
 };
 
 
@@ -777,6 +784,22 @@ export type AddCategoryMutationVariables = Exact<{
 
 
 export type AddCategoryMutation = { __typename?: 'Mutation', addCategory: { __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined } };
+
+export type DelCategoryByIdMutationVariables = Exact<{
+  categoryId: Scalars['String'];
+}>;
+
+
+export type DelCategoryByIdMutation = { __typename?: 'Mutation', delCategoryById: number };
+
+export type UpdateCategoryMutationVariables = Exact<{
+  urlImg: Scalars['String'];
+  name: Scalars['String'];
+  categoryId: Scalars['String'];
+}>;
+
+
+export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory: { __typename?: 'Category', _id: string, name: string, url_img?: string | null | undefined } };
 
 export type GetUserByEmailQueryVariables = Exact<{
   userByEmailEmail: Scalars['String'];
@@ -1563,6 +1586,74 @@ export function useAddCategoryMutation(baseOptions?: Apollo.MutationHookOptions<
 export type AddCategoryMutationHookResult = ReturnType<typeof useAddCategoryMutation>;
 export type AddCategoryMutationResult = Apollo.MutationResult<AddCategoryMutation>;
 export type AddCategoryMutationOptions = Apollo.BaseMutationOptions<AddCategoryMutation, AddCategoryMutationVariables>;
+export const DelCategoryByIdDocument = gql`
+    mutation DelCategoryById($categoryId: String!) {
+  delCategoryById(categoryId: $categoryId)
+}
+    `;
+export type DelCategoryByIdMutationFn = Apollo.MutationFunction<DelCategoryByIdMutation, DelCategoryByIdMutationVariables>;
+
+/**
+ * __useDelCategoryByIdMutation__
+ *
+ * To run a mutation, you first call `useDelCategoryByIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelCategoryByIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delCategoryByIdMutation, { data, loading, error }] = useDelCategoryByIdMutation({
+ *   variables: {
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function useDelCategoryByIdMutation(baseOptions?: Apollo.MutationHookOptions<DelCategoryByIdMutation, DelCategoryByIdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelCategoryByIdMutation, DelCategoryByIdMutationVariables>(DelCategoryByIdDocument, options);
+      }
+export type DelCategoryByIdMutationHookResult = ReturnType<typeof useDelCategoryByIdMutation>;
+export type DelCategoryByIdMutationResult = Apollo.MutationResult<DelCategoryByIdMutation>;
+export type DelCategoryByIdMutationOptions = Apollo.BaseMutationOptions<DelCategoryByIdMutation, DelCategoryByIdMutationVariables>;
+export const UpdateCategoryDocument = gql`
+    mutation UpdateCategory($urlImg: String!, $name: String!, $categoryId: String!) {
+  updateCategory(url_img: $urlImg, name: $name, categoryId: $categoryId) {
+    _id
+    name
+    url_img
+  }
+}
+    `;
+export type UpdateCategoryMutationFn = Apollo.MutationFunction<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
+
+/**
+ * __useUpdateCategoryMutation__
+ *
+ * To run a mutation, you first call `useUpdateCategoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCategoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCategoryMutation, { data, loading, error }] = useUpdateCategoryMutation({
+ *   variables: {
+ *      urlImg: // value for 'urlImg'
+ *      name: // value for 'name'
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function useUpdateCategoryMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCategoryMutation, UpdateCategoryMutationVariables>(UpdateCategoryDocument, options);
+      }
+export type UpdateCategoryMutationHookResult = ReturnType<typeof useUpdateCategoryMutation>;
+export type UpdateCategoryMutationResult = Apollo.MutationResult<UpdateCategoryMutation>;
+export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
 export const GetUserByEmailDocument = gql`
     query getUserByEmail($userByEmailEmail: String!) {
   userByEmail(email: $userByEmailEmail) {
