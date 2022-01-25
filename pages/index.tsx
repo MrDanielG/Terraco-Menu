@@ -10,30 +10,18 @@ import CategoryBar, { CategoryBarRef } from '../components/layout/CategoryBar';
 import Navbar from '../components/layout/Navbar';
 import SearchBar, { SearchBarRef } from '../components/layout/SearchBar';
 import Modal from '../components/modals/Modal';
-import { Dish, Menu, Order, useGetMenusQuery, useGetTableByIdQuery } from '../graphql/graphql';
+import {
+    Dish,
+    Menu,
+    Order,
+    useGetMenusQuery,
+    useGetTableByIdQuery,
+    useGetCategoriesQuery,
+} from '../graphql/graphql';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { enUS } from '../lib/i18n/enUS';
 import { esMX } from '../lib/i18n/esMX';
 import { intlFormat } from '../lib/utils';
-
-const categoryData = [
-    {
-        name: 'Platillos',
-        url: 'https://images.unsplash.com/photo-1519077336050-4ca5cac9d64f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-    },
-    {
-        name: 'Bebidas',
-        url: 'https://images.unsplash.com/photo-1599225745889-5697ac8ed5d2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=967&q=80',
-    },
-    {
-        name: 'Postres',
-        url: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    },
-    {
-        name: 'Ensaladas',
-        url: 'https://images.unsplash.com/photo-1595670002930-b30d563cf121?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1490&q=80',
-    },
-];
 
 export default function Home() {
     const router = useRouter();
@@ -46,6 +34,11 @@ export default function Home() {
     const [menus, setMenus] = useState<Menu[]>([]);
     const [dishes, setDishes] = useState<Dish[]>([]);
     const { data } = useGetMenusQuery();
+    const { data: cData } = useGetCategoriesQuery();
+    const categoryData =
+        cData?.categories.map((cat) => {
+            return { name: cat.name, url: cat.url_img || '' };
+        }) || [];
     const fullMenus = data ? data.menus.filter((menu) => menu.isActive) : [];
     const fullDishes =
         fullMenus.length > 0
@@ -187,9 +180,9 @@ export default function Home() {
             <div>
                 {menus.length > 0 &&
                     menus.map(
-                        (menu) =>
+                        (menu, i) =>
                             menu.dishes.length > 0 && (
-                                <>
+                                <div key={i}>
                                     <h2 className="mt-10 mb-6 text-lg uppercase text-brown">
                                         {menu.title}
                                     </h2>
@@ -234,7 +227,7 @@ export default function Home() {
                                             </ParentCard>
                                         ))}
                                     </div>
-                                </>
+                                </div>
                             )
                     )}
             </div>

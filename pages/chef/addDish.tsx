@@ -14,6 +14,7 @@ import {
     useAddDishMutation,
     useAddDishToMenuMutation,
     useGetMenusQuery,
+    useGetCategoriesQuery,
 } from '../../graphql/graphql';
 
 interface Props {}
@@ -28,6 +29,7 @@ const AddDish = (props: Props) => {
     const [imgFile, setImgFile] = useState<File | null>(null);
     const [loadingRequests, setLoadingRequests] = useState(false);
     const { data, loading: loadingMenus } = useGetMenusQuery();
+    const { data: categoriesData, loading: loadingCategories } = useGetCategoriesQuery();
     const {
         register,
         control,
@@ -47,11 +49,12 @@ const AddDish = (props: Props) => {
             label: time,
         };
     });
-    const categoryValues = ['Platillos', 'Bebidas', 'Postres', 'Ensaladas'];
+    // const categoryValues = ['Platillos', 'Bebidas', 'Postres', 'Ensaladas'];
+    const categoryValues = categoriesData?.categories || [];
     const categoryOpts = categoryValues.map((category) => {
         return {
-            value: category,
-            label: category,
+            value: category._id,
+            label: category.name,
         };
     });
     const [addDishMutation] = useAddDishMutation();
@@ -194,6 +197,7 @@ const AddDish = (props: Props) => {
                                 <Select
                                     {...field}
                                     isMulti
+                                    isLoading={loadingCategories}
                                     placeholder="Bebidas, Postres, etc."
                                     className="mt-2"
                                     id="categories"

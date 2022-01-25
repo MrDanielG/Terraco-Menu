@@ -168,9 +168,7 @@ export const CHANGE_ORDER_ITEM_STATUS = gql`
 `;
 
 export const GENERATE_TICKET = gql`
-    mutation GenerateTicket(
-        $orderId: String!
-    ) {
+    mutation GenerateTicket($orderId: String!) {
         generateTicket(orderId: $orderId) {
             _id
             orderId
@@ -235,5 +233,31 @@ export const REMOVE_DISH_FROM_MENU = gql`
 export const DELETE_DISH_BY_ID = gql`
     mutation DelDishById($delDishByIdId: String!) {
         delDishById(id: $delDishByIdId)
+    }
+`;
+
+export const ADD_CATEGORY = gql`
+    mutation AddCategory($urlImg: String!, $name: String!) {
+        addCategory(url_img: $urlImg, name: $name) {
+            _id
+            name
+            url_img
+        }
+    }
+`;
+
+export const DELETE_CATEGORY_BY_ID = gql`
+    mutation DelCategoryById($categoryId: String!) {
+        delCategoryById(categoryId: $categoryId)
+    }
+`;
+
+export const UPDATE_CATEGORY = gql`
+    mutation UpdateCategory($urlImg: String!, $name: String!, $categoryId: String!) {
+        updateCategory(url_img: $urlImg, name: $name, categoryId: $categoryId) {
+            _id
+            name
+            url_img
+        }
     }
 `;

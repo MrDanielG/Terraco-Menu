@@ -16,7 +16,7 @@ const AddMenu = (props: Props) => {
         handleSubmit,
         formState: { errors },
     } = useForm<MenuDataInput>();
-    const [addMenuMutation, { data, loading }] = useAddMenuMutation();
+    const [addMenuMutation, { loading }] = useAddMenuMutation();
 
     const onSubmit: SubmitHandler<MenuDataInput> = async ({ title, description }, e) => {
         try {

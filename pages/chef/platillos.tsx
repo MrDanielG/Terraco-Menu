@@ -10,34 +10,26 @@ import Navbar from '../../components/layout/Navbar';
 import SearchBar, { SearchBarRef } from '../../components/layout/SearchBar';
 import DangerModal from '../../components/modals/DangerModal';
 import ProtectedPage from '../../components/ProtectedPage';
-import { Dish, useDelDishByIdMutation, useGetDishesQuery } from '../../graphql/graphql';
+import {
+    Dish,
+    useDelDishByIdMutation,
+    useGetDishesQuery,
+    useGetCategoriesQuery,
+} from '../../graphql/graphql';
 import { useSwipe } from '../../hooks/useSwipe';
 import { intlFormat } from '../../lib/utils';
 
-interface Props {}
 
-const categoryData = [
-    {
-        name: 'Platillos',
-        url: 'https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
-    },
-    {
-        name: 'Bebidas',
-        url: 'https://images.unsplash.com/photo-1599225745889-5697ac8ed5d2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=967&q=80',
-    },
-    {
-        name: 'Postres',
-        url: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    },
-    {
-        name: 'Ensaladas',
-        url: 'https://images.unsplash.com/photo-1595670002930-b30d563cf121?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1490&q=80',
-    },
-];
+interface Props {}
 
 const Platillos = (props: Props) => {
     const router = useRouter();
     const { data, refetch } = useGetDishesQuery({ fetchPolicy: 'cache-and-network' });
+    const { data: cData } = useGetCategoriesQuery();
+    const categoryData =
+        cData?.categories.map((cat) => {
+            return { name: cat.name, url: cat.url_img || '' };
+        }) || [];
     const [isOpen, setIsOpen] = useState(false);
     const [dishes, setDishes] = useState<Dish[]>([]);
     const [dish, setDish] = useState<Dish>();
@@ -106,8 +98,6 @@ const Platillos = (props: Props) => {
                     all_img="https://images.unsplash.com/photo-1452967712862-0cca1839ff27?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
                 />
 
-                <h2 className="mt-10 mb-6 text-lg text-brown">Entrantes</h2>
-
                 <p className="mt-4 text-xs text-center text-gray-500">
                     Desliza a la izquierda para eliminar un platillo
                 </p>
@@ -132,9 +122,6 @@ const Platillos = (props: Props) => {
                         </animated.div>
                     ))}
                 </div>
-
-                <ParentCard />
-
                 <AddButton onClick={() => router.push('/chef/addDish')} />
             </div>
 

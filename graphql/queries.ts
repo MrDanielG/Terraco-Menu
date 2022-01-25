@@ -39,6 +39,18 @@ export const GET_MENUS = gql`
         }
     }
 `;
+
+export const GET_MENUS_NO_DISHES = gql`
+    query GetMenusNoDishes {
+        menus {
+            _id
+            isActive
+            url_img
+            title
+            description
+        }
+    }
+`;
 export const GET_DISHES = gql`
     query GetDishes {
         dishes {
@@ -276,6 +288,26 @@ export const GET_TICKET_BY_ID = gql`
                 paymentAmount
             }
             vat
+        }
+    }
+`;
+
+export const GET_CATEGORIES = gql`
+    query GetCategories {
+        categories {
+            _id
+            name
+            url_img
+        }
+    }
+`;
+
+export const GET_CATEGORY_BY_ID = gql`
+    query GetCategoryById($categoryId: String!) {
+        categoryById(categoryId: $categoryId) {
+            _id
+            name
+            url_img
         }
     }
 `;
