@@ -14,7 +14,7 @@ const ParentCard = (props: Props) => {
     return (
         <div className="max-w-2xl my-6 overflow-hidden transition-shadow duration-300 ease-in-out bg-white shadow-xl cursor-pointer rounded-2xl md:max-w-xs hover:shadow-2xl">
             <div className="flex md:block">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                     <figure className="relative h-full w-28 md:h-40 md:w-full">
                         <Image
                             src={props?.url_img ?? defaultImg}

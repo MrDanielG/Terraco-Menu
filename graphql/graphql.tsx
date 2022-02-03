@@ -31,6 +31,7 @@ export type Category = {
 export type CreateOrderItemsInput = {
   dishId: Scalars['String'];
   quantity: Scalars['Float'];
+  status?: Maybe<Status>;
 };
 
 export type DaySalesStats = {
@@ -200,6 +201,7 @@ export type MutationAddDishToMenuArgs = {
 
 export type MutationAddItemsToOrderArgs = {
   itemsIds: Array<Scalars['String']>;
+  itemsStatus?: Maybe<Status>;
   orderId: Scalars['String'];
 };
 
@@ -227,6 +229,7 @@ export type MutationChangeOrderItemsStatusArgs = {
 
 export type MutationCreateOrderArgs = {
   itemsIds: Array<Scalars['String']>;
+  itemsStatus?: Maybe<Status>;
   tableId: Scalars['String'];
 };
 
@@ -234,6 +237,7 @@ export type MutationCreateOrderArgs = {
 export type MutationCreateOrderItemArgs = {
   dishId: Scalars['String'];
   quantity: Scalars['Float'];
+  status?: Maybe<Status>;
 };
 
 
@@ -254,6 +258,7 @@ export type MutationDelDishByIdArgs = {
 
 export type MutationDelItemsFromOrderArgs = {
   itemsIds: Array<Scalars['String']>;
+  itemsStatus?: Maybe<Status>;
   orderId: Scalars['String'];
 };
 
@@ -437,7 +442,7 @@ export type Query = {
   roles: Array<Role>;
   serchDishes?: Maybe<Array<Dish>>;
   tableById?: Maybe<Table>;
-  tableByIdNumber?: Maybe<Table>;
+  tableByNumber?: Maybe<Table>;
   tables: Array<Table>;
   ticketById: Ticket;
   tickets: Array<Ticket>;
@@ -507,8 +512,8 @@ export type QueryTableByIdArgs = {
 };
 
 
-export type QueryTableByIdNumberArgs = {
-  idNumber: Scalars['Float'];
+export type QueryTableByNumberArgs = {
+  tableNumber: Scalars['Int'];
 };
 
 
@@ -716,6 +721,15 @@ export type CreateOrderMutationVariables = Exact<{
 
 export type CreateOrderMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: string | null | undefined, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: string | null | undefined } }> } };
 
+export type CreateOrderWithStatusMutationVariables = Exact<{
+  createOrderItemsIds: Array<Scalars['String']> | Scalars['String'];
+  createOrderTableId: Scalars['String'];
+  itemsStatus?: Maybe<Status>;
+}>;
+
+
+export type CreateOrderWithStatusMutation = { __typename?: 'Mutation', createOrder: { __typename?: 'Order', _id: string, orderNumber: number, table: { __typename?: 'Table', _id: string, name?: string | null | undefined, tableNumber: number }, items: Array<{ __typename?: 'OrderItem', _id: string, status: Status, quantity: number, dish: { __typename?: 'Dish', name: string, _id: string, price: any, url_img?: string | null | undefined } }> } };
+
 export type CreateOrderItemsMutationVariables = Exact<{
   createOrderItemsItems: Array<CreateOrderItemsInput> | CreateOrderItemsInput;
 }>;
@@ -834,6 +848,13 @@ export type GetTableByIdQueryVariables = Exact<{
 
 
 export type GetTableByIdQuery = { __typename?: 'Query', tableById?: { __typename?: 'Table', _id: string, tableNumber: number, name?: string | null | undefined, token: string, enabled: boolean } | null | undefined };
+
+export type GetTableByNumberQueryVariables = Exact<{
+  tableNumber: Scalars['Int'];
+}>;
+
+
+export type GetTableByNumberQuery = { __typename?: 'Query', tableByNumber?: { __typename?: 'Table', _id: string, name?: string | null | undefined, tableNumber: number, token: string, enabled: boolean } | null | undefined };
 
 export type GetDishByIdQueryVariables = Exact<{
   dishByIdId: Scalars['String'];
@@ -1211,6 +1232,62 @@ export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
 export type CreateOrderMutationResult = Apollo.MutationResult<CreateOrderMutation>;
 export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<CreateOrderMutation, CreateOrderMutationVariables>;
+export const CreateOrderWithStatusDocument = gql`
+    mutation CreateOrderWithStatus($createOrderItemsIds: [String!]!, $createOrderTableId: String!, $itemsStatus: Status) {
+  createOrder(
+    itemsIds: $createOrderItemsIds
+    tableId: $createOrderTableId
+    itemsStatus: $itemsStatus
+  ) {
+    _id
+    orderNumber
+    table {
+      _id
+      name
+      tableNumber
+    }
+    items {
+      _id
+      status
+      quantity
+      dish {
+        name
+        _id
+        price
+        url_img
+      }
+    }
+  }
+}
+    `;
+export type CreateOrderWithStatusMutationFn = Apollo.MutationFunction<CreateOrderWithStatusMutation, CreateOrderWithStatusMutationVariables>;
+
+/**
+ * __useCreateOrderWithStatusMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderWithStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderWithStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderWithStatusMutation, { data, loading, error }] = useCreateOrderWithStatusMutation({
+ *   variables: {
+ *      createOrderItemsIds: // value for 'createOrderItemsIds'
+ *      createOrderTableId: // value for 'createOrderTableId'
+ *      itemsStatus: // value for 'itemsStatus'
+ *   },
+ * });
+ */
+export function useCreateOrderWithStatusMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrderWithStatusMutation, CreateOrderWithStatusMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrderWithStatusMutation, CreateOrderWithStatusMutationVariables>(CreateOrderWithStatusDocument, options);
+      }
+export type CreateOrderWithStatusMutationHookResult = ReturnType<typeof useCreateOrderWithStatusMutation>;
+export type CreateOrderWithStatusMutationResult = Apollo.MutationResult<CreateOrderWithStatusMutation>;
+export type CreateOrderWithStatusMutationOptions = Apollo.BaseMutationOptions<CreateOrderWithStatusMutation, CreateOrderWithStatusMutationVariables>;
 export const CreateOrderItemsDocument = gql`
     mutation CreateOrderItems($createOrderItemsItems: [CreateOrderItemsInput!]!) {
   createOrderItems(items: $createOrderItemsItems) {
@@ -1907,6 +1984,45 @@ export function useGetTableByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetTableByIdQueryHookResult = ReturnType<typeof useGetTableByIdQuery>;
 export type GetTableByIdLazyQueryHookResult = ReturnType<typeof useGetTableByIdLazyQuery>;
 export type GetTableByIdQueryResult = Apollo.QueryResult<GetTableByIdQuery, GetTableByIdQueryVariables>;
+export const GetTableByNumberDocument = gql`
+    query getTableByNumber($tableNumber: Int!) {
+  tableByNumber(tableNumber: $tableNumber) {
+    _id
+    name
+    tableNumber
+    token
+    enabled
+  }
+}
+    `;
+
+/**
+ * __useGetTableByNumberQuery__
+ *
+ * To run a query within a React component, call `useGetTableByNumberQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTableByNumberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTableByNumberQuery({
+ *   variables: {
+ *      tableNumber: // value for 'tableNumber'
+ *   },
+ * });
+ */
+export function useGetTableByNumberQuery(baseOptions: Apollo.QueryHookOptions<GetTableByNumberQuery, GetTableByNumberQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTableByNumberQuery, GetTableByNumberQueryVariables>(GetTableByNumberDocument, options);
+      }
+export function useGetTableByNumberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTableByNumberQuery, GetTableByNumberQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTableByNumberQuery, GetTableByNumberQueryVariables>(GetTableByNumberDocument, options);
+        }
+export type GetTableByNumberQueryHookResult = ReturnType<typeof useGetTableByNumberQuery>;
+export type GetTableByNumberLazyQueryHookResult = ReturnType<typeof useGetTableByNumberLazyQuery>;
+export type GetTableByNumberQueryResult = Apollo.QueryResult<GetTableByNumberQuery, GetTableByNumberQueryVariables>;
 export const GetDishByIdDocument = gql`
     query getDishById($dishByIdId: String!) {
   dishById(id: $dishByIdId) {

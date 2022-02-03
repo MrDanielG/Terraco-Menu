@@ -78,7 +78,11 @@ const DineroInput: React.FC<Props> = ({ onChange, initValue, min, max, step = 10
                 name=""
                 type="number"
                 className="appearance-none text-center w-24 h-8 border-none bg-brown caret-white text-white text-base p-0"
-                style={{ appearance: 'textfield' }}
+                style={{
+                    WebkitAppearance: 'textfield',
+                    MozAppearance: 'textfield',
+                    appearance: 'textfield',
+                }}
             />
             <button
                 className="rounded-r-full bg-brown text-white max-h-8 p-2"

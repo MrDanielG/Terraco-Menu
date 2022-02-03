@@ -11,11 +11,12 @@ interface Props {
     onClick?: (category: ICategoryData) => void;
     ref?: Ref<CategoryBarRef>;
     all_img?: string;
-    default_idx?: number;
+  default_idx?: number;
+  className?: string;
 }
 
 const CategoryBar: React.FC<Props> = forwardRef<CategoryBarRef, Props>(
-    ({ data, onClick, all_img, default_idx }, ref) => {
+  ({ data, onClick, all_img, default_idx, className }, ref) => {
         const [selected, setSelected] = useState(default_idx !== undefined ? default_idx : -1);
 
         useImperativeHandle(ref, () => ({
@@ -42,7 +43,7 @@ const CategoryBar: React.FC<Props> = forwardRef<CategoryBarRef, Props>(
             },
         }));
         return (
-            <div className="flex overflow-x-auto my-8 no-scrollbar">
+          <div className={className || "flex overflow-x-auto my-8 no-scrollbar"}>
                 {all_img && all_img !== '' && (
                     <button
                         className={`mr-6 flex flex-col items-center justify-center ${

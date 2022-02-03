@@ -101,6 +101,38 @@ export const CREATE_ORDER = gql`
     }
 `;
 
+export const CREATE_ORDER_WITH_STATUS = gql`
+    mutation CreateOrderWithStatus(
+        $createOrderItemsIds: [String!]!
+        $createOrderTableId: String!
+        $itemsStatus: Status
+    ) {
+        createOrder(
+            itemsIds: $createOrderItemsIds
+            tableId: $createOrderTableId
+            itemsStatus: $itemsStatus
+        ) {
+            _id
+            orderNumber
+            table {
+                _id
+                name
+                tableNumber
+            }
+            items {
+                _id
+                status
+                quantity
+                dish {
+                    name
+                    _id
+                    price
+                    url_img
+                }
+            }
+        }
+    }
+`;
 export const CREATE_ORDERITEMS = gql`
     mutation CreateOrderItems($createOrderItemsItems: [CreateOrderItemsInput!]!) {
         createOrderItems(items: $createOrderItemsItems) {
