@@ -1,15 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Ticket } from '../../graphql/graphql';
-import html2canvas from 'html2canvas';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import { Style } from '@react-pdf/types';
+import html2canvas from 'html2canvas';
+import React, { useEffect, useRef, useState } from 'react';
+import PulseLoader from 'react-spinners/PulseLoader';
+import { Ticket } from '../../graphql/graphql';
 import TicketDocument from './TicketDocument';
 import TicketRender from './TicketRenderer';
-import PulseLoader from 'react-spinners/PulseLoader';
+
 interface Props {
     ticket: Ticket;
+    style?: Style | Style[];
+    className?: string;
 }
 
-const PDFTicketLink: React.FC<Props> = ({ ticket }) => {
+const PDFTicketLink: React.FC<Props> = ({ ticket, style, className }) => {
     const [ticketImgURL, setTicketImgURL] = useState(
         'https://res.cloudinary.com/brosimgstorage/image/upload/v1629850963/noimage_ycfq5j.png'
     );
@@ -37,12 +41,12 @@ const PDFTicketLink: React.FC<Props> = ({ ticket }) => {
 
     return (
         <div className="flex justify-center">
-            <div id="ticket" className="sm:w-72" hidden>
+            <div id="ticket" className="w-72" hidden>
                 <TicketRender ticket={ticket} />
             </div>
             <PDFDownloadLink
-                style={{ color: '#3ABB2E' }}
-                className="text-sky-500 mt-6"
+                style={style}
+                className={className}
                 document={<TicketDocument ticketImgURL={ticketImgURL} />}
                 fileName={`ticket-${ticket.ticketNumber}.pdf`}
             >

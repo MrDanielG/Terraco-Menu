@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, Fragment } from 'react';
 import PaymentCard from '../../components/cards/PaymentCard';
-import DirectSalesPanel from '../../components/DirectSalesPanel';
+import DirectSellsPanel from '../../components/DirectSellsPanel';
 import Navbar from '../../components/layout/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
 import { Tab } from '@headlessui/react';
@@ -74,7 +74,7 @@ const CahsierHome = (props: Props) => {
                     </Tab.List>
                     <Tab.Panels>
                         <Tab.Panel>
-                            <div className="mt-8">
+                            <div className="mt-8 overflow-auto">
                                 <h1 className="font-semibold text-3xl text-brown">
                                     {getDayNumberDate(locale!)}{' '}
                                 </h1>
@@ -82,7 +82,7 @@ const CahsierHome = (props: Props) => {
                                 <h2 className="mt-10 mb-6 text-brown text-lg">
                                     Cobros Solicitados
                                 </h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-8 items-start justify-items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 gap-y-8 items-start justify-items-center">
                                     {activeTickets.map((ticket, i) => (
                                         <PaymentCard key={i} ticket={ticket} />
                                     ))}
@@ -90,7 +90,7 @@ const CahsierHome = (props: Props) => {
                             </div>
                         </Tab.Panel>
                         <Tab.Panel>
-                            <DirectSalesPanel />
+                            <DirectSellsPanel />
                         </Tab.Panel>
                     </Tab.Panels>
                 </Tab.Group>

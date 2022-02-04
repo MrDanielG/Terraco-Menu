@@ -12,8 +12,8 @@ interface Props {
 
 const DishesPanel: React.FC<Props> = ({ onAddDish }) => {
     const [dishes, setDishes] = useState<Dish[]>([]);
-    const searchRef = useRef<SearchBarRef | null>(null);
-    const catBarRef = useRef<CategoryBarRef | null>(null);
+    const searchRef = useRef<SearchBarRef>(null);
+    const catBarRef = useRef<CategoryBarRef>(null);
     const { data } = useGetDishesQuery();
     const { data: cData } = useGetCategoriesQuery();
     const categoryData =
@@ -43,8 +43,8 @@ const DishesPanel: React.FC<Props> = ({ onAddDish }) => {
     };
 
     return (
-        <div className="flex flex-col">
-        <div className="md:px-4">
+        <div className="flex flex-col w-full">
+            <div className="md:px-4 min-w-full">
                 <SearchBar
                     className="p-3 focus:ring-brown-light focus:border-brown-light block w-full shadow-sm sm:text-sm border-none rounded-3xl"
                     list={allDishes}
@@ -61,7 +61,7 @@ const DishesPanel: React.FC<Props> = ({ onAddDish }) => {
                 />
             </div>
 
-        <div className="shrink md:grid md:grid-cols-3 md:gap-8 overflow-auto md:p-4">
+            <div className="md:grid md:grid-cols-3 md:gap-8 overflow-auto md:p-4">
                 {dishes.map((dish, i) => (
                     <div className="max-h-96" key={i}>
                         <ParentCard url_img={dish.url_img?.toString()}>
