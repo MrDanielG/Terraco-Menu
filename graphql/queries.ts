@@ -93,6 +93,18 @@ export const GET_TABLE_BY_ID = gql`
     }
 `;
 
+export const GET_TABLE_BY_NUMBER = gql`
+    query getTableByNumber($tableNumber: Int!) {
+        tableByNumber(tableNumber: $tableNumber) {
+            _id
+            name
+            tableNumber
+            token
+            enabled
+        }
+    }
+`;
+
 export const GET_DISH_BY_ID = gql`
     query getDishById($dishByIdId: String!) {
         dishById(id: $dishByIdId) {

@@ -150,7 +150,7 @@ const Navbar = (props: Props) => {
                                                     {currentUser?.name === 'Cajero' && (
                                                         <>
                                                             <li className="my-8">
-                                                                <Link href="/">
+                                                                <Link href="/cashier">
                                                                     <a>Inicio</a>
                                                                 </Link>
                                                             </li>

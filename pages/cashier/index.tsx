@@ -1,8 +1,10 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import PaymentCard from '../../components/cards/PaymentCard';
+import DirectSalesPanel from '../../components/DirectSalesPanel';
 import Navbar from '../../components/layout/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
+import { Tab } from '@headlessui/react';
 
 import {
     Ticket,
@@ -49,15 +51,49 @@ const CahsierHome = (props: Props) => {
         <ProtectedPage username="Cajero" redirectTo="/">
             <div className="bg-gray-200 p-8 min-h-screen">
                 <Navbar />
-                <h1 className="font-semibold text-3xl text-brown"> {getDayNumberDate(locale!)} </h1>
+                <Tab.Group>
+                    <Tab.List className="grid gap-4 grid-cols-2 bg-brown p-2 text-white rounded-md">
+                        <Tab
+                            className={({ selected }) =>
+                                selected
+                                    ? 'p-2 bg-white text-black rounded-md  hover:bg-white/[0.12]'
+                                    : 'p-2 hover:bg-white/[0.12]'
+                            }
+                        >
+                            Tickets
+                        </Tab>
+                        <Tab
+                            className={({ selected }) =>
+                                selected
+                                    ? 'm-left-2 p-2 bg-white text-black rounded-md'
+                                    : 'p-2 hover:bg-white/[0.12]'
+                            }
+                        >
+                            Venta directa
+                        </Tab>
+                    </Tab.List>
+                    <Tab.Panels>
+                        <Tab.Panel>
+                            <div className="mt-8">
+                                <h1 className="font-semibold text-3xl text-brown">
+                                    {getDayNumberDate(locale!)}{' '}
+                                </h1>
 
-                <h2 className="mt-10 mb-6 text-brown text-lg">Cobros Solicitados</h2>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-start">
-                    {activeTickets.map((ticket, i) => (
-                        <PaymentCard key={i} ticket={ticket} />
-                    ))}
-                </div>
+                                <h2 className="mt-10 mb-6 text-brown text-lg">
+                                    Cobros Solicitados
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-8 items-start justify-items-center">
+                                    {activeTickets.map((ticket, i) => (
+                                        <PaymentCard key={i} ticket={ticket} />
+                                    ))}
+                                </div>
+                            </div>
+                        </Tab.Panel>
+                        <Tab.Panel>
+                            <DirectSalesPanel />
+                        </Tab.Panel>
+                    </Tab.Panels>
+                </Tab.Group>
             </div>
         </ProtectedPage>
     );

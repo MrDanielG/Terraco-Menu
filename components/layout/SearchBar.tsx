@@ -11,9 +11,10 @@ interface Props<T> {
     keys: string[];
     onSearch?: (resutls: T[], pattern: string) => void;
     ref?: Ref<SearchBarRef>;
+    className?: string;
 }
 
-function SearchBarT<T>({ list, keys, onSearch }: Props<T>, ref: Ref<SearchBarRef>) {
+function SearchBarT<T>({ list, keys, onSearch, className }: Props<T>, ref: Ref<SearchBarRef>) {
     const input = useRef<HTMLInputElement>(null);
     const handleInput = (pattern: string) => {
         if (onSearch) {
@@ -42,7 +43,10 @@ function SearchBarT<T>({ list, keys, onSearch }: Props<T>, ref: Ref<SearchBarRef
             name="first-name"
             id="first-name"
             autoComplete="given-name"
-            className="p-3 my-10 focus:ring-brown-light focus:border-brown-light block w-full shadow-sm sm:text-sm border-none rounded-3xl"
+            className={
+                className ||
+                'p-3 my-10 focus:ring-brown-light focus:border-brown-light block w-full shadow-sm sm:text-sm border-none rounded-3xl'
+            }
             placeholder=" Buscar"
             onChange={(e) => handleInput(e.target.value)}
         />
