@@ -56,8 +56,8 @@ const CahsierHome = (props: Props) => {
                         <Tab
                             className={({ selected }) =>
                                 selected
-                                    ? 'p-2 bg-white text-black rounded-md  hover:bg-white/[0.12]'
-                                    : 'p-2 hover:bg-white/[0.12]'
+                                    ? 'p-px bg-white text-black rounded-md  hover:bg-white/[0.12]'
+                                    : 'p-px hover:bg-white/[0.12]'
                             }
                         >
                             Tickets
@@ -65,8 +65,8 @@ const CahsierHome = (props: Props) => {
                         <Tab
                             className={({ selected }) =>
                                 selected
-                                    ? 'm-left-2 p-2 bg-white text-black rounded-md'
-                                    : 'p-2 hover:bg-white/[0.12]'
+                                    ? 'm-left-2 p-px bg-white text-black rounded-md'
+                                    : 'p-px hover:bg-white/[0.12]'
                             }
                         >
                             Venta directa

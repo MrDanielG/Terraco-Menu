@@ -117,7 +117,9 @@ const DirectSellsPanel: React.FC<Props> = () => {
                         variables: { orderId: order.data.createOrder._id },
                     });
 
-                  toast.success('Venta registrada, revisa la pestaña de Tickets', {duration: 3000});
+                    toast.success('Venta registrada, revisa la pestaña de Tickets', {
+                        duration: 3000,
+                    });
                     setItems([]);
                 }
             } catch (err) {
@@ -189,7 +191,7 @@ const DirectSellsPanel: React.FC<Props> = () => {
                         onCloseModal={() => setIsOpen(false)}
                         closeBtnTitle="Cerrar"
                     >
-                        <div className="flex flex-nowrap h-96 mt-4 w-70 xs:w-full">
+                        <div className="flex flex-nowrap h-96 mt-4 w-70  xs:w-full">
                             <DishesPanel onAddDish={handleAddDish} />
                         </div>
                     </Modal>

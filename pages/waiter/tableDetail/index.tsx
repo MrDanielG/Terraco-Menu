@@ -10,6 +10,7 @@ import {
     HiMinusSm,
     HiPlus,
     HiPlusSm,
+    HiTrash,
 } from 'react-icons/hi';
 import { Action, Fab } from 'react-tiny-fab';
 import BackButton from '../../../components/buttons/BackButton';
@@ -270,7 +271,7 @@ const TableDetail = () => {
                                     onClick={() => handleQuantityChange(i, 1)}
                                 />
                                 <CardActions.Bottom
-                                    icon={<HiMinusSm />}
+                                    icon={order.qty === 1 ? <HiTrash /> : <HiMinusSm />}
                                     onClick={() => handleQuantityChange(i, -1)}
                                 />
                             </CardActions>

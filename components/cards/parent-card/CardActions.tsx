@@ -12,7 +12,7 @@ const CardActionTop = (props: ActionProps) => {
     return (
         <button
             onClick={props.onClick}
-            className="w-full h-14 bg-brown-light rounded-bl-3xl self-start text-white text-3xl mb-1 flex items-center justify-center md:w-20 md:mb-0 md:rounded-tl-3xl md:rounded-bl-none md:float-right"
+            className="w-full h-14 bg-brown-light rounded-bl-3xl text-white text-3xl mb-1 flex items-center justify-center md:w-20 md:mb-0 md:rounded-bl-none md:rounded-tr-none md:rounded-tl-3xl md:float-right absolute top-0 md:relative"
         >
             {props.icon}
         </button>
@@ -23,7 +23,7 @@ const CardActionBottom = (props: ActionProps) => {
     return (
         <button
             onClick={props.onClick}
-            className="w-full h-14 bg-brown-light rounded-tl-3xl self-end text-white text-3xl mt-30 flex items-center justify-center md:w-20 md:mt-0 md:rounded-tr-3xl md:rounded-tl-none md:float-left"
+            className="w-full h-14 bg-brown-light rounded-tl-3xl text-white text-3xl mt-30 flex items-center justify-center md:w-20 md:mt-0 md:rounded-bl-none md:rounded-tl-none md:rounded-tr-3xl md:float-left absolute bottom-0 md:relative order-last"
         >
             {props.icon}
         </button>
@@ -35,7 +35,7 @@ const CardActions: React.FC<Props> & {
     Bottom: typeof CardActionBottom;
 } = (props: Props) => {
     return (
-        <div className="w-56 h-100 flex flex-wrap md:w-full md:h-auto md:block">
+        <div className="h-auto w-56 flex flex-wrap flex-col md:block md:w-full md:h-auto relative">
             {props.children}
         </div>
     );

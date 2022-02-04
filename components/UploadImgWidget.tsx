@@ -19,7 +19,7 @@ export const uploadImage = async (image: File) => {
         body: data,
     })
         .then((res) => res.json())
-        .then((data) => data.url);
+        .then((data) => data.secure_url); 
     return url;
 };
 

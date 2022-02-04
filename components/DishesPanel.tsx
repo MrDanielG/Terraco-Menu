@@ -5,7 +5,7 @@ import CategoryBar, { CategoryBarRef } from './layout/CategoryBar';
 import SearchBar, { SearchBarRef } from './layout/SearchBar';
 import { intlFormat } from '../lib/utils';
 import { HiPlusSm } from 'react-icons/hi';
-
+import { useWindowSize } from '../hooks/';
 interface Props {
     onAddDish?: (dish: Dish) => void;
 }
@@ -16,6 +16,7 @@ const DishesPanel: React.FC<Props> = ({ onAddDish }) => {
     const catBarRef = useRef<CategoryBarRef>(null);
     const { data } = useGetDishesQuery();
     const { data: cData } = useGetCategoriesQuery();
+    const windowSize = useWindowSize();
     const categoryData =
         cData?.categories.map((cat) => {
             return { name: cat.name, url: cat.url_img || '' };
@@ -61,7 +62,11 @@ const DishesPanel: React.FC<Props> = ({ onAddDish }) => {
                 />
             </div>
 
-            <div className="md:grid md:grid-cols-3 md:gap-8 overflow-auto md:p-4">
+            <div
+                className={`md:grid ${
+                    windowSize.width <= 900 ? 'md:grid-cols-2' : 'md:grid-cols-3'
+                } md:gap-8 overflow-auto md:p-4`}
+            >
                 {dishes.map((dish, i) => (
                     <div className="max-h-96" key={i}>
                         <ParentCard url_img={dish.url_img?.toString()}>
@@ -74,7 +79,7 @@ const DishesPanel: React.FC<Props> = ({ onAddDish }) => {
                                 </CardInfo.Footer>
                             </CardInfo>
                             <CardActions>
-                                <CardActions.Bottom
+                                <CardActions.Top
                                     icon={<HiPlusSm />}
                                     onClick={() => !!onAddDish && onAddDish(dish)}
                                 />

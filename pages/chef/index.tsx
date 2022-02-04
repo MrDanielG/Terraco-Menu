@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
-import { HiPencil } from 'react-icons/hi';
+import { HiPencil, HiTrash } from 'react-icons/hi';
 import AddButton from '../../components/buttons/AddButton';
 import CardActions from '../../components/cards/parent-card/CardActions';
 import CardInfo from '../../components/cards/parent-card/CardInfo';
