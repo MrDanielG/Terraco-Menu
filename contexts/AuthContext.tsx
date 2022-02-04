@@ -40,7 +40,7 @@ const AuthProvider = ({ children }: any) => {
             const { data } = await loginMutation({
                 variables: { loginEmail: email, loginPassword: password },
             });
-            console.log(data);
+   //         console.log(data);
             if (!data?.login) return;
 
             const accessToken = data.login.accessToken;
