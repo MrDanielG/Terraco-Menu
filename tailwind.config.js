@@ -1,7 +1,13 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
 module.exports = {
     purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
     darkMode: false, // or 'media' or 'class'
     theme: {
+        screens: {
+            xxs: '360px',
+            xs: '475px',
+            ...defaultTheme.screens,
+        },
         extend: {
             colors: {
                 brown: {
@@ -23,6 +29,10 @@ module.exports = {
                 }),
             },
             spacing: {
+                62: '15.5rem',
+                66: '16.5rem',
+                68: '17rem',
+                70: '17.5rem',
                 128: '32rem',
                 144: '40rem',
                 152: '44rem',

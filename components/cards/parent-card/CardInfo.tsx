@@ -38,7 +38,7 @@ const CardInfo: React.FC<Props> & {
     Footer: typeof CardInfoFooter;
 } = (props: Props) => {
     return (
-        <div onClick={props.onClick} className="p-5 w-full flex flex-col overflow-hidden">
+        <div onClick={props.onClick} className="p-5 w-full flex flex-col overflow-hidden h-full">
             {props.children}
         </div>
     );

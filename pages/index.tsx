@@ -217,7 +217,7 @@ export default function Home() {
                                                     </CardInfo.Footer>
                                                 </CardInfo>
                                                 <CardActions>
-                                                    <CardActions.Bottom
+                                                    <CardActions.Top
                                                         icon={<HiPlusSm />}
                                                         onClick={(_e) => {
                                                             handleAddDish(dish);
@@ -260,7 +260,7 @@ export default function Home() {
                                     </CardInfo.Footer>
                                 </CardInfo>
                                 <CardActions>
-                                    <CardActions.Bottom
+                                    <CardActions.Top
                                         icon={<HiPlusSm />}
                                         onClick={(_e) => {
                                             handleAddDish(dish);

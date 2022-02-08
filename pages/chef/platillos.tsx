@@ -19,7 +19,6 @@ import {
 import { useSwipe } from '../../hooks/useSwipe';
 import { intlFormat } from '../../lib/utils';
 
-
 interface Props {}
 
 const Platillos = (props: Props) => {
@@ -102,7 +101,7 @@ const Platillos = (props: Props) => {
                     Desliza a la izquierda para eliminar un platillo
                 </p>
 
-                <div className='className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5"'>
+                <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
                     {springs.map(({ x }, i) => (
                         <animated.div
                             key={i}

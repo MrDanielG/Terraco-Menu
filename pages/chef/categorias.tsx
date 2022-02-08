@@ -53,7 +53,7 @@ const Categorias: React.FC<Props> = () => {
                 <p className="mt-4 text-xs text-center text-gray-500">
                     Desliza a la izquierda para eliminar una categoría
                 </p>
-                <div>
+                <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
                     {springs.map(({ x }, i) => (
                         <animated.div
                             key={i}

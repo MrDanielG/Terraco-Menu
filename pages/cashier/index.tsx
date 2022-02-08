@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, Fragment } from 'react';
 import PaymentCard from '../../components/cards/PaymentCard';
-import DirectSalesPanel from '../../components/DirectSalesPanel';
+import DirectSellsPanel from '../../components/DirectSellsPanel';
 import Navbar from '../../components/layout/Navbar';
 import ProtectedPage from '../../components/ProtectedPage';
 import { Tab } from '@headlessui/react';
@@ -26,23 +26,27 @@ const CahsierHome = (props: Props) => {
     useEffect(() => {
         if (data?.ticketChanges) {
             const ticket = data.ticketChanges as Ticket;
-            const hasTicket = activeTickets.some((activeTicket) => activeTicket._id === ticket._id);
             const newTickets = [...activeTickets];
-            if (ticket.status !== TicketStatus.Paid) {
-                newTickets.push(ticket);
-                setActiveTickets(newTickets);
-            } else if (hasTicket) {
-                const filteredTickets = newTickets.filter(
-                    (currentTicket) => currentTicket._id !== ticket._id
-                );
-                setActiveTickets(filteredTickets);
+
+            let index = newTickets.findIndex((activeTicket) => activeTicket._id === ticket._id);
+
+            if (index > -1) {
+                newTickets[index] = ticket;
+            } else {
+                index = newTickets.push(ticket) - 1;
             }
+
+            if (ticket.status === TicketStatus.Paid) {
+                newTickets.splice(index, 1);
+            }
+
+            setActiveTickets(newTickets);
         }
     }, [data]);
 
     useEffect(() => {
         if (tickets) {
-            const nonPaidTickets = tickets?.tickets.filter((ticket) => ticket.status !== 'PAID');
+            const nonPaidTickets = tickets?.tickets.filter((ticket) => ticket.status !== TicketStatus.Paid);
             setActiveTickets(nonPaidTickets as Ticket[]);
         }
     }, [tickets]);
@@ -56,8 +60,8 @@ const CahsierHome = (props: Props) => {
                         <Tab
                             className={({ selected }) =>
                                 selected
-                                    ? 'p-2 bg-white text-black rounded-md  hover:bg-white/[0.12]'
-                                    : 'p-2 hover:bg-white/[0.12]'
+                                    ? 'p-px bg-white text-black rounded-md  hover:bg-white/[0.12]'
+                                    : 'p-px hover:bg-white/[0.12]'
                             }
                         >
                             Tickets
@@ -65,8 +69,8 @@ const CahsierHome = (props: Props) => {
                         <Tab
                             className={({ selected }) =>
                                 selected
-                                    ? 'm-left-2 p-2 bg-white text-black rounded-md'
-                                    : 'p-2 hover:bg-white/[0.12]'
+                                    ? 'm-left-2 p-px bg-white text-black rounded-md'
+                                    : 'p-px hover:bg-white/[0.12]'
                             }
                         >
                             Venta directa
@@ -74,7 +78,7 @@ const CahsierHome = (props: Props) => {
                     </Tab.List>
                     <Tab.Panels>
                         <Tab.Panel>
-                            <div className="mt-8">
+                            <div className="mt-8 overflow-auto">
                                 <h1 className="font-semibold text-3xl text-brown">
                                     {getDayNumberDate(locale!)}{' '}
                                 </h1>
@@ -82,7 +86,7 @@ const CahsierHome = (props: Props) => {
                                 <h2 className="mt-10 mb-6 text-brown text-lg">
                                     Cobros Solicitados
                                 </h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-8 items-start justify-items-center">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 gap-y-8 items-start justify-items-center">
                                     {activeTickets.map((ticket, i) => (
                                         <PaymentCard key={i} ticket={ticket} />
                                     ))}
@@ -90,7 +94,7 @@ const CahsierHome = (props: Props) => {
                             </div>
                         </Tab.Panel>
                         <Tab.Panel>
-                            <DirectSalesPanel />
+                            <DirectSellsPanel />
                         </Tab.Panel>
                     </Tab.Panels>
                 </Tab.Group>

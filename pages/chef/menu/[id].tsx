@@ -88,28 +88,28 @@ const MenuDetail = (props: Props) => {
                 <p className="text-xs text-gray-500 mt-4 text-center">
                     Desliza a la izquierda para eliminar un platillo
                 </p>
-
-                {springs.map(({ x }, i) => (
-                    <animated.div
-                        key={i}
-                        {...bind(i, data?.menuById?.dishes[i]._id)}
-                        style={{ x, touchAction: 'pan-y' }}
-                    >
-                        <ParentCard url_img={data?.menuById?.dishes[i].url_img?.toString()}>
-                            <CardInfo>
-                                <CardInfo.Title>
-                                    <span>{data?.menuById?.dishes[i].name}</span>
-                                </CardInfo.Title>
-                                <CardInfo.Footer>
-                                    <span>
-                                        {intlFormat(data?.menuById?.dishes[0]?.price, 'es-MX')}
-                                    </span>
-                                </CardInfo.Footer>
-                            </CardInfo>
-                        </ParentCard>
-                    </animated.div>
-                ))}
-
+                <div className="sm:grid sm:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5">
+                    {springs.map(({ x }, i) => (
+                        <animated.div
+                            key={i}
+                            {...bind(i, data?.menuById?.dishes[i]._id)}
+                            style={{ x, touchAction: 'pan-y' }}
+                        >
+                            <ParentCard url_img={data?.menuById?.dishes[i].url_img?.toString()}>
+                                <CardInfo>
+                                    <CardInfo.Title>
+                                        <span>{data?.menuById?.dishes[i].name}</span>
+                                    </CardInfo.Title>
+                                    <CardInfo.Footer>
+                                        <span>
+                                            {intlFormat(data?.menuById?.dishes[0]?.price, 'es-MX')}
+                                        </span>
+                                    </CardInfo.Footer>
+                                </CardInfo>
+                            </ParentCard>
+                        </animated.div>
+                    ))}
+                </div>
                 <AddButton onClick={() => setIsOpen(true)} />
             </div>
 

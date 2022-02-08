@@ -1,21 +1,25 @@
-import { Dish } from '../graphql/graphql';
+import { useState, useRef, useEffect } from 'react';
+import { add, dinero, multiply } from 'dinero.js';
 import Image from 'next/image';
-import { intlFormat } from '../lib/utils';
-import DishesPanel from './DishesPanel';
+import ContentLoader from 'react-content-loader';
+import { toast } from 'react-hot-toast';
+import { HiMinusSm, HiOutlineEmojiSad, HiPlusSm, HiTrash } from 'react-icons/hi';
 import {
-    useCreateOrderWithStatusMutation,
-    useCreateOrderItemsMutation,
     CreateOrderItemsInput,
+    Dish,
+    Status,
+    useCreateOrderItemsMutation,
+    useCreateOrderWithStatusMutation,
     useGenerateTicketMutation,
     useGetTableByNumberQuery,
-    Status,
 } from '../graphql/graphql';
-import { dinero, multiply, add } from 'dinero.js';
+import { useWindowSize } from '../hooks';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { HiMinusSm, HiPlusSm, HiTrash, HiOutlineEmojiSad } from 'react-icons/hi';
+import { intlFormat } from '../lib/utils';
 import BigButton from './buttons/BigButton';
-import { toast } from 'react-hot-toast';
-import ContentLoader from 'react-content-loader';
+import DishesPanel from './DishesPanel';
+import Modal from './modals/Modal';
+import AddButton from './buttons/AddButton';
 
 interface Props {}
 interface SellItem extends Dish {
@@ -31,13 +35,20 @@ function sumSellItems(items: SellItem[]) {
     }
     return intlFormat(sum.toJSON(), 'es-MX');
 }
-const DirectSalesPanel: React.FC<Props> = () => {
+
+const DirectSellsPanel: React.FC<Props> = () => {
     const [items, setItems] = useLocalStorage<SellItem[]>('sellItems', []);
     const [CreateOrderItems] = useCreateOrderItemsMutation();
     const [CreateOrder] = useCreateOrderWithStatusMutation();
     const [GenerateTicket] = useGenerateTicketMutation();
     const { data, loading } = useGetTableByNumberQuery({ variables: { tableNumber: -1 } });
-
+    const windowSize = useWindowSize();
+    const [isOpen, setIsOpen] = useState(false);
+    const itemsDivRef = useRef<HTMLDivElement>(null);
+    const [processing, setProcessing] = useState(false);
+    useEffect(() => {
+        itemsDivRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [items.length]);
     if (loading) {
         return (
             <ContentLoader className="mt-10" width="100%" height="80vh" viewBox="0 0 160 100">
@@ -67,7 +78,6 @@ const DirectSalesPanel: React.FC<Props> = () => {
         } else {
             newItems.push({ ...dish, quantity: 1 });
         }
-
         setItems(newItems);
     };
 
@@ -87,6 +97,7 @@ const DirectSalesPanel: React.FC<Props> = () => {
     const handleCobrar = async () => {
         if (!!data.tableByNumber) {
             try {
+                setProcessing(true);
                 const orderItemsInput: CreateOrderItemsInput[] = items.map((item) => {
                     return { dishId: item._id, quantity: item.quantity };
                 });
@@ -106,20 +117,24 @@ const DirectSalesPanel: React.FC<Props> = () => {
                         variables: { orderId: order.data.createOrder._id },
                     });
 
-                    toast.success('Venta registrada, revisa la pestaña de Tickets');
+                    toast.success('Venta registrada, revisa la pestaña de Tickets', {
+                        duration: 3000,
+                    });
                     setItems([]);
                 }
             } catch (err) {
                 console.error(err);
                 toast.error('Error al generar ticket');
+            } finally {
+                setProcessing(false);
             }
         }
     };
 
     return (
-        <div className="md:flex md:flex-row mt-6 md:mt-10">
-            <div className="w-full md:w-6/12 md:mr-10">
-                <div className="h-64 md:h-144 flex flex-col bg-white rounded-lg overflow-auto">
+        <div className="flex flex-col lg:flex-row mt-6 md:mt-10 h-1/4">
+            <div className="h-80 lg:h-152 flex flex-col lg:mr-10 lg:w-2/4">
+                <div className="h-full bg-white rounded-lg overflow-auto">
                     {items.map((item, i) => (
                         <div key={i} className="flex flex-row p-4 items-center md:text-xl">
                             <Image
@@ -153,19 +168,37 @@ const DirectSalesPanel: React.FC<Props> = () => {
                             </div>
                         </div>
                     ))}
+                    {/*dummy div to scroll when items are added*/}
+                    <div ref={itemsDivRef} />
                 </div>
                 <BigButton
                     text={`Cobrar: ${sumSellItems(items)}`}
                     onClick={handleCobrar}
-                    isDisabled={items.length === 0}
+                    isDisabled={items.length === 0 || processing}
                 />
             </div>
-
-            <div className="mt-6 md:mt-0 md:w-full h-96 md:h-152 flex">
-                <DishesPanel onAddDish={handleAddDish} />
-            </div>
+            {windowSize.width >= 1024 ? (
+                <div className="mt-6 md:mt-0 md:w-full h-96 lg:h-152 flex flex-grow">
+                    <DishesPanel onAddDish={handleAddDish} />
+                </div>
+            ) : (
+                <>
+                    <AddButton onClick={() => setIsOpen(true)} />
+                    <Modal
+                        isOpen={isOpen}
+                        title="Agrega Productos"
+                        closeModal={() => setIsOpen(false)}
+                        onCloseModal={() => setIsOpen(false)}
+                        closeBtnTitle="Cerrar"
+                    >
+                        <div className="flex flex-nowrap h-96 mt-4 w-70  xs:w-full">
+                            <DishesPanel onAddDish={handleAddDish} />
+                        </div>
+                    </Modal>
+                </>
+            )}
         </div>
     );
 };
 
-export default DirectSalesPanel;
+export default DirectSellsPanel;

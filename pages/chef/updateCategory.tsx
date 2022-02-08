@@ -25,7 +25,6 @@ const UpdateCategory: React.FC<Props> = ({ children }) => {
     useEffect(() => {
         setImgURL(data?.categoryById.url_img);
         setValue('name', data?.categoryById.name || '');
-        console.log('data update');
     }, [data]);
     const {
         register,

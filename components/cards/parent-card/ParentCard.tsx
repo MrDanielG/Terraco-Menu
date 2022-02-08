@@ -12,8 +12,8 @@ interface Props {
 
 const ParentCard = (props: Props) => {
     return (
-        <div className="max-w-2xl my-6 overflow-hidden transition-shadow duration-300 ease-in-out bg-white shadow-xl cursor-pointer rounded-2xl md:max-w-xs hover:shadow-2xl">
-            <div className="flex md:block">
+      <div className="max-w-2xl my-6 overflow-hidden transition-shadow duration-300 ease-in-out bg-white shadow-xl cursor-pointer rounded-2xl md:max-w-xs hover:shadow-2xl h-full">
+            <div className="flex md:flex-col h-full">
                 <div className="shrink-0">
                     <figure className="relative h-full w-28 md:h-40 md:w-full">
                         <Image
@@ -25,7 +25,7 @@ const ParentCard = (props: Props) => {
                         />
                     </figure>
                 </div>
-                <>{props.children}</>
+                {props.children}
             </div>
         </div>
     );

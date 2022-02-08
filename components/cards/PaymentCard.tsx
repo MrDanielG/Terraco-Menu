@@ -73,7 +73,7 @@ const PaymentCard = ({ ticket }: Props) => {
         return undefined;
     };
     return (
-        <div className="flex flex-col justify-between px-8 pt-4 pb-8 transition-shadow duration-300 ease-in-out bg-white sm:w-72 rounded-3xl hover:shadow-xl">
+        <div className="flex flex-col justify-between px-8 pt-4 pb-8 transition-shadow duration-300 ease-in-out bg-white w-72 rounded-3xl hover:shadow-xl">
             <TicketView ticket={ticket} />
             <div className="flex items-center justify-between mb-2 sm:flex-col sm:items-start">
                 <p className="font-semibold text-brown">{ticket.tableName}</p>
@@ -138,8 +138,8 @@ const PaymentCard = ({ ticket }: Props) => {
                     closeModal={() => setOpenPrintModal(false)}
                     onCloseModal={() => setOpenPrintModal(false)}
                 >
-                    <p className="text-gray-700 text-center">Se está generando el documento PDF</p>
-                    <PDFTicketLink ticket={ticket} />
+                    <p className="text-gray-700 text-center">Generando documento PDF</p>
+                    <PDFTicketLink ticket={ticket} className="text-mygreen font-bold" />
                 </Modal>
             </div>
         </div>
